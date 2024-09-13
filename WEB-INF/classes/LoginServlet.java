@@ -65,7 +65,7 @@ public class LoginServlet extends HttpServlet {
         }
 
         
-        PrintWriter out = res.getWriter(); //This is temporary just to test stuff
+        
         if(dbUserPassword != null && dbUserPassword.equals(password)){
             //Session creation
             HttpSession session = req.getSession(true);
@@ -75,6 +75,7 @@ public class LoginServlet extends HttpServlet {
             //Redirect to home page
             res.sendRedirect("home");
         } else {
+            PrintWriter out = res.getWriter(); //This is temporary just to test stuff
             out.append("Failed login"); //temporary way to notify of a failed login
         }
 

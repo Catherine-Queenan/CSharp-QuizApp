@@ -52,19 +52,29 @@ public class SignupServlet extends HttpServlet {
             //CHANGE THE NAME OF DATABASE, USER, and PASSWORD
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "CS-pain-2024");
             // con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "oracle1");
-            
-            //Create insert statement for database
-            PreparedStatement preparedStatement = con.prepareStatement("INSERT INTO users (ID, username, password, role) VALUES (?, ?, ?, ?)");
-            UUID userId = UUID.randomUUID();
-            preparedStatement.setBytes(1, asBytes(userId));
+             Statement statement = con.createStatement();
 
-            preparedStatement.setString(2, username);
-            preparedStatement.setString(3, password);
-            preparedStatement.setString(4, "g");
-            
-            int row = preparedStatement.executeUpdate();
+            //Query database for the user name
+            ResultSet rs = statement.executeQuery("SELECT password FROM users WHERE username  =\"" + username + "\"");
 
-            preparedStatement.close();
+            if (rs.next()) { //if something is returned get the password
+                username = null;
+            } else {
+                //Create insert statement for database
+                PreparedStatement preparedStatement = con.prepareStatement("INSERT INTO users (ID, username, password, role) VALUES (?, ?, ?, ?)");
+                UUID userId = UUID.randomUUID();
+                preparedStatement.setBytes(1, asBytes(userId));
+
+                preparedStatement.setString(2, username);
+                preparedStatement.setString(3, password);
+                preparedStatement.setString(4, "g");
+                
+                int row = preparedStatement.executeUpdate();
+
+                preparedStatement.close();
+            }
+
+            
         } catch(SQLException ex) {
             while (ex != null) { 
                 System.out.println("Message: " + ex.getMessage ()); 
@@ -75,12 +85,19 @@ public class SignupServlet extends HttpServlet {
             } 
         }
 
-        //Session creation
-        HttpSession session = req.getSession(true);
-		session.setAttribute("USER_ID", username);
-		res.setStatus(302);
+        
+        if(username != null){
+            //Session creation
+            HttpSession session = req.getSession(true);
+            session.setAttribute("USER_ID", username);
+            res.setStatus(302);
 
-        res.sendRedirect("home");
+            res.sendRedirect("home");
+        } else {
+            PrintWriter out = res.getWriter(); //This is temporary just to test stuff
+            out.append("Failed signup, username in use");
+        }
+        
 
     }
 }
