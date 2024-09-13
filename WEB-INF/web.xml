@@ -22,4 +22,14 @@
     <servlet-name>signup</servlet-name>
     <url-pattern>/signup</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>home</servlet-name>
+    <servlet-class>MainServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>home</servlet-name>
+    <url-pattern>/home</url-pattern>
+  </servlet-mapping>
 </web-app>
