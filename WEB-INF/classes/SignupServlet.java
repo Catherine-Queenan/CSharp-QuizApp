@@ -5,13 +5,7 @@ import java.io.*;
 import java.util.UUID;
 import java.nio.*;
 
-/**
- * MySQL:
- * CREATE TABLE users  (ID BINARY(16), username CHAR (20), password CHAR(30), role CHAR(1));
- * 
- * Oracle:
- * CREATE TABLE users  (ID RAW(16), username CHAR (20), password CHAR(30), role CHAR(1));
- */
+
 public class SignupServlet extends HttpServlet {
     //Creating unique user Ids
     public static byte[] asBytes(UUID uuid) {
