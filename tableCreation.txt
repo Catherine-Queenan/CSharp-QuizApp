@@ -1,0 +1,5 @@
+MySQL:
+CREATE TABLE users  (ID BINARY(16), username CHAR (20), password CHAR(30), role CHAR(1));
+ 
+Oracle:
+CREATE TABLE users  (ID RAW(16), username CHAR (20), password CHAR(30), role CHAR(1));

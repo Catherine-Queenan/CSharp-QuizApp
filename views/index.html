@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index?</title>
+    <link rel="stylesheet" href="reset.css">
+    <style>
+        
+        .title {
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 50px;
+        }
+
+        .categories {
+            width: 85%;
+            height: 500px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .category {
+            width: 23%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition-duration: 0.5s;
+        }
+
+        .category:hover {
+            transform: scale(1.05);
+            transition-duration: 0.5s;
+        }
+
+        .img {
+            width: 100%;
+            height: 80%;
+            border-radius: 15px;
+            overflow: hidden;
+            background-color: darkseagreen;
+            box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .c-title {
+            width: 100%;
+            text-align: center;
+            font-size: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="loginbtn">
+            login
+        </div>
+    </header>
+    <div class="wrap">
+        <div class="title">
+            Trivia Game
+        </div>
+        <div class="categories">
+            <div class="1 category">
+                <div class="c-title">40's Movies</div>
+                <div class="img">
+                    <img src="" alt="">
+                </div>
+            </div>
+            <div class="2 category">
+                <div class="c-title">Category 1</div>
+                <div class="img">
+                    <img src="" alt="">
+                </div>
+            </div>
+            <div class="3 category">
+                <div class="c-title">Category 1</div>
+                <div class="img">
+                    <img src="" alt="">
+                </div>
+            </div>
+            <div class="4 category">
+                <div class="c-title">Category 1</div>
+                <div class="img">
+                    <img src="" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
