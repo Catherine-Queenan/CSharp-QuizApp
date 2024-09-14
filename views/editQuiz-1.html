@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Edit Wireframe1</title>
+    <link rel="stylesheet" href="../public/css/reset.css">
+    <style>
+
+        .wrap {
+            padding: 10px 0;
+            justify-content: space-evenly;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 40px;
+        }
+
+        .quizzes {
+            width: 85%;
+            height: 500px;
+            padding: 0px 0px 20px 0px;
+            overflow: scroll;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 30px;
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .quizzes::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .quizzes {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .quiz {
+            width: 40%;
+            height: 225px;
+            background-color: rgba(254, 254, 254, 0.05);
+            box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition-duration: 0.5s;
+        }
+
+        .quiz:hover {
+            transform: scale(1.02);
+            transition-duration: 0.5s;
+        }
+
+        .quiz_desc {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .img {
+            width: 45%;
+            height: 100%;
+            border-radius: 15px;
+            background-color: darkseagreen;
+            overflow: hidden;
+        }
+
+        .quiz_btns {
+            width: 55%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quiz_btns button {
+            width: 100%;
+            height: 30%;
+            border-radius: 10px;
+            border: 0px;
+            box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.4);
+            transition-duration: 0.2s;
+        }
+
+        .quiz_btns button:hover {
+            transform: scale(1.02);
+        }
+
+        .q-title {
+            width: 100%;
+            padding: 10px;
+            font-size: 25px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .edit_btn {
+            background-color: lightseagreen;
+        }
+
+        .delete_btn {
+            background-color: tomato;
+        }
+
+        .add_btn {
+            background-color: gold;
+            box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+            padding: 10px 30px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: 0px;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition-duration: 0.2s;
+        }
+
+        .add_btn:hover {
+            transform: scale(1.02);
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logoutbtn">
+            Log Out
+        </div>
+    </header>
+    <div class="wrap">
+        <div class="title">
+            All quizzes in category __
+        </div>
+
+        <!-- Quiz list starts here -->
+        <div class="quizzes">
+
+            <!-- ↓ This is one quiz card -->
+            <div class="quiz">
+                <div class="quiz_desc">
+                    <div class="img">
+                        <img src="#" alt="">
+                    </div>
+                    <div class="quiz_btns">
+                        <div class="q-title">Quiz name</div>
+                        <button class="edit_btn">EDIT</button>
+                        <button class="delete_btn">DELETE</button>
+                    </div>
+                </div>
+            </div>
+            <!-- ↑ One quiz card -->
+
+            <div class="quiz">
+                <div class="quiz_desc">
+                    <div class="img">
+                        <img src="#" alt="">
+                    </div>
+                    <div class="quiz_btns">
+                        <div class="q-title">Quiz name</div>
+                        <button class="edit_btn">EDIT</button>
+                        <button class="delete_btn">DELETE</button>
+                    </div>
+                </div>
+            </div>
+            <div class="quiz">
+                <div class="quiz_desc">
+                    <div class="img">
+                        <img src="#" alt="">
+                    </div>
+                    <div class="quiz_btns">
+                        <div class="q-title">Quiz name</div>
+                        <button class="edit_btn">EDIT</button>
+                        <button class="delete_btn">DELETE</button>
+                    </div>
+                </div>
+            </div>
+            <div class="quiz">
+                <div class="quiz_desc">
+                    <div class="img">
+                        <img src="#" alt="">
+                    </div>
+                    <div class="quiz_btns">
+                        <div class="q-title">Quiz name</div>
+                        <button class="edit_btn">EDIT</button>
+                        <button class="delete_btn">DELETE</button>
+                    </div>
+                </div>
+            </div>
+            <div class="quiz">
+                <div class="quiz_desc">
+                    <div class="img">
+                        <img src="#" alt="">
+                    </div>
+                    <div class="quiz_btns">
+                        <div class="q-title">Quiz name</div>
+                        <button class="edit_btn">EDIT</button>
+                        <button class="delete_btn">DELETE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Quiz list ends here -->
+
+        <!-- Add button -->
+        <button class="add_btn">
+            + New Quiz
+        </button>
+    </div>
+</body>
+</html>

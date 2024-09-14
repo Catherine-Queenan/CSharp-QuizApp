@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Edit Wireframe2</title>
+    <link rel="stylesheet" href="../public/css/reset.css">
+    <style>
+        
+        .wrap {
+            padding: 50px 15vw;
+            justify-content: unset;
+            overflow-y: scroll;
+        }
+
+        .top_section {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            font-size: 40px;
+            /* margin-bottom: 50px; */
+        }
+
+        .delete_btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 0px;
+            box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+            background-color: tomato;
+        }
+
+        .middle_section {
+            width: 100%;
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .quiz_thumbnail {
+            width: 200px;
+            height: 200px;
+            background-color: darkseagreen;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+        .middle_tags {
+            margin-left: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .category_option, .tag_option {
+            padding: 10px 50px;
+            border-radius: 8px;
+        }
+
+        .question_list {
+            width: 100%;
+            margin-top: 30px;
+            border-radius: 10px;
+            background-color: rgba(254, 254, 254, 0.05);            display: flex;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .question {
+            width: 100%;
+            padding: 60px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .question:last-child {
+            border: 0;
+        }
+
+        .question_top {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question_title {
+            font-size: 30px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .delete_question {
+            padding: 10px 30px;
+            border-radius: 8px;
+            border: 0px;
+            background-color: tomato;
+            box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .question_desc {
+            width: 100%;
+            height: 200px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question_img {
+            width: 200px;
+            height: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: darkseagreen;
+        }
+
+        .question_answers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .answer_options {
+            width: 40%;
+            padding: 20px 30px;
+            background-color: wheat;
+            border-radius: 8px;
+            box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        
+        label {
+            width: 100%;
+            height: 100%;
+        }
+
+        .answer_options:nth-child(1) {
+            background-color: crimson;
+        }
+        .answer_options:nth-child(2) {
+            background-color: orange;
+        }
+        .answer_options:nth-child(3) {
+            background-color: lightseagreen;
+        }
+        .answer_options:nth-child(4) {
+            background-color: dodgerblue;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="wrap">
+
+        <!-- Quiz title and delete button -->
+        <div class="top_section">
+            <div class="title">
+                Quiz Title <button class="edit_title">icon for edit name</button>
+            </div>
+            <button class="delete_btn">Delete Quiz</button>
+        </div>
+
+        <!-- Quiz thumbnail and category/tag dropdown menu -->
+        <div class="middle_section">
+            <div class="quiz_thumbnail">
+                <img src="#" alt="">
+            </div>
+            <div class="middle_tags">
+                <select name="Category" class="category_option">
+                    <option value="" selectd disabled>Category</option> <!-- Label for dropdown -->
+                    <option value="category1">Category1</option> <!-- Actual option -->
+                    <option value="category2">Category2</option> <!-- Actual option -->
+                </select>
+                <select name="Tags" class="tag_option">
+                    <option value="" selectd disabled>Tags</option> <!-- Label for dropdown -->
+                    <option value="tag1">Tag1</option> <!-- Actual option -->
+                    <option value="tag2">Tag2</option> <!-- Actual option -->
+                </select>
+            </div>
+        </div>
+
+        <!-- Questions list -->
+        <div class="question_list">
+
+            <!-- ↓ This is one question section -->
+            <div class="question">
+                <div class="question_top">
+                    <div class="question_title">
+                        Qustion <button class="edit_question">icon for edit question</button>
+                    </div>
+                    <button class="delete_question">Delete Question</button>
+                </div>
+                <div class="question_desc">
+                    <div class="question_img">
+                        <img src="#" alt="">
+                    </div>
+                    <div class="question_answers">
+                        <div class="answer_options">
+                            <input type="radio" id="q1_option1" name="q1_options" />
+                            <label for="q1_option1">Option 1</label>
+                        </div>
+                        <div class="answer_options">
+                            <input type="radio" id="q1_option2" name="q1_options" />
+                            <label for="q1_option2">Option 2</label>
+                        </div>
+                        <div class="answer_options">
+                            <input type="radio" id="q1_option3" name="q1_options" />
+                            <label for="q1_option3">Option 3</label>
+                        </div>
+                        <div class="answer_options">
+                            <input type="radio" id="q1_option4" name="q1_options" />
+                            <label for="q1_option4">Option 4</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ↑ One question section -->
+
+            <div class="question">
+                <div class="question_top">
+                    <div class="question_title">
+                        Qustion <button class="edit_question">icon for edit question</button>
+                    </div>
+                    <button class="delete_question">Delete Question</button>
+                </div>
+                <div class="question_desc">
+                    <div class="question_img">
+                        <img src="#" alt="">
+                    </div>
+                    <div class="question_answers">
+                        <div class="answer_options">
+                            <input type="radio" id="q2_option1" name="q2_options" />
+                            <label for="q2_option1">Option 1</label>
+                        </div>
+                        <div class="answer_options">
+                            <input type="radio" id="q2_option2" name="q2_options" />
+                            <label for="q2_option2">Option 2</label>
+                        </div>
+                        <div class="answer_options">
+                            <input type="radio" id="q2_option3" name="q2_options" />
+                            <label for="q2_option3">Option 3</label>
+                        </div>
+                        <div class="answer_options">
+                            <input type="radio" id="q2_option4" name="q2_options" />
+                            <label for="q2_option4">Option 4</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>
