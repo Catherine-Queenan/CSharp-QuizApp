@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +7,6 @@
     <title>Index?</title>
     <link rel="stylesheet" href="reset.css">
     <style>
-        
         .title {
             text-align: center;
             font-size: 40px;
@@ -53,7 +53,6 @@
             align-items: center;
             margin-bottom: 10px;
         }
-
     </style>
 </head>
 <body>
@@ -68,7 +67,7 @@
         </div>
         <div class="categories">
             <!-- Categories will be injected dynamically by the servlet -->
-            ${categoriesHtml}
+            <%= request.getAttribute("categoriesHtml") %>
         </div>
     </div>
 </body>
