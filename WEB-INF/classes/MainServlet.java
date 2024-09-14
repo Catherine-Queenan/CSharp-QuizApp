@@ -15,10 +15,25 @@ public class MainServlet extends HttpServlet{
         title += session.getAttribute("USER_ID");
         res.setContentType("text/html");
         String docType = "<!doctype html public \"-//dtd html 4.0 " + "transitional//en\">\n";
-        String html = docType + "<html>\n" + "<head><title>" + title + "</title></head>\n" + 
-            "<body bgcolor=\"#f0f0f0\">\n" + "<h1 align=\"center\">" + title + "</h1></body></html>";
-
+        String html = docType + "<html>\n" + 
+            "<head><title>" + title + "</title></head>\n" + 
+            "<body bgcolor=\"#f0f0f0\">\n" + 
+            "<h1 align=\"center\">" + title + "</h1>\n" +
+            "<div align=\"center\">\n" +
+            "<form action=\"category1\" method=\"get\">\n" + 
+            "    <input type=\"submit\" value=\"Category 1\" />\n" + 
+            "</form>\n" +
+            "<form action=\"category2\" method=\"get\">\n" + 
+            "    <input type=\"submit\" value=\"Category 2\" />\n" + 
+            "</form>\n" +
+            "<form action=\"category3\" method=\"get\">\n" + 
+            "    <input type=\"submit\" value=\"Category 3\" />\n" + 
+            "</form>\n" +
+            "</div>\n" +
+            "</body></html>";
         PrintWriter out = res.getWriter();
         out.println(html);
+        
+
     }
 }
