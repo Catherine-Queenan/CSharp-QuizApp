@@ -1,4 +1,3 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +6,7 @@
     <title>Index?</title>
     <link rel="stylesheet" href="reset.css">
     <style>
+        
         .title {
             text-align: center;
             font-size: 40px;
@@ -53,13 +53,33 @@
             align-items: center;
             margin-bottom: 10px;
         }
+
+        /* New CSS for logout button */
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px;
+        }
+
+        .logout-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .logout-btn:hover {
+            background-color: #0056b3; 
+        }
+
     </style>
 </head>
 <body>
-    <header>
-        <div class="loginbtn">
-            login
-        </div>
+    <header class="header">
+        <button class="logout-btn" onclick="window.location.href='/quiz/logout';">Logout</button>
     </header>
     <div class="wrap">
         <div class="title">
