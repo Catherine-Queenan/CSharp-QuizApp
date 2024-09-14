@@ -33,12 +33,12 @@ public class MainServlet extends HttpServlet {
 
             //CHANGE TO CATEGORY
             // Query database for the categories
-            String sql = "SELECT username FROM users";
+            String sql = "SELECT name FROM categories";
             rs = statement.executeQuery(sql);
 
             // Generate HTML for each category
             while (rs.next()) {
-                String categoryName = rs.getString("username");
+                String categoryName = rs.getString("name");
                 cardsHtml.append("<div class=\"category\">\n")
                          .append("  <div class=\"c-title\">").append(categoryName).append("</div>\n")
                          .append("  <div class=\"img\"></div>\n")

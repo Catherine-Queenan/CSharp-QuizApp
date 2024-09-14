@@ -79,6 +79,7 @@
 </head>
 <body>
     <header class="header">
+        <!-- You may have to change the path depending on what you named the app -->
         <button class="logout-btn" onclick="window.location.href='/quiz/logout';">Logout</button>
     </header>
     <div class="wrap">
