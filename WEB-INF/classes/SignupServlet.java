@@ -44,7 +44,7 @@ public class SignupServlet extends HttpServlet {
 
             //DATABASE CONNECTION LINE 
             //CHANGE THE NAME OF DATABASE, USER, and PASSWORD
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "CS-pain-2024");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
             // con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "oracle1");
              Statement statement = con.createStatement();
 
