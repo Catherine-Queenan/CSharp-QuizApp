@@ -3,7 +3,7 @@ import jakarta.servlet.*;
 import java.io.*;
 import java.sql.*;
 
-public class MainServlet extends HttpServlet {
+public class QuizServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         if (session == null) {
@@ -15,7 +15,7 @@ public class MainServlet extends HttpServlet {
         Connection con = null;
         Statement statement = null;
         ResultSet rs = null;
-        StringBuilder categoriesHtml = new StringBuilder();
+        StringBuilder quizzesHtml = new StringBuilder();
 
         try {
             // Load MySQL driver
@@ -25,26 +25,24 @@ public class MainServlet extends HttpServlet {
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/project1", "root", "q12773250P");
             statement = con.createStatement();
 
-            // Query database for categories
-            String sql = "SELECT name FROM categories";
+            // Query database for quizzes
+            String sql = "SELECT name FROM quizzes";
             rs = statement.executeQuery(sql);
 
-            // Generate HTML for each category
+            // Generate HTML for each quiz
             while (rs.next()) {
-                String categoryName = rs.getString("name");
-
-                // Create a form for each category to redirect to the quizzes page
-                categoriesHtml.append("<div class=\"category\">\n")
-                             .append("<form action=\"quizzes\" method=\"get\">\n")
-                             .append("    <input type=\"hidden\" name=\"categoryName\" value=\"" + categoryName + "\" />\n")
-                             .append("    <input type=\"submit\" value=\"" + categoryName + "\" />\n")
-                             .append("</form>\n")
-                             .append("  <div class=\"img\"></div>\n")
-                             .append("</div>\n");
+                String quizName = rs.getString("name");
+                quizzesHtml.append("<div class=\"quiz\">\n")
+                           .append("<form action=\"questions\" method=\"get\">\n")
+                           .append("    <input type=\"hidden\" name=\"quizName\" value=\"" + quizName + "\" />\n")
+                           .append("    <input type=\"submit\" value=\"" + quizName + "\" />\n")
+                           .append("</form>\n")
+                           .append("  <div class=\"img\"></div>\n")
+                           .append("</div>\n");
             }
 
-            // Set categories as request attribute
-            req.setAttribute("categoriesHtml", categoriesHtml.toString());
+            // Set quizzes as request attribute
+            req.setAttribute("quizzesHtml", quizzesHtml.toString());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,8 +52,8 @@ public class MainServlet extends HttpServlet {
             try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
         }
 
-        // Forward the request to the main.jsp or any other page you use to display categories
-        RequestDispatcher view = req.getRequestDispatcher("/views/main.jsp");
+        // Forward the request to the quiz.jsp
+        RequestDispatcher view = req.getRequestDispatcher("/views/quiz.jsp");
         view.forward(req, res);
     }
 }
