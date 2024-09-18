@@ -41,4 +41,31 @@
     <servlet-name>LogoutServlet</servlet-name>
     <url-pattern>/logout</url-pattern>
 </servlet-mapping>
+
+<servlet>
+  <servlet-name>QuizServlet</servlet-name>
+  <servlet-class>QuizServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>QuizServlet</servlet-name>
+  <url-pattern>/quizzes</url-pattern>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>QuestionsServlet</servlet-name>
+  <servlet-class>QuestionsServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>QuestionsServlet</servlet-name>
+  <url-pattern>/questions</url-pattern>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>MainServlet</servlet-name>
+  <servlet-class>MainServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>MainServlet</servlet-name>
+  <url-pattern>/main</url-pattern>
+</servlet-mapping>
 </web-app>
