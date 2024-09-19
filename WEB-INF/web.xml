@@ -41,4 +41,40 @@
     <servlet-name>LogoutServlet</servlet-name>
     <url-pattern>/logout</url-pattern>
 </servlet-mapping>
+<servlet>
+    <servlet-name>EditServlet</servlet-name>
+    <servlet-class>EditServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>EditServlet</servlet-name>
+    <url-pattern>/edit</url-pattern>
+</servlet-mapping>
+<!-- EditQuestionsServlet Mapping -->
+    <servlet>
+        <servlet-name>EditQuestionsServlet</servlet-name>
+        <servlet-class>EditQuestionsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditQuestionsServlet</servlet-name>
+        <url-pattern>/editQuestions</url-pattern>
+    </servlet-mapping>
+
+    <!-- AddQuestionServlet Mapping -->
+    <servlet>
+        <servlet-name>AddQuestionServlet</servlet-name>
+        <servlet-class>AddQuestionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddQuestionServlet</servlet-name>
+        <url-pattern>/addQuestion</url-pattern>
+    </servlet-mapping>
+<servlet>
+    <servlet-name>DeleteQuestionServlet</servlet-name>
+    <servlet-class>DeleteQuestionServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>DeleteQuestionServlet</servlet-name>
+    <url-pattern>/deleteQuestion</url-pattern>
+</servlet-mapping>
+
 </web-app>
