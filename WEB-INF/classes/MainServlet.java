@@ -43,6 +43,16 @@ public class MainServlet extends HttpServlet {
                              .append("</div>\n");
             }
 
+            // Check if the logged-in user is an admin (role = "a")
+            String role = (String) session.getAttribute("role");
+            if ("a".equals(role)) {
+                categoriesHtml.append("<div class=\"admin\">\n")
+                              .append("<form action=\"createQuiz\" method=\"get\">\n")
+                              .append("    <input type=\"submit\" value=\"Create New Quiz\" />\n")
+                              .append("</form>\n")
+                              .append("</div>\n");
+            }
+
             // Set categories as request attribute
             req.setAttribute("categoriesHtml", categoriesHtml.toString());
 
@@ -54,7 +64,7 @@ public class MainServlet extends HttpServlet {
             try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
         }
 
-        // Forward the request to the main.jsp or any other page you use to display categories
+        // Forward the request to the main.jsp
         RequestDispatcher view = req.getRequestDispatcher("/views/main.jsp");
         view.forward(req, res);
     }

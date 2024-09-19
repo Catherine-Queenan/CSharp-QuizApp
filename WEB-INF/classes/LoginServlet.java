@@ -69,7 +69,7 @@ public class LoginServlet extends HttpServlet {
         if(dbUserPassword != null && dbUserPassword.equals(password)){
             //Session creation
             HttpSession session = req.getSession(true);
-            session.setAttribute("USER_ID", username);
+            session.setAttribute("username", username);
             res.setStatus(302);
 
             //Redirect to home page
