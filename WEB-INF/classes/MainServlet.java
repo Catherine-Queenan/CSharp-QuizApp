@@ -12,52 +12,55 @@ public class MainServlet extends HttpServlet {
             return;
         }
 
+        if(session.getAttribute("questions") != null){
+            session.removeAttribute("questions");
+            session.removeAttribute("currQuestion");
+        }
+
         Connection con = null;
         Statement statement = null;
         ResultSet rs = null;
-        // To build HTML content
-        StringBuilder cardsHtml = new StringBuilder();
+        StringBuilder categoriesHtml = new StringBuilder();
 
         try {
-            try {
-                // DATABASE CONNECTION LINE
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                // Class.forName("oracle.jdbc.OracleDriver");
-            } catch (Exception ex) {}
+            // Load MySQL driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // DATABASE CONNECTION LINE
+            // Database connection
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
-            // con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "oracle1");
-
             statement = con.createStatement();
 
-            //CHANGE TO CATEGORY
-            // Query database for the categories
+            // Query database for categories
             String sql = "SELECT name FROM categories";
             rs = statement.executeQuery(sql);
 
             // Generate HTML for each category
             while (rs.next()) {
                 String categoryName = rs.getString("name");
-                cardsHtml.append("<div class=\"category\">\n")
-                         .append("  <div class=\"c-title\">").append(categoryName).append("</div>\n")
-                         .append("  <div class=\"img\"></div>\n")
-                         .append("</div>\n");
+
+                // Create a form for each category to redirect to the quizzes page
+                categoriesHtml.append("<div class=\"category\">\n")
+                             .append("<form action=\"quizzes\" method=\"get\">\n")
+                             .append("    <input type=\"hidden\" name=\"categoryName\" value=\"" + categoryName + "\" />\n")
+                             .append("    <input type=\"submit\" value=\"" + categoryName + "\" />\n")
+                             .append("</form>\n")
+                             .append("  <div class=\"img\"></div>\n")
+                             .append("</div>\n");
             }
 
             // Set categories as request attribute
-            req.setAttribute("categoriesHtml", cardsHtml.toString());
+            req.setAttribute("categoriesHtml", categoriesHtml.toString());
 
         } catch (Exception e) {
-            e.printStackTrace(); 
+            e.printStackTrace();
         } finally {
             try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
             try { if (statement != null) statement.close(); } catch (SQLException e) { e.printStackTrace(); }
             try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
         }
 
-        // Forward the request to index.html but keeping the URL as /home
-        RequestDispatcher view = req.getRequestDispatcher("/views/index.jsp");
+        // Forward the request to the main.jsp or any other page you use to display categories
+        RequestDispatcher view = req.getRequestDispatcher("/views/main.jsp");
         view.forward(req, res);
     }
 }

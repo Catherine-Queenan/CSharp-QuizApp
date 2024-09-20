@@ -80,16 +80,17 @@
 <body>
     <header class="header">
         <!-- You may have to change the path depending on what you named the app -->
-        <button class="logout-btn" onclick="window.location.href='/quiz/logout';">Logout</button>
+        <button class="logout-btn" onclick="window.location.href='/project1/logout';">Logout</button>
     </header>
     <div class="wrap">
         <div class="title">
             Trivia Game
         </div>
-        <div class="categories">
-            <!-- Categories will be injected dynamically by the servlet -->
-            <%= request.getAttribute("categoriesHtml") %>
-        </div>
+        
+    </div>
+    <h1>Quiz Dashboard</h1>
+    <div id="content">
+        <%= request.getAttribute("contentHtml") %>
     </div>
 </body>
 </html>
