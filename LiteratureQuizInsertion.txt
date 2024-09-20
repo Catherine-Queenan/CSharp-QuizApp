@@ -91,6 +91,9 @@ VALUES (
     'Multiple Choice'
 );
 
+-- If the fellowship question doesn't properly upload
+update questions set question_text = 'In The Fellowship of the Ring by J.R.R. Tolkien, who says the iconic line, "Even the smallest person can change the course of the future"?' where id = 0x50EF7CDA760B11EF8414902E16FA33A7;
+
 -- Question 10
 INSERT INTO questions (id, quiz_name, question_text, question_type)
 VALUES (
