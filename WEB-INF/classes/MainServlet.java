@@ -22,7 +22,7 @@ public class MainServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             // Database connection
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/project1", "root", "q12773250P");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
             statement = con.createStatement();
 
             // Query database for categories

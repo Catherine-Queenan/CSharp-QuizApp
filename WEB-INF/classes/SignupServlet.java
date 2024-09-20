@@ -44,7 +44,7 @@ public class SignupServlet extends HttpServlet {
 
             //DATABASE CONNECTION LINE 
             //CHANGE THE NAME OF DATABASE, USER, and PASSWORD
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/project1", "root", "q12773250P");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
             // con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "oracle1");
              Statement statement = con.createStatement();
 
@@ -70,6 +70,8 @@ public class SignupServlet extends HttpServlet {
 
             
         } catch(SQLException ex) {
+            
+            System.out.println("FAILED ON SIGNUP");
             while (ex != null) { 
                 System.out.println("Message: " + ex.getMessage ()); 
                 System.out.println("SQLState: " + ex.getSQLState ()); 
@@ -77,6 +79,7 @@ public class SignupServlet extends HttpServlet {
                 ex = ex.getNextException(); 
                 System.out.println("");
             } 
+
         }
 
         
