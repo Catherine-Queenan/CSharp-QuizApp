@@ -23,7 +23,7 @@ public class QuizServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "q12773250P");
             stmnt = con.createStatement();
             rs = stmnt.executeQuery("SELECT name FROM quizzes WHERE category_name = \"" + category + "\";");
 

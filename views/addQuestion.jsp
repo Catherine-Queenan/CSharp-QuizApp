@@ -65,14 +65,38 @@
         }
     </style>
     <script>
-        function addAnswer() {
+         function addAnswer() {
             const answerDiv = document.createElement('div');
             answerDiv.classList.add('answer');
+            const answerCount = document.querySelectorAll('input[name="answerText"]').length + 1;
             answerDiv.innerHTML = `
-                <input type="text" name="answerText" placeholder="Answer" required>
-                <input type="radio" name="correctAnswer" value="${document.querySelectorAll('input[name="answerText"]').length + 1}"> Correct
+                <input type="text" name="answerText" placeholder="Answer ${answerCount}" required>
+                <input type="radio" name="correctAnswer" value="${answerCount}"> Correct
             `;
             document.getElementById('answersContainer').appendChild(answerDiv);
+        }
+
+        function addQuestion() {
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('question');
+            questionDiv.innerHTML = `
+                <label for="questionText">Question Text:</label>
+                <input type="text" name="questionText" required><br>
+                
+                <label for="questionType">Question Type:</label>
+                <input type="text" name="questionType" required><br>
+
+                <div class="answersContainer" id="answersContainer">
+                    <div class="answer">
+                        <input type="text" name="answerText" placeholder="Answer 1" required>
+                        <input type="radio" name="correctAnswer" value="1"> Correct
+                    </div>
+                </div>
+                <button type="button" onclick="addAnswer()">Add Another Answer</button><br><br>
+                <label for="mediaFile">Upload Media (optional):</label>
+                <input type="file" name="mediaFile" accept="image/*,video/*" /><br />
+            `;
+            document.getElementById('questionsContainer').appendChild(questionDiv);
         }
     </script>
 </head>
@@ -80,7 +104,7 @@
     <div class="container">
         <h1>Add Question to <%= request.getAttribute("quizName") %></h1>
 
-        <form method="post" action="addQuestion">
+        <form method="post" action="addQuestion" enctype="multipart/form-data">
             <label for="questionText">Question Text:</label>
             <input type="text" id="questionText" name="questionText" required><br>
             
@@ -101,8 +125,9 @@
             <button type="button" onclick="addAnswer()">Add Another Answer</button><br><br>
 
             <input type="hidden" name="quizName" value="<%= request.getAttribute("quizName") %>">
-            <button type="submit">Add Question</button>
-        </form>
+            <button type="button" onclick="addQuestion()">Add Another Question</button><br><br>
+            <button type="submit">Submit All Questions</button>        </form>
     </div>
 </body>
 </html>
+
