@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Question</title>
+    <title>Create Quiz and Add Questions</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,7 +26,7 @@
             display: block;
             margin-bottom: 10px;
         }
-        input[type="text"], input[type="radio"] {
+        input[type="text"], textarea, input[type="radio"] {
             width: calc(100% - 22px);
             padding: 10px;
             margin-bottom: 10px;
@@ -78,45 +78,32 @@
 </head>
 <body>
     <div class="container">
-        <h1>Add Question to <%= request.getAttribute("quizName") %></h1>
+        <h1>Create a New Quiz</h1>
+        <% if (request.getAttribute("error") != null) { %>
+            <p style="color:red;"><%= request.getAttribute("error") %></p>
+        <% } %>
+        <form method="post" action="createQuiz">
+            <label for="quizName">Quiz Name:</label>
+            <input type="text" id="quizName" name="quizName" required /><br />
 
-        <form method="POST" action="addQuestion" enctype="multipart/form-data">
-            <input type="hidden" name="quizName" value="${quizName}">
-        
-            <!-- Question text -->
-            <label for="questionText">Question:</label>
-            <input type="text" name="questionText" required><br>
-        
-            <!-- Question Type (for example, 'multiple-choice') -->
-            <label for="questionType">Question Type:</label>
-            <input type="text" name="questionType" required><br>
-        
-            <!-- Media type (if any) -->
-            <label for="mediaType">Media Type:</label>
-            <select name="mediaType">
-                <option value="">None</option>
-                <option value="image">Image</option>
-                <option value="video">Video</option>
-            </select><br>
-        
-            <!-- Media file upload -->
-            <label for="mediaFile">Upload Media:</label>
-            <input type="file" name="mediaFile" accept="image/*,video/*"><br>
-        
-            <!-- Answers -->
-            <label for="answerText">Answers:</label><br>
-            <input type="text" name="answerText" required><br>
-            <input type="text" name="answerText"><br>
-            <input type="text" name="answerText"><br>
-            <input type="text" name="answerText"><br>
-        
-            <!-- Correct answer -->
-            <label for="correctAnswer">Correct Answer (index):</label>
-            <input type="number" name="correctAnswer" min="0" required><br>
-        
-            <button type="submit">Submit</button>
+            <label for="categoryName">Category Name:</label>
+            <input type="text" id="categoryName" name="categoryName" required /><br />
+
+            <label for="description">Description:</label><br />
+            <textarea id="description" name="description"></textarea><br />
+            <button type="submit">Create Quiz</button>
+
         </form>
-        
+         <!-- Check if the quiz was successfully created -->
+         <% if (request.getAttribute("quizName") != null) { %>
+            <h2>Quiz "<%= request.getAttribute("quizName") %>" created successfully!</h2>
+
+            <!-- Button to add questions to the newly created quiz -->
+            <form method="post" action="addQuestion">
+                <input type="hidden" name="quizName" value="<%= request.getAttribute("quizName") %>" />
+                <button type="submit">Add Questions to "<%= request.getAttribute("quizName") %>"</button>
+            </form>
+        <% } %>
     </div>
 </body>
 </html>

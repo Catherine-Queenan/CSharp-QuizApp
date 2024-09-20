@@ -76,5 +76,13 @@
     <servlet-name>DeleteQuestionServlet</servlet-name>
     <url-pattern>/deleteQuestion</url-pattern>
 </servlet-mapping>
+<servlet>
+    <servlet-name>CreateQuizServlet</servlet-name>
+    <servlet-class>CreateQuizServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>CreateQuizServlet</servlet-name>
+    <url-pattern>/createQuiz</url-pattern>
+</servlet-mapping>
 
 </web-app>

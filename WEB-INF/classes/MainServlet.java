@@ -26,7 +26,7 @@ public class MainServlet extends HttpServlet {
             } catch (Exception ex) {}
 
             // DATABASE CONNECTION LINE
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/project1", "root", "q12773250P");
             // con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "oracle1");
 
             statement = con.createStatement();
