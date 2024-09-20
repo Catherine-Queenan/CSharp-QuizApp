@@ -2,8 +2,7 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 public class QuestionsServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -15,11 +14,14 @@ public class QuestionsServlet extends HttpServlet {
         }
 
         String quizName = session.getAttribute("quiz").toString();
+        
 
         if (quizName == null || quizName.trim().isEmpty()) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing quiz name");
             return;
         }
+
+
 
         Connection con = null;
         PreparedStatement stmntQuestion = null;
@@ -27,8 +29,21 @@ public class QuestionsServlet extends HttpServlet {
         ResultSet rsQuestion = null;
         ResultSet rsAnswer = null;
         StringBuilder questionsHtml = new StringBuilder();
-        ArrayList<InputStream> questions = (ArrayList<InputStream>) session.getAttribute("questions");
         Integer currQuestion = (Integer) session.getAttribute("currQuestion");
+        ArrayList<InputStream> questions = (ArrayList<InputStream>) session.getAttribute("questions");
+        
+        if(questions.isEmpty()){
+            questionsHtml.append("<p>The quiz \"").append(quizName).append("\" is empty!</p>")
+                        .append("<form action=\"home\"><button type=\"Submit\">Return Home</button></form>");
+            req.setAttribute("questionsHtml", questionsHtml);
+            req.setAttribute("qNumber", currQuestion);
+            req.setAttribute("quizSize", questions.size());
+
+            RequestDispatcher view = req.getRequestDispatcher("/views/questions.jsp");
+            view.forward(req, res);
+            return;
+        }
+
         InputStream qID = questions.get(currQuestion);
 
         try {
@@ -90,6 +105,8 @@ public class QuestionsServlet extends HttpServlet {
 
             // Set questions as request attribute           
             req.setAttribute("questionsHtml", questionsHtml);
+            req.setAttribute("qNumber", currQuestion + 1);
+            req.setAttribute("quizSize", questions.size());
             // }
 
         } catch (Exception e) {
@@ -116,8 +133,20 @@ public class QuestionsServlet extends HttpServlet {
             res.sendRedirect("login");
             return;
         }
+
         Integer currQuestion = (Integer) session.getAttribute("currQuestion");
         ArrayList<InputStream> questions = (ArrayList<InputStream>) session.getAttribute("questions");
+
+        if(req.getParameter("restart") != null){
+            Collections.shuffle(questions);
+            session.setAttribute("currQuestion", 0);
+            session.setAttribute("questions", questions);
+            res.setStatus(302);
+            res.sendRedirect("questions");
+            return;
+        }
+        
+
 
         if(++currQuestion >= questions.size()){
             res.setStatus(302);

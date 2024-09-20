@@ -6,7 +6,11 @@
 </head>
 <body>
     <form action="home"><button type="Submit">Home</button></form>
-    <h1>Questions for Quiz</h1>
+    <form method="post">
+        <input type="hidden" value="true" name="restart">
+        <button type="Submit">Restart</button>
+    </form>
+    <h1>Question <%=request.getAttribute("qNumber")%> out of <%=request.getAttribute("quizSize")%></h1>
     <div id="questions"><%=request.getAttribute("questionsHtml")%>
     </div>
     
