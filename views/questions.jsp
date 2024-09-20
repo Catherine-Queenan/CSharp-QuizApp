@@ -5,6 +5,7 @@
     <title>Questions</title>
 </head>
 <body>
+    <form action="home"><button type="Submit">Home</button></form>
     <h1>Questions for Quiz</h1>
     <div id="questions"><%=request.getAttribute("questionsHtml")%>
     </div>

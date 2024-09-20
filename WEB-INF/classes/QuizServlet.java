@@ -79,7 +79,7 @@ public class QuizServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
             stmnt = con.createStatement();
-            rs = stmnt.executeQuery("SELECT id FROM questions WHERE quiz_name = \"" + quizName + "\";");
+            rs = stmnt.executeQuery("SELECT id FROM questions WHERE quiz_name = \"" + quizName + "\" ORDER BY rand();");
 
             while (rs.next()) {
                 InputStream qID = rs.getBinaryStream("id");

@@ -3,6 +3,7 @@ import jakarta.servlet.*;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class QuestionsServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -62,7 +63,7 @@ public class QuestionsServlet extends HttpServlet {
                 // psAnswers = con.prepareStatement(sqlAnswers);
                 // psAnswers.setBinaryStream(1, questionId);
                 // rsAnswers = psAnswers.executeQuery();
-                stmntAnswer = con.prepareStatement("SELECT answer_text, is_correct, answer_type FROM answers WHERE question_id = ?");
+                stmntAnswer = con.prepareStatement("SELECT answer_text, is_correct, answer_type FROM answers WHERE question_id = ? ORDER BY rand()");
                 stmntAnswer.setBinaryStream(1, qID);
                 rsAnswer = stmntAnswer.executeQuery();
 
@@ -120,7 +121,7 @@ public class QuestionsServlet extends HttpServlet {
 
         if(++currQuestion >= questions.size()){
             res.setStatus(302);
-            res.sendRedirect("home");
+            res.sendRedirect("end");
             return;
         }
         session.setAttribute("currQuestion", currQuestion);

@@ -61,6 +61,15 @@
 </servlet-mapping>
 
 <servlet>
+  <servlet-name>QuizEndServlet</servlet-name>
+  <servlet-class>QuizEndServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>QuizEndServlet</servlet-name>
+  <url-pattern>/end</url-pattern>
+</servlet-mapping>
+
+<servlet>
   <servlet-name>MainServlet</servlet-name>
   <servlet-class>MainServlet</servlet-class>
 </servlet>

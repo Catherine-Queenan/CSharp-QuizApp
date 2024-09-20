@@ -12,6 +12,11 @@ public class MainServlet extends HttpServlet {
             return;
         }
 
+        if(session.getAttribute("questions") != null){
+            session.removeAttribute("questions");
+            session.removeAttribute("currQuestion");
+        }
+
         Connection con = null;
         Statement statement = null;
         ResultSet rs = null;
