@@ -23,7 +23,6 @@
         }
 
         .category {
-            padding: 20px 40px;
             border-radius: 15px;
             border: 0;
             transition-duration: 0.3s;
@@ -71,6 +70,8 @@
             all: unset;
             width: 100%;
             height: 100%;
+            padding: 20px 40px;
+            cursor: pointer;
         }
 
     </style>
