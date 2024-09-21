@@ -54,22 +54,43 @@
             margin-bottom: 10px;
         }
 
+        /* New CSS for logout button */
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px;
+        }
+
+        .logout-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .logout-btn:hover {
+            background-color: #0056b3; 
+        }
+
     </style>
 </head>
 <body>
-    <header>
-        <div class="loginbtn">
-            login
-        </div>
+    <header class="header">
+        <!-- You may have to change the path depending on what you named the app -->
+        <button class="logout-btn" onclick="window.location.href='/project1/logout';">Logout</button>
     </header>
     <div class="wrap">
         <div class="title">
             Trivia Game
         </div>
-        <div class="categories">
-            <!-- Categories will be injected dynamically by the servlet -->
-            ${categoriesHtml}
-        </div>
+        
+    </div>
+    <h1>Quiz Dashboard</h1>
+    <div id="content">
+        <%= request.getAttribute("contentHtml") %>
     </div>
 </body>
 </html>
