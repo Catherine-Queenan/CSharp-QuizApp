@@ -6,7 +6,7 @@ public class DatabaseUtil {
 
     private static final String URL = "jdbc:mysql://localhost:3306/testdb";
     private static final String USER = "root";
-    private static final String PASSWORD = "q12773250P";
+    private static final String PASSWORD = "yorPassword";
 
     static {
         try {
