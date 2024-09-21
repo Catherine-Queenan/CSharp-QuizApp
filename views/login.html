@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login?</title>
-    <link rel="stylesheet" href="reset.css">
+    <!-- Use this for tomcat -->
+    <!-- <link rel="stylesheet" href="/CS-QuizGame/public/css/reset.css"> -->
+    <!-- Use this for local -->
+    <link rel="stylesheet" href="../public/css/reset.css"> 
     <style>
 
         .title {
@@ -14,15 +17,15 @@
 
         .login {
             width: 500px;
-            height: 75%;
-            padding: 20px 0;
+            padding: 70px 10px;
             border-radius: 15px;
-            background-color: rgba(254, 254, 254, 0.05);
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+            background-color: #45425A;
+            box-shadow: 5px 5px 10px rgba(1, 1, 1, 0.5);
             display: flex;
             flex-direction: column;
-            justify-content: space-around;
+            justify-content: center;
             align-items: center;
+            gap: 30px;
         }
 
         .id, .pw {
@@ -33,7 +36,7 @@
             border-radius: 15px;
             display: flex;
             align-items: center;
-            background-color: darkseagreen;
+            background-color: #DCEED1;
         }
 
         .btn {
@@ -41,23 +44,25 @@
             height: 60px;
             border-radius: 15px;
             font-size: 20px;
+            color: rgb(244, 244, 244);
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: seagreen;
+            background-color: #0C1B33;
+            cursor: pointer;
         }
 
         .desc a {
-            color: lightgreen;
+            color: #FFE548;
         }
 
         input, button {
-            color: black;
+            color: #0C1B33;
             border: 0;
         }
 
         ::placeholder {
-            color: black;
+            color: #0C1B33;
         }
 
         :focus {
@@ -69,7 +74,7 @@
 <body>
     <div class="wrap">
         <form class="login" method="POST">
-            <div class="title">
+            <div class="title cherry-cream-soda">
                 Login
             </div>
 
