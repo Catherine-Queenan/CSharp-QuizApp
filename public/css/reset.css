@@ -20,7 +20,7 @@
 
 header {
     width: 99%;;
-    height: 50px;
+    padding: 20px 0;
     color: #D7E8BA;
     display: flex;
     justify-content: flex-end;
