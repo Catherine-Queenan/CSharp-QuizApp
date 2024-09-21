@@ -22,8 +22,8 @@ public class QuizServlet extends HttpServlet {
         StringBuilder quizzesHtml = new StringBuilder();
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "q12773250P");
+            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+             con = DatabaseUtil.getConnection();
             stmnt = con.createStatement();
             rs = stmnt.executeQuery("SELECT name FROM quizzes WHERE category_name = \"" + category + "\";");
 
@@ -76,8 +76,8 @@ public class QuizServlet extends HttpServlet {
         ArrayList<InputStream> qIDs = new ArrayList<>();
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
+            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+            con = DatabaseUtil.getConnection();
             stmnt = con.createStatement();
             rs = stmnt.executeQuery("SELECT id FROM questions WHERE quiz_name = \"" + quizName + "\" ORDER BY rand();");
 

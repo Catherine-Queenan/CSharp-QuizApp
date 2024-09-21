@@ -59,7 +59,7 @@ public class CreateQuizServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
     
             // Database connection
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "q12773250P");
+            con = DatabaseUtil.getConnection();
     
             // Insert new quiz with generated keys
             String sql = "INSERT INTO quizzes (name, category_name, description) VALUES (?, ?, ?)";
@@ -106,8 +106,8 @@ public class CreateQuizServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             // Database connection
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "q12773250P");
-
+            con = DatabaseUtil.getConnection();
+            
             // Query to get the user's role
             String sql = "SELECT role FROM users WHERE username = ?";
             ps = con.prepareStatement(sql);

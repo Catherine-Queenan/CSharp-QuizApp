@@ -23,11 +23,12 @@ public class MainServlet extends HttpServlet {
         StringBuilder categoriesHtml = new StringBuilder();
 
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
             // Load MySQL driver
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             // Database connection
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "q12773250P");
+            con = DatabaseUtil.getConnection();
             statement = con.createStatement();
 
             // Query database for categories
@@ -64,3 +65,5 @@ public class MainServlet extends HttpServlet {
         view.forward(req, res);
     }
 }
+
+

@@ -30,9 +30,7 @@ public class DeleteQuestionServlet extends HttpServlet {
             // Class.forName("oracle.jdbc.OracleDriver"); // Oracle Driver
 
             // DATABASE CONNECTION LINE
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "q12773250P"); // MySQL connection
-            // con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "oracle1"); // Oracle connection
-
+            con = DatabaseUtil.getConnection();
             // Delete the question
             String deleteQuestionSql = "DELETE FROM questions WHERE id = ?";
             ps = con.prepareStatement(deleteQuestionSql);
@@ -56,12 +54,10 @@ public class DeleteQuestionServlet extends HttpServlet {
             String role = null;
     
             try {
-                // Load MySQL driver
-                Class.forName("com.mysql.cj.jdbc.Driver");
-    
-                // Database connection
-                con = DriverManager.getConnection("jdbc:mysql://localhost:3306/project1", "root", "q12773250P");
-    
+                Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+
+                con = DatabaseUtil.getConnection();
+
                 // Query to get the user's role
                 String sql = "SELECT role FROM users WHERE username = ?";
                 ps = con.prepareStatement(sql);

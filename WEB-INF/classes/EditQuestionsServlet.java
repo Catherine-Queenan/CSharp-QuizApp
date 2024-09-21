@@ -25,14 +25,9 @@ public class EditQuestionsServlet extends HttpServlet {
         StringBuilder questionsHtml = new StringBuilder();
 
         try {
-            // DATABASE CONNECTION LINE
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
-            // Class.forName("oracle.jdbc.OracleDriver"); // Oracle Driver
-
             // DATABASE CONNECTION LINE
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "q12773250P"); // MySQL connection
-            // con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "oracle1"); // Oracle connection
-
+            con = DatabaseUtil.getConnection();
             // Get quiz name from request parameters
             String quizName = req.getParameter("quizName");
             if (quizName == null || quizName.isEmpty()) {
@@ -90,11 +85,9 @@ public class EditQuestionsServlet extends HttpServlet {
         String role = null;
 
         try {
-            // Load MySQL driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
+            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
             // Database connection
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/project1", "root", "q12773250P");
+            con = DatabaseUtil.getConnection();
 
             // Query to get the user's role
             String sql = "SELECT role FROM users WHERE username = ?";

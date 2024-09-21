@@ -65,6 +65,7 @@
         }
     </style>
     <script>
+
          function addAnswer() {
             const answerDiv = document.createElement('div');
             answerDiv.classList.add('answer');
@@ -109,7 +110,29 @@
             <input type="text" id="questionText" name="questionText" required><br>
             
             <label for="questionType">Question Type:</label>
-            <input type="text" id="questionType" name="questionType" required><br>
+        <select id="questionType" name="questionType">
+            <option value="multipleChoice">Multiple Choice</option>
+            <option value="trueFalse">True/False</option>
+            <!-- Add other question types as needed -->
+        </select><br><br>
+
+        <label for="mediaType">Media Type:</label>
+        <select id="mediaType" name="mediaType">
+            <option value="none">None</option>
+            <option value="image">Image</option>
+            <option value="video">YouTube Video</option>
+        </select><br><br>
+
+        <div id="imageUrl" style="display: none;">
+            <label for="imageUrl">Image URL:</label>
+            <input type="text" id="imageUrl" name="imageUrl"><br><br>
+        </div>
+        <div id="videoUrl" style="display: none;">
+            <label for="videoUrl">YouTube Video URL:</label>
+            <input type="text" id="videoUrl" name="videoUrl"><br><br>
+        </div>
+        <!-- <label for="mediaFile">Upload Media (optional):</label>
+        <input type="file" name="mediaFile" accept="image/*,video/*" /><br /> -->
 
             <div id="answersContainer">
                 <div class="answer">
@@ -128,6 +151,21 @@
             <button type="button" onclick="addQuestion()">Add Another Question</button><br><br>
             <button type="submit">Submit All Questions</button>        </form>
     </div>
+
+    <script>
+        document.getElementById('mediaType').addEventListener('change', function() {
+            if (this.value === 'image') {
+                document.getElementById('imageUrl').style.display = 'block';
+                document.getElementById('videoUrl').style.display = 'none';
+            } else if (this.value === 'video') {
+                document.getElementById('imageUrl').style.display = 'none';
+                document.getElementById('videoUrl').style.display = 'block';
+            } else {
+                document.getElementById('imageUrl').style.display = 'none';
+                document.getElementById('videoUrl').style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
 

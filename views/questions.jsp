@@ -14,6 +14,9 @@
     <div id="questions"><%=request.getAttribute("questionsHtml")%>
     </div>
     
+    
+    <%= request.getAttribute("mediaHtml") %>
+
 </body>
 <script>
     let body = document.getElementsByTagName("body");
