@@ -6,24 +6,27 @@ import java.sql.*;
 public class EditServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
-        if (session == null) {
-            res.setStatus(302);
+        if (session == null || session.getAttribute("USER_ID") == null) {
             res.sendRedirect("login");
             return;
         }
 
+        String username = (String) session.getAttribute("USER_ID");
+        String role = getUserRoleFromDatabase(username);
+
+        if (!"a".equals(role)) {
+            res.sendRedirect("login");
+            return;
+        }
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         StringBuilder editHtml = new StringBuilder();
 
         try {
-            // DATABASE CONNECTION LINE
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
-
             // DATABASE CONNECTION LINE
-           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/quizapp", "root", ""); // MySQL connection
-
+            con = DatabaseUtil.getConnection();
             // Get quiz name from request parameters
             String quizName = req.getParameter("quizName");
             if (quizName == null || quizName.isEmpty()) {
@@ -77,11 +80,9 @@ public class EditServlet extends HttpServlet {
         PreparedStatement ps = null;
 
         try {
-            // DATABASE CONNECTION LINE
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
-
             // DATABASE CONNECTION LINE
-           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/quizapp", "root", ""); // MySQL connection
+            con = DatabaseUtil.getConnection();
 
             // Get form data from the request
             String quizName = req.getParameter("quizName");
@@ -105,5 +106,35 @@ public class EditServlet extends HttpServlet {
             try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
             try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
         }
+    }
+    private String getUserRoleFromDatabase(String username) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String role = null;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+            // Database connection
+            con = DatabaseUtil.getConnection();
+
+            // Query to get the user's role
+            String sql = "SELECT role FROM users WHERE username = ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, username);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                role = rs.getString("role");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+        }
+
+        return role;
     }
 }
