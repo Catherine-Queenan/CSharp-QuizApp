@@ -145,6 +145,7 @@
                 </div>
                 <!-- Add more answers dynamically if needed -->
             </div>
+            <div id="questionsContainer"></div>
             <button type="button" onclick="addAnswer()">Add Another Answer</button><br><br>
 
             <input type="hidden" name="quizName" value="<%= request.getAttribute("quizName") %>">
