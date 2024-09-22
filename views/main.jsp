@@ -84,7 +84,6 @@
         <div class="categories">
             <%= request.getAttribute("categoriesHtml") %>
         </div>
-        <h1>Admin dashboard</h1>
     <%= request.getAttribute("adminHtml") %>
     </div>
 </body>

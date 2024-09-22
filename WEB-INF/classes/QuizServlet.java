@@ -34,24 +34,21 @@ public class QuizServlet extends HttpServlet {
 
                 quizzesHtml.append("<div class=\"quiz\">\n")
                         .append("<form method=\"post\">\n")
-                        .append("    <input type=\"hidden\" name=\"quizName\" value=\"" + quizName + "\" />\n")
-                        .append("    <input type=\"submit\" value=\"" + quizName + "\" />\n");
+                        .append("    <input type=\"hidden\" name=\"quizName\" value=\"").append(quizName).append("\" />\n")
+                        .append("    <input type=\"submit\" value=\"").append(quizName).append("\" />\n")
+                        .append("<p class=\"quiz-description\"><small>").append(quizDescription).append("</small></p>\n")
+                        .append("</form>\n")
+                        .append("</div>\n");
                 
                 // Show "Add Question" and "Delete Quiz" buttons only for admin users
                 if ("a".equals(role)) {
                     quizzesHtml.append("    <button type=\"button\" onclick=\"window.location.href='addQuestion?quizName=")
                             .append(quizName).append("'\">Add Question</button>\n")
                             .append("    <button type=\"button\" onclick=\"window.location.href='deleteQuiz?quizName=")
-                            .append(quizName).append("'\">Delete Quiz</button>\n");
+                            .append(quizName).append("'\">Delete Quiz</button>\n")
+                            .append("    <button type=\"button\" onclick=\"window.location.href='/edit?quizName=")
+                            .append(quizName).append("'\">Edit Quiz</button>\n");
                 }
-
-                quizzesHtml.append("</form>\n")
-                        .append("    <input type=\"hidden\" name=\"quizName\" value=\"").append(quizName).append("\" />\n")
-                        .append("    <input type=\"submit\" value=\"").append(quizName).append("\" />\n")
-                        .append("</form>\n")
-                        .append("<p class=\"quiz-description\">").append(quizDescription).append("</p>\n")
-                        .append("  <div class=\"img\"></div>\n")
-                        .append("</div>\n");
             }
 
         } catch (Exception e) {

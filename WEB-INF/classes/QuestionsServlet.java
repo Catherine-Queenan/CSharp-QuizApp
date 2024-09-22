@@ -67,54 +67,51 @@ public class QuestionsServlet extends HttpServlet {
 
             // Generate HTML for questions
             while (rsQuestion.next()) {
-                // InputStream questionId = rsQuestions.getBinaryStream("id");
-                // questions.add(questionId);
+                        
+            // stmnmedia = con.prepareStatement("SELECT  media_id  FROM question_media WHERE  question_id = ?");
+            // stmnmedia.setBinaryStream(1, qID);
+            // ResultSet rsmedia = stmnmedia.executeQuery();
 
-                
-            stmnmedia = con.prepareStatement("SELECT  media_id  FROM question_media WHERE  question_id = ?");
-            stmnmedia.setBinaryStream(1, qID);
-            ResultSet rsmedia = stmnmedia.executeQuery();
+            // while(rsmedia.next()){
+            //     InputStream media_id = rsmedia.getBinaryStream("media_id");
+            //     req.setAttribute("media_id", media_id);
+            // }
 
-            while(rsmedia.next()){
-                InputStream media_id = rsmedia.getBinaryStream("media_id");
-                req.setAttribute("media_id", media_id);
-            }
+            // stmnQuestionmedia = con.prepareStatement("SELECT media_file_path, media_type FROM media WHERE id = ?");
+            // stmnQuestionmedia.setBinaryStream(1, (InputStream)req.getAttribute("media_id"));
+            // ResultSet rsQuestionmedia = stmnQuestionmedia.executeQuery();
 
-            stmnQuestionmedia = con.prepareStatement("SELECT media_file_path, media_type FROM media WHERE id = ?");
-            stmnQuestionmedia.setBinaryStream(1, (InputStream)req.getAttribute("media_id"));
-            ResultSet rsQuestionmedia = stmnQuestionmedia.executeQuery();
-
-            while(rsQuestionmedia.next()){
-                String media_file_path = rsQuestionmedia.getString("media_file_path");
-                String media_type = rsQuestionmedia.getString("media_type");
-                req.setAttribute("media_file_path", media_file_path);
-                req.setAttribute("media_type", media_type);
-                // Check if it's a YouTube link
-                if (media_file_path.contains("youtube.com/watch")) {
-                    // Convert YouTube URL to embed format
-                    String youtubeEmbedUrl = media_file_path.replace("watch?v=", "embed/");
-                    mediaHtml.append("<div class=\"media-item\">\n")
-                             .append("<iframe width=\"560\" height=\"315\" src=\"" + youtubeEmbedUrl + "\" frameborder=\"0\" allowfullscreen></iframe>\n")
-                             .append("</div>\n");
-                } else if ("image".equalsIgnoreCase(media_type)) {
-                    // For image media types
-                    mediaHtml.append("<div class=\"media-item\">\n")
-                             .append("<img src=\"" + media_file_path + "\" alt=\"Image\" width=\"300\" height=\"200\" />\n")
-                             .append("</div>\n");
-                } else if ("video".equalsIgnoreCase(media_type)) {
-                    // For local video media types
-                    mediaHtml.append("<div class=\"media-item\">\n")
-                             .append("<video width=\"300\" height=\"200\" controls>\n")
-                             .append("  <source src=\"" + media_file_path + "\" type=\"video/mp4\">\n")
-                             .append("  Your browser does not support the video tag.\n")
-                             .append("</video>\n")
-                             .append("</div>\n");
-                }
-            }
+            // while(rsQuestionmedia.next()){
+            //     String media_file_path = rsQuestionmedia.getString("media_file_path");
+            //     String media_type = rsQuestionmedia.getString("media_type");
+            //     req.setAttribute("media_file_path", media_file_path);
+            //     req.setAttribute("media_type", media_type);
+            //     // Check if it's a YouTube link
+            //     if (media_file_path.contains("youtube.com/watch")) {
+            //         // Convert YouTube URL to embed format
+            //         String youtubeEmbedUrl = media_file_path.replace("watch?v=", "embed/");
+            //         mediaHtml.append("<div class=\"media-item\">\n")
+            //                  .append("<iframe width=\"560\" height=\"315\" src=\"" + youtubeEmbedUrl + "\" frameborder=\"0\" allowfullscreen></iframe>\n")
+            //                  .append("</div>\n");
+            //     } else if ("image".equalsIgnoreCase(media_type)) {
+            //         // For image media types
+            //         mediaHtml.append("<div class=\"media-item\">\n")
+            //                  .append("<img src=\"" + media_file_path + "\" alt=\"Image\" width=\"300\" height=\"200\" />\n")
+            //                  .append("</div>\n");
+            //     } else if ("video".equalsIgnoreCase(media_type)) {
+            //         // For local video media types
+            //         mediaHtml.append("<div class=\"media-item\">\n")
+            //                  .append("<video width=\"300\" height=\"200\" controls>\n")
+            //                  .append("  <source src=\"" + media_file_path + "\" type=\"video/mp4\">\n")
+            //                  .append("  Your browser does not support the video tag.\n")
+            //                  .append("</video>\n")
+            //                  .append("</div>\n");
+            //     }
+            // }
 
 
             // Set the media HTML as request attribute (after the loop has finished)
-            req.setAttribute("mediaHtml", mediaHtml.toString());
+            // req.setAttribute("mediaHtml", mediaHtml.toString());
 
                 String questionText = rsQuestion.getString("question_text");
                 String questionType = rsQuestion.getString("question_type");
@@ -147,16 +144,14 @@ public class QuestionsServlet extends HttpServlet {
                     boolean isCorrect = rsAnswer.getBoolean("is_correct");
                     String answerType = rsAnswer.getString("answer_type");
                     String answerDisplay = answerType.equalsIgnoreCase("TEXT") ? answerText : insertMedia(con, "answer", answerId, answerType);
+
+                    answerDisplay = answerDisplay != null ? answerDisplay : answerText;
                     if(isCorrect){
-                        questionsHtml.append("<form id=\"questionForm\" method=\"post\">").append("<button id=\"rightPlayAnswer\">").append(answerDisplay).append("</button></form>\n");
-                        questionsHtml.append("<form id=\"questionForm\" method=\"post\">").append("<button class=\"answer").append(countAnswer).append("\"id=\"rightPlayAnswer\">").append(answerText).append("</button></form>\n");
+                        questionsHtml.append("<form id=\"questionForm\" method=\"post\">").append("<button class=\"answer").append(countAnswer).append("\"id=\"rightPlayAnswer\">").append(answerDisplay).append("</button></form>\n");
                     } else {
-                        questionsHtml.append("<button class=\"wrongPlayAnswer\">").append(answerDisplay).append("</button>\n");
-                        questionsHtml.append("<button class=\"wrongPlayAnswer answer").append(countAnswer).append("\">").append(answerText).append("</button>\n");
+                        questionsHtml.append("<button class=\"wrongPlayAnswer answer").append(countAnswer).append("\">").append(answerDisplay).append("</button>\n");
                     }
-                    
-                    
-                    
+
                     countAnswer++;
                 }
                 questionsHtml.append("</div>");
