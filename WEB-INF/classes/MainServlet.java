@@ -27,7 +27,7 @@ public class MainServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             // Database connection
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
+           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/quizapp", "root", "");
             statement = con.createStatement();
 
             // Query database for categories

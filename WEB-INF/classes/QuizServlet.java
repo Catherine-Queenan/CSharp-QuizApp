@@ -23,17 +23,20 @@ public class QuizServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
+           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/quizapp", "root", "");
             stmnt = con.createStatement();
-            rs = stmnt.executeQuery("SELECT name FROM quizzes WHERE category_name = \"" + category + "\";");
+            rs = stmnt.executeQuery("SELECT name, description FROM quizzes WHERE category_name = \"" + category + "\";");
 
             while (rs.next()) {
                 String quizName = rs.getString("name");
+                String quizDescription = rs.getString("description");
+
                 quizzesHtml.append("<div class=\"quiz\">\n")
                         .append("<form method=\"post\">\n")
-                        .append("    <input type=\"hidden\" name=\"quizName\" value=\"" + quizName + "\" />\n")
-                        .append("    <input type=\"submit\" value=\"" + quizName + "\" />\n")
+                        .append("    <input type=\"hidden\" name=\"quizName\" value=\"").append(quizName).append("\" />\n")
+                        .append("    <input type=\"submit\" value=\"").append(quizName).append("\" />\n")
                         .append("</form>\n")
+                        .append("<p class=\"quiz-description\">").append(quizDescription).append("</p>\n")
                         .append("  <div class=\"img\"></div>\n")
                         .append("</div>\n");
             }
@@ -77,7 +80,7 @@ public class QuizServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
+           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/quizapp", "root", "");
             stmnt = con.createStatement();
             rs = stmnt.executeQuery("SELECT id FROM questions WHERE quiz_name = \"" + quizName + "\" ORDER BY rand();");
 

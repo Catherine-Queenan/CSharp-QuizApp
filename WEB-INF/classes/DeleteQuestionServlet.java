@@ -17,7 +17,7 @@ public class DeleteQuestionServlet extends HttpServlet {
             // Class.forName("oracle.jdbc.OracleDriver"); // Oracle Driver
 
             // DATABASE CONNECTION LINE
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", ""); // MySQL connection
+           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/quizapp", "root", ""); // MySQL connection
             // con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "oracle1"); // Oracle connection
 
             // Delete the question

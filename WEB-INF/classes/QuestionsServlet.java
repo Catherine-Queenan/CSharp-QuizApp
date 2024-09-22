@@ -3,9 +3,11 @@ import jakarta.servlet.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import javax.print.attribute.standard.RequestingUserName;
 
 public class QuestionsServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        //Check if user is logged in, if not send them to login
         HttpSession session = req.getSession(false);
         if (session == null) {
             res.setStatus(302);
@@ -13,9 +15,8 @@ public class QuestionsServlet extends HttpServlet {
             return;
         }
 
+        //Check if a quiz has been selected
         String quizName = session.getAttribute("quiz").toString();
-        
-
         if (quizName == null || quizName.trim().isEmpty()) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing quiz name");
             return;
@@ -51,7 +52,7 @@ public class QuestionsServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             // Database connection
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
+           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/quizapp", "root", "");
 
             // // Query to get questions
             // String sqlQuestions = "SELECT id, question_text, question_type FROM questions WHERE quiz_name = ?";
@@ -68,6 +69,9 @@ public class QuestionsServlet extends HttpServlet {
                 String questionText = rsQuestion.getString("question_text");
                 String questionType = rsQuestion.getString("question_type");
 
+                if(!questionType.equals("TEXT")){
+                    questionsHtml.append(insertMedia(con, "question", qID, questionType));
+                }
                 // // Display question
                 questionsHtml.append("<div class=\"question\"").append(">\n")
                              .append("<p><strong>Question:</strong> ").append(questionText).append("</p>\n");
@@ -78,36 +82,34 @@ public class QuestionsServlet extends HttpServlet {
                 // psAnswers = con.prepareStatement(sqlAnswers);
                 // psAnswers.setBinaryStream(1, questionId);
                 // rsAnswers = psAnswers.executeQuery();
-                stmntAnswer = con.prepareStatement("SELECT answer_text, is_correct, answer_type FROM answers WHERE question_id = ? ORDER BY rand()");
+                stmntAnswer = con.prepareStatement("SELECT id, answer_text, is_correct, answer_type FROM answers WHERE question_id = ? ORDER BY rand()");
                 stmntAnswer.setBinaryStream(1, qID);
                 rsAnswer = stmntAnswer.executeQuery();
 
                 // Display answers
                 while (rsAnswer.next()) {
+                    InputStream answerId = rsAnswer.getBinaryStream("id");
                     String answerText = rsAnswer.getString("answer_text");
                     boolean isCorrect = rsAnswer.getBoolean("is_correct");
                     String answerType = rsAnswer.getString("answer_type");
+                    String answerDisplay = answerType.equalsIgnoreCase("TEXT") ? answerText : insertMedia(con, "answer", answerId, answerType);
                     if(isCorrect){
-                        questionsHtml.append("<form id=\"questionForm\" method=\"post\">").append("<button id=\"rightPlayAnswer\">").append(answerText).append("</button></form>\n");
+                        questionsHtml.append("<form id=\"questionForm\" method=\"post\">").append("<button id=\"rightPlayAnswer\">").append(answerDisplay).append("</button></form>\n");
                     } else {
-                        questionsHtml.append("<button class=\"wrongPlayAnswer\">").append(answerText).append("</button>\n");
+                        questionsHtml.append("<button class=\"wrongPlayAnswer\">").append(answerDisplay).append("</button>\n");
                     }
+                    
+                    
                     
                 }
                 
                 questionsHtml.append("</div>\n");
-                
-                // Reset ResultSet and PreparedStatement for the next question
-                // rsAnswer.close();
-                // stmntAnswer.close();
-                // psAnswers.close();
             }
 
-            // Set questions as request attribute           
+            // Set question, total number of questions, and current question as request attribute           
             req.setAttribute("questionsHtml", questionsHtml);
             req.setAttribute("qNumber", currQuestion + 1);
             req.setAttribute("quizSize", questions.size());
-            // }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,5 +158,84 @@ public class QuestionsServlet extends HttpServlet {
         session.setAttribute("currQuestion", currQuestion);
         res.setStatus(302);
         res.sendRedirect("questions");
+    }
+    
+    public String insertMedia(Connection con, String table, InputStream id, String type){
+        PreparedStatement pstmntMedia = null;
+        PreparedStatement pstmntMediaId = null;
+        ResultSet rsMedia = null;
+        ResultSet rsMediaId = null;
+        StringBuilder mediaHtml = new StringBuilder();
+        
+        try {
+            if(table.equalsIgnoreCase("answer")){
+                pstmntMediaId = con.prepareStatement("SELECT media_id FROM answer_media WHERE id = ?");
+            } else if (table.equalsIgnoreCase("question")) {
+                pstmntMediaId = con.prepareStatement("SELECT media_id FROM question_media WHERE id = ?");
+            } else {
+                return null;
+            }
+
+            pstmntMediaId.setBinaryStream(1, id);
+            rsMediaId = pstmntMediaId.executeQuery();
+            InputStream mediaId = null;
+            while(rsMediaId.next()){
+                mediaId = rsMediaId.getBinaryStream("media_id");
+            }
+            
+            pstmntMedia = con.prepareStatement("SELECT media_file_path, media_start, media_end, description FROM media WHERE id = ?");
+            pstmntMedia.setBinaryStream(1, mediaId);
+            rsMedia = pstmntMedia.executeQuery();
+            switch(type){
+                case "VID":
+                    while(rsMedia.next()){
+                        String filePath = rsMedia.getString("media_file_path").split("=")[1];
+                        String mediaStart = rsMedia.getString("media_start");
+                        String mediaEnd = rsMedia.getString("media_end");
+
+                        mediaHtml.append("<input type=\"hidden\" id=\"videoId\" value=\"").append(filePath).append("\">\n")
+                                .append("<input type=\"hidden\" id=\"videoStart\" value=\"").append(mediaStart).append("\">\n")
+                                .append("<input type=\"hidden\" id=\"videoEnd\" value=\"").append(mediaEnd).append("\">\n")
+                                .append("<div id=\"player\"></div>");
+                    }
+                    
+                    break;
+                case "IMG":
+                    while(rsMedia.next()){
+                        String filePath = rsMedia.getString("media_file_path");
+                        String alt = rsMedia.getString("description");
+
+                        mediaHtml.append("<img alt=\"").append(alt).append("\"width=\"300\" height=\"200\" src=\"").append(filePath).append("\">\n");
+                    }
+
+                    break;
+                case "AUD":
+                    while(rsMedia.next()){
+                        String filePath = rsMedia.getString("media_file_path").split("=")[1];
+                        String mediaStart = rsMedia.getString("media_start");
+
+                        mediaHtml.append("<audio preload controls ontimeupdate=\"audio()\">\n")
+                                .append("<source src=\"").append(filePath).append("#t=").append(mediaStart).append("\" type=\"audio/mp3\">")
+                                .append("</audio>");
+                    }
+                    
+                    break;                
+                default :
+                    return null;
+            }
+
+            pstmntMedia.close();
+            rsMedia.close(); 
+            pstmntMediaId.close();       
+            rsMediaId.close();       
+            return rsMedia.toString();
+            
+        } catch (Exception e) {
+            try { if (pstmntMedia != null) pstmntMedia.close(); } catch (SQLException sqlEx) { sqlEx.printStackTrace(); }
+            try { if (rsMedia != null) rsMedia.close(); } catch (SQLException sqlEx) { sqlEx.printStackTrace(); }
+            try { if (pstmntMediaId != null) pstmntMediaId.close(); } catch (SQLException sqlEx) { sqlEx.printStackTrace(); }
+            try { if (rsMediaId != null) rsMediaId.close(); } catch (SQLException sqlEx) { sqlEx.printStackTrace(); }
+            return null;
+        }
     }
 }

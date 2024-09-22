@@ -22,7 +22,7 @@ public class EditServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
 
             // DATABASE CONNECTION LINE
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", ""); // MySQL connection
+           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/quizapp", "root", ""); // MySQL connection
 
             // Get quiz name from request parameters
             String quizName = req.getParameter("quizName");
@@ -81,7 +81,7 @@ public class EditServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
 
             // DATABASE CONNECTION LINE
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", ""); // MySQL connection
+           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/quizapp", "root", ""); // MySQL connection
 
             // Get form data from the request
             String quizName = req.getParameter("quizName");
