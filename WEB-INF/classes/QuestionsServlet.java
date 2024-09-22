@@ -49,6 +49,8 @@ public class QuestionsServlet extends HttpServlet {
 
         InputStream qID = questions.get(currQuestion);
 
+        // ArrayList<String> colors = new ArrayList<>("#A40E4C", "#D00000", "#FF4B3E", "#FFB20F");
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
             // Database connection
@@ -119,7 +121,7 @@ public class QuestionsServlet extends HttpServlet {
 
                 // // Display question
                 questionsHtml.append("<div class=\"question\"").append(">\n")
-                             .append("<p><strong>Question:</strong> ").append(questionText).append("</p>\n");
+                             .append("<p>").append(questionText).append("</p>\n");
                              
 
                 // Query to get answers for this question
@@ -131,18 +133,23 @@ public class QuestionsServlet extends HttpServlet {
                 stmntAnswer.setBinaryStream(1, qID);
                 rsAnswer = stmntAnswer.executeQuery();
 
+                questionsHtml.append("<div class=\"answersOption\">");
+                
+                int countAnswer = 1;
+
                 // Display answers
                 while (rsAnswer.next()) {
                     String answerText = rsAnswer.getString("answer_text");
                     boolean isCorrect = rsAnswer.getBoolean("is_correct");
                     String answerType = rsAnswer.getString("answer_type");
                     if(isCorrect){
-                        questionsHtml.append("<form id=\"questionForm\" method=\"post\">").append("<button id=\"rightPlayAnswer\">").append(answerText).append("</button></form>\n");
+                        questionsHtml.append("<form id=\"questionForm\" method=\"post\">").append("<button class=\"answer").append(countAnswer).append("\"id=\"rightPlayAnswer\">").append(answerText).append("</button></form>\n");
                     } else {
-                        questionsHtml.append("<button class=\"wrongPlayAnswer\">").append(answerText).append("</button>\n");
+                        questionsHtml.append("<button class=\"wrongPlayAnswer answer").append(countAnswer).append("\">").append(answerText).append("</button>\n");
                     }
-                    
+                    countAnswer++;
                 }
+                questionsHtml.append("</div>");
                 
                 questionsHtml.append("</div>\n");
                 
