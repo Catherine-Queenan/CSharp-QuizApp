@@ -71,6 +71,34 @@
             cursor: pointer;
         }
 
+
+        .adminWrap {
+            margin-top: 20px;
+        }
+
+        .admin {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .admin button {
+            all: unset;
+            margin-top: 10px;
+            border-radius: 15px;
+            padding: 20px 40px;
+            font-size: 22px;
+            background-color: #D7E8BA;
+            color: #0C1B33;
+            cursor: pointer;
+            transition-duration: 0.3s;
+        }
+
+        .admin button:hover {
+            transform: scale(1.05);
+            box-shadow: 5px 5px 10px rgb(14, 1, 47);
+        }
+
     </style>
 </head>
 <body>
@@ -81,7 +109,9 @@
         <div class="categories">
             <%= request.getAttribute("categoriesHtml") %>
         </div>
-    <%= request.getAttribute("adminHtml") %>
+        <div class="adminWrap">
+            <%= request.getAttribute("adminHtml") %>
+        </div>
     </div>
 </body>
 </html>
