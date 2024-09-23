@@ -119,10 +119,6 @@
             <%=request.getAttribute("questionsHtml")%>
         </div>
     </div>
-    
-    
-    <%= request.getAttribute("mediaHtml") %>
-
 </body>
 <script>
 
@@ -175,12 +171,11 @@
             }, 100);
         }
     }
-
     //---------------AUDIO PLAYING---------------\\
     //makes audio loop
     function audio() {
-        if (document.querySelector("audio").currentTime >= endTime) {
-            document.querySelector("audio").currentTime = startTime
+        if (document.querySelector("audio").currentTime >= parseInt(document.getElementById("videoEnd").value)) {
+            document.querySelector("audio").currentTime = parseInt(document.getElementById("videoStart").value);
         }
     }
 
