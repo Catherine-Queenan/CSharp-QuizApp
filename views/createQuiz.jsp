@@ -1,70 +1,79 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Quiz and Add Questions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creating a New Quiz</title>
+    <link rel="stylesheet" href="public/css/reset.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+
+        .title {
+            font-size: 40px;
+        }
+
+        .wrap {
+            padding: 60px 0;
+            justify-content: unset;
+            overflow-y: scroll;
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+            -webkit-scrollbar: none;
+            z-index: -99;
+        }
+
+        .newQuizForm {
+            transform: scale(0.9);
+            width: 60%;
+            padding: 50px;
+            border-radius: 15px;
+            font-size: 18px;
+            background-color: #45425A;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .newQuizForm label {
+            font-size: 22px;
+            margin-top: 10px;
+        }
+
+        .newQuizForm input,
+        .newQuizForm textarea,
+        .newQuizForm select {
+            border: 0;
+            border-radius: 10px;
+            padding: 15px 20px;
+            font-size: 18px;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .createQuizBtn {
+            all: unset;
+            margin-top: 20px;
             padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-        input[type="text"], textarea, input[type="radio"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        input[type="radio"] {
-            width: auto;
-            margin-right: 10px;
-        }
-        .answer {
-            margin-bottom: 10px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            border-radius: 4px;
+            border-radius: 15px;
+            font-size: 20px;
+            color: rgb(244, 244, 244);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #0C1B33;
             cursor: pointer;
+            transition-duration: 0.3s;
         }
-        button:hover {
-            background-color: #4cae4c;
+
+        .createQuizBtn:hover {
+            box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.8);
         }
-        .button-link {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #0275d8;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-bottom: 20px;
+        
+        :focus {
+            outline: none;
         }
-        .button-link:hover {
-            background-color: #025aa5;
-        }
+
     </style>
     <%@page import="java.util.ArrayList" %>
 </head>
@@ -73,19 +82,17 @@
         <form action="home">
             <button class="homeBtn" type="Submit">Home</button>
         </form>
-        <form method="post">
-            <input type="hidden" value="true" name="restart">
-            <button class="restartBtn" type="Submit">Restart</button>
-        </form>
     </header>
-    <div class="container">
-        <h1>Create a New Quiz</h1>
+    <div class="wrap">
+        <div class="title cherry-cream-soda">
+            Create a New Quiz
+        </div>
         <% if (request.getAttribute("error") != null) { %>
-            <p style="color:red;"><%= request.getAttribute("error") %></p>
+            <p><%= request.getAttribute("error") %></p>
         <% } %>
-        <form method="post" action="createQuiz">
+        <form class="newQuizForm" method="post" action="createQuiz">
             <label for="quizName">Quiz Name:</label>
-            <input type="text" id="quizName" name="quizName" required /><br />
+            <input type="text" id="quizName" name="quizName" required />
 
             <label for="categoryName">Category Name:</label>
             <select name="categoryName" id="category">
@@ -100,9 +107,9 @@
                 <input id="newCategory" name="newCategory" type="text" />
             </div>
 
-            <label for="description">Description:</label><br />
-            <textarea id="description" name="description"></textarea><br />
-            <button type="submit">Create Quiz</button>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"></textarea>
+            <button class="createQuizBtn" type="submit">Create Quiz</button>
 
         </form>
          <!-- Check if the quiz was successfully created -->
