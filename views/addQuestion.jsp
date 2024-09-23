@@ -117,9 +117,6 @@
     </div>
 
     <script>
-        let answersCount = 2; // Initial count of answers
-        document.getElementById('addAnswerButton').disabled = false; // Re-enable add answer button
-            addInitialAnswers(); // Add 2 initial answers
         document.getElementById('mediaType').addEventListener('change', function() {
             if (this.value === 'image') {
                 document.getElementById('imageUrl').style.display = 'block';
@@ -132,6 +129,9 @@
                 document.getElementById('videoUrl').style.display = 'none';
             }
         });
+        let answersCount = 2; // Initial count of answers
+        document.getElementById('addAnswerButton').disabled = false; // Re-enable add answer button
+            addInitialAnswers(); // Add 2 initial answers
 
         function addAnotherAnswer() {
             if (answersCount < 4) {
