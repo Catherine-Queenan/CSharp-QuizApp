@@ -75,15 +75,6 @@
 </head>
 <body>
     <div class="wrap">
-        <header>
-            <form action="home">
-                <button class="homeBtn" type="Submit">Home</button>
-            </form>
-            <form method="post">
-                <input type="hidden" value="true" name="restart">
-                <button class="restartBtn" type="Submit">Restart</button>
-            </form>
-        </header>
         <div class="title cherry-cream-soda">
             Categories
         </div>
