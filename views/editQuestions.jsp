@@ -35,9 +35,8 @@
         <form action="home">
             <button class="homeBtn" type="Submit">Home</button>
         </form>
-        <form method="post">
-            <input type="hidden" value="true" name="restart">
-            <button class="restartBtn" type="Submit">Restart</button>
+        <form action="logout">
+            <button class="logoutBtn" type="Submit">Log Out</button>
         </form>
     </header>
 

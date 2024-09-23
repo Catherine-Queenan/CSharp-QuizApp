@@ -5,62 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Quiz</title>
+    <link rel="stylesheet" href="public/css/reset.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        form {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: auto;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #4cae4c;
-        }
-        .button-link {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #0275d8;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .button-link:hover {
-            background-color: #025aa5;
-        }
+        
     </style>
 </head>
 <body>
@@ -68,14 +15,15 @@
         <form action="home">
             <button class="homeBtn" type="Submit">Home</button>
         </form>
-        <form method="post">
-            <input type="hidden" value="true" name="restart">
-            <button class="restartBtn" type="Submit">Restart</button>
+        <form action="logout">
+            <button class="logoutBtn" type="Submit">Log Out</button>
         </form>
     </header>
 
-<%-- Render the form generated in the servlet --%>
-<%= request.getAttribute("editFormHtml") %>
+    <div class="wrap">
+        <%-- Render the form generated in the servlet --%>
+        <%= request.getAttribute("editFormHtml") %>    
+    </div>
 
 </body>
 </html>

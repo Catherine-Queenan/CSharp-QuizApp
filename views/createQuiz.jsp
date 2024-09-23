@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,7 +84,11 @@
         <form action="home">
             <button class="homeBtn" type="Submit">Home</button>
         </form>
+        <form action="logout">
+            <button class="logoutBtn" type="Submit">Log Out</button>
+        </form>
     </header>
+    
     <div class="wrap">
         <div class="title cherry-cream-soda">
             Create a New Quiz

@@ -102,6 +102,12 @@
     </style>
 </head>
 <body>
+    <header>
+        <form action="logout">
+            <button class="logoutBtn" type="Submit">Log Out</button>
+        </form>
+    </header>
+
     <div class="wrap">
         <div class="title cherry-cream-soda">
             Categories

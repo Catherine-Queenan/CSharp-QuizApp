@@ -8,7 +8,7 @@
     <style>
 
         .restartBtn {
-            background-color: #FF4B3E;
+            background-color: #d00000;
             color: #DCEED1;
         }
 
@@ -80,6 +80,9 @@
     <header>
         <form action="home">
             <button class="homeBtn" type="Submit">Home</button>
+        </form>
+        <form action="logout">
+            <button class="logoutBtn" type="Submit">Log Out</button>
         </form>
         <form method="post">
             <input type="hidden" value="true" name="restart">

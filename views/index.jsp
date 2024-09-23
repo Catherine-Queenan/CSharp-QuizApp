@@ -72,17 +72,18 @@
     </style>
 </head>
 <body>
-    <header class="header">
-        <!-- You may have to change the path depending on what you named the app -->
-        <button class="logout-btn" onclick="window.location.href='/QuizApp/logout';">Logout</button>
-        <button onclick = "window.location.href='/QuizApp/home';">Home</button>
+    <header>
+        <form action="logout">
+            <button class="logoutBtn" type="Submit">Log Out</button>
+        </form>
     </header>
+
     <div class="wrap">
         <div class="title">
             Trivia Game
         </div>
-        
     </div>
+    
     <h1>Quiz Dashboard</h1>
     <div id="content">
         <%= request.getAttribute("contentHtml") %>
