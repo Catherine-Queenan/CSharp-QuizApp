@@ -7,6 +7,15 @@
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
 
+        .wrap {
+            padding: 60px 0;
+            /* justify-content: unset; */
+            overflow-y: scroll;
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+            -webkit-scrollbar: none;
+        }
+
         .errorHome,
         header button {
             padding: 10px 30px;
@@ -30,14 +39,18 @@
         .title {
             text-align: center;
             font-size: 40px;
-            margin-bottom: 20px;
+            margin-bottom: 0;
         }
 
         .questions {
             width: 80%;
+            transform: scale(0.9);
         }
 
         .question>p {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: 23px;
         }
 
@@ -101,6 +114,21 @@
         .answersOption button:hover {
             transform: scale(1.03);
         }
+
+        /* Displaying media */
+        .imgWrap {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
 
         /* Error Message */
 

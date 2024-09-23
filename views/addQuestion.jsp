@@ -23,7 +23,6 @@
             -ms-overflow-style: none;  /* Internet Explorer 10+ */
             scrollbar-width: none;  /* Firefox */
             -webkit-scrollbar: none;
-            z-index: -99;
         }
 
         .newQuestionForm {
@@ -217,7 +216,7 @@
             <div id="answersContainer">
                 <div class="answer">
                     <input type="text" name="answerText" placeholder="Answer 1" required>
-                    <input type="radio" name="correctAnswer" value="1" selected> Correct
+                    <input type="radio" name="correctAnswer" value="1" checked="checked"> Correct
                 </div>
                 <div class="answer">
                     <input type="text" name="answerText" placeholder="Answer 2" required>

@@ -124,17 +124,16 @@ public class QuestionsServlet extends HttpServlet {
                 String questionText = rsQuestion.getString("question_text");
                 String questionType = rsQuestion.getString("question_type");
    
+                // // Display question
+                questionsHtml.append("<div class=\"question\"").append(">\n")
+                             .append("<p>").append(questionText).append("</p>\n");
+                             
                 if(!questionType.equals("TEXT")){
                     String media = insertMedia(con, "question", qID, questionType);
                     if(media != null){
                         questionsHtml.append(media);
                     }
-
                 }
-                // // Display question
-                questionsHtml.append("<div class=\"question\"").append(">\n")
-                             .append("<p>").append(questionText).append("</p>\n");
-                             
 
                 // Query to get answers for this question
                 // String sqlAnswers = "SELECT answer_text, is_correct, answer_type FROM answers WHERE question_id = ?";
@@ -269,9 +268,8 @@ public class QuestionsServlet extends HttpServlet {
                         String filePath = rsMedia.getString("media_file_path");
                         String alt = rsMedia.getString("description");
 
-                        mediaHtml.append("<img alt=\"").append(alt).append("\"width=\"300\" height=\"200\" src=\"").append(filePath).append("\">\n");
+                        mediaHtml.append("<div class=\"imgWrap\"><img alt=\"").append(alt).append("\"width=\"300\" height=\"200\" src=\"").append(filePath).append("\"></div>\n");
                     }
-                    System.out.println("aaaaa");
                     break;
                 case "AUD":
                     while(rsMedia.next()){
