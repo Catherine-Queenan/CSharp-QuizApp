@@ -188,14 +188,14 @@
                 <label for="videoEnd">Clip End (seconds):</label>
                 <input type="number" id="videoEnd" name="videoEnd" value="0"/>
             </div>
-<!-- 
+
             <label for="answerTypeQ1">Answer Media Type:</label>
                     <select class="mediaType" id="answerTypeQ1A2" name="answerTypeQ1A2">
                         <option value="TEXT">None</option>
                         <option value="VID">Video</option>
                         <option value="IMG">Image</option>
                         <option value="AUD">Audio</option>
-                    </select><br><br> -->
+                    </select><br><br>
             <div id="answersContainer">
                 <div class="answer">
                     <input type="text" name="answerText" placeholder="Answer 1" required>
