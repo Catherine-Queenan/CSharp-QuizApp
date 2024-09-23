@@ -64,6 +64,15 @@
     </style>
 </head>
 <body>
+    <header>
+        <form action="home">
+            <button class="homeBtn" type="Submit">Home</button>
+        </form>
+        <form method="post">
+            <input type="hidden" value="true" name="restart">
+            <button class="restartBtn" type="Submit">Restart</button>
+        </form>
+    </header>
 
 <%-- Render the form generated in the servlet --%>
 <%= request.getAttribute("editFormHtml") %>
