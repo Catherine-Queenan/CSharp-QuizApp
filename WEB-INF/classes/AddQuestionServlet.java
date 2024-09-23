@@ -42,6 +42,7 @@ public class AddQuestionServlet extends HttpServlet {
         }
 
         String quizName = req.getParameter("quizName");
+        System.out.println(quizName);
         req.setAttribute("quizName", quizName);
         RequestDispatcher view = req.getRequestDispatcher("/views/addQuestion.jsp");
         view.forward(req, res);
@@ -59,7 +60,6 @@ public class AddQuestionServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
              con = DatabaseUtil.getConnection();
             // Get form data from the request
-            // String quizName = req.getParameter("quizName");
             String quizName = req.getParameter("quizName");
             String questionText = req.getParameter("questionText");
             String questionType = req.getParameter("questionType");
@@ -138,11 +138,7 @@ public class AddQuestionServlet extends HttpServlet {
             }
 
             // Redirect back to the quiz creation page or show success message
-            if(addAnotherQuestion.equals("true")){
-                res.sendRedirect("addQuestion?quizName=" + quizName);
-            } else {
-                res.sendRedirect("main");
-            }
+            res.sendRedirect("editQuestions?quizName=" + quizName);
 
         } catch (Exception e) {
             throw new ServletException("Error processing question addition", e);
