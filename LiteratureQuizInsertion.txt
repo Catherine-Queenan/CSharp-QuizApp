@@ -191,7 +191,7 @@ INSERT INTO answers (id, question_id, answer_text, is_correct, answer_type)
 SELECT 
     UUID_TO_BIN(UUID()), 
     q.id, 
-    'Thing 1 and Thing 2.', 
+    'Thing 1 and Thing 2', 
     1, 
     'TEXT'
 FROM 
@@ -281,7 +281,7 @@ INSERT INTO answers (id, question_id, answer_text, is_correct, answer_type)
 SELECT 
     UUID_TO_BIN(UUID()), 
     q.id, 
-    'The murder of Arthur Jarvis, James Jarvis\'s son.', 
+    'The murder of Arthur Jarvis, James Jarvis\'s son', 
     1, 
     'TEXT'
 FROM 
@@ -326,7 +326,7 @@ INSERT INTO answers (id, question_id, answer_text, is_correct, answer_type)
 SELECT 
     UUID_TO_BIN(UUID()), 
     q.id, 
-    'The Halifax Explosion of 1917.', 
+    'The Halifax Explosion of 1917', 
     1, 
     'TEXT'
 FROM 
@@ -371,7 +371,7 @@ INSERT INTO answers (id, question_id, answer_text, is_correct, answer_type)
 SELECT 
     UUID_TO_BIN(UUID()), 
     q.id, 
-    'Meeting Mrs. Bertha Flowers.', 
+    'Meeting Mrs. Bertha Flowers', 
     1, 
     'TEXT'
 FROM 
@@ -416,7 +416,7 @@ INSERT INTO answers (id, question_id, answer_text, is_correct, answer_type)
 SELECT 
     UUID_TO_BIN(UUID()), 
     q.id, 
-    'Turkish Delight.', 
+    'Turkish Delight', 
     1, 
     'TEXT'
 FROM 
