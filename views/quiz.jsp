@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quizzes</title>
-    <link rel="stylesheet" href="/CS-QuizGame/public/css/reset.css">
+    <link rel="stylesheet" href="public/css/reset.css">
     <style>
         .title {
             text-align: center;
@@ -81,7 +81,7 @@
             Available Quizzes
         </div>
         <div class="quizzes">
-            <%= request.getAttribute("quizzesHtml") %>
+            <%= request.getAttribute("quizzesHtml")%>
         </div>
     </div>
 </body>

@@ -66,19 +66,18 @@
             background-color: #025aa5;
         }
     </style>
-    <script>
-        function addAnswer() {
-            const answerDiv = document.createElement('div');
-            answerDiv.classList.add('answer');
-            answerDiv.innerHTML = `
-                <input type="text" name="answerText" placeholder="Answer" required>
-                <input type="radio" name="correctAnswer" value="${document.querySelectorAll('input[name="answerText"]').length + 1}"> Correct
-            `;
-            document.getElementById('answersContainer').appendChild(answerDiv);
-        }
-    </script>
+    <%@page import="java.util.ArrayList" %>
 </head>
 <body>
+    <header>
+        <form action="home">
+            <button class="homeBtn" type="Submit">Home</button>
+        </form>
+        <form method="post">
+            <input type="hidden" value="true" name="restart">
+            <button class="restartBtn" type="Submit">Restart</button>
+        </form>
+    </header>
     <div class="container">
         <h1>Create a New Quiz</h1>
         <% if (request.getAttribute("error") != null) { %>
@@ -89,7 +88,17 @@
             <input type="text" id="quizName" name="quizName" required /><br />
 
             <label for="categoryName">Category Name:</label>
-            <input type="text" id="categoryName" name="categoryName" required /><br />
+            <select name="categoryName" id="category">
+                <% ArrayList<String> categories = (ArrayList<String>)request.getAttribute("categories"); %>
+                <% for(int i = 0; i < categories.size(); i++){ %>
+                    <option value="<%= categories.get(i)%>"><%= categories.get(i)%></option>
+                <%} %>
+                <option value="ADDANOTHERCATEGORY">Other</option>
+            </select>
+            <div id="newCatDiv" style="display:none;">
+                <label for="newCategory">Other Category:</label>
+                <input id="newCategory" name="newCategory" type="text" />
+            </div>
 
             <label for="description">Description:</label><br />
             <textarea id="description" name="description"></textarea><br />
@@ -108,4 +117,28 @@
         <% } %>
     </div>
 </body>
+<script>
+    function addAnswer() {
+        const answerDiv = document.createElement('div');
+        answerDiv.classList.add('answer');
+        answerDiv.innerHTML = `
+            <input type="text" name="answerText" placeholder="Answer" required>
+            <input type="radio" name="correctAnswer" value="${document.querySelectorAll('input[name="answerText"]').length + 1}"> Correct
+        `;
+        document.getElementById('answersContainer').appendChild(answerDiv);
+    }
+
+    let newCatInput = document.getElementById("newCategory");
+    let newCatDiv = document.getElementById("newCatDiv");
+    let catSelect = document.getElementById("category");
+    catSelect.addEventListener('change', () =>{
+        if(catSelect.value === "ADDANOTHERCATEGORY"){
+            newCatDiv.style.display = "block";
+            newCatInput.required = true;
+        } else {
+            newCatDiv.style.display = "none";
+            newCatInput.required = false;
+        }
+    });
+</script>
 </html>
