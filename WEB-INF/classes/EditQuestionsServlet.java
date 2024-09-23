@@ -48,18 +48,14 @@ public class EditQuestionsServlet extends HttpServlet {
                 String questionId = rs.getString("id");
                 String questionText = rs.getString("question_text");
 
-                questionsHtml.append("<div class='col-md-12'>")
-                        .append("<div class='card question-card'>")
-                        .append("<div class='card-body'>")
-                        .append("<p class='card-text'>").append(questionText).append("</p>")
-                        .append("<a href='deleteQuestion?id=").append(questionId).append("&quizName=").append(quizName).append("' class='btn btn-danger'>Delete Question</a>")
-                        .append("</div>")
-                        .append("</div>")
+                questionsHtml.append("<div class='question'>")
+                        .append("<p class='questionTitle'>").append(questionText).append("</p>")
+                        .append("<a class='deleteBtn' href='deleteQuestion?id=").append(questionId).append("&quizName=").append(quizName).append("'>Delete Question</a>")
                         .append("</div>");
             }
 
             if (!hasQuestions) {
-                questionsHtml.append("<p>There are currently no questions for this quiz.</p>");
+                questionsHtml.append("<p class='errorMsg'>There are currently no questions for this quiz.</p>");
             }
 
             // Set quiz name and questions HTML as request attributes

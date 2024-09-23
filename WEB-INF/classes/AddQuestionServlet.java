@@ -70,6 +70,7 @@ public class AddQuestionServlet extends HttpServlet {
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
             String[] answerTexts = req.getParameterValues("answerText");
             String correctAnswer = req.getParameter("correctAnswer");
+            String addAnotherQuestion= req.getParameter("addQuestion");
 
             // Generate a UUID for the question
             UUID questionUUID = UUID.randomUUID();
@@ -137,7 +138,11 @@ public class AddQuestionServlet extends HttpServlet {
             }
 
             // Redirect back to the quiz creation page or show success message
-            res.sendRedirect("editQuestions?quizName=" + quizName);
+            if(addAnotherQuestion.equals("true")){
+                res.sendRedirect("addQuestion?quizName=" + quizName);
+            } else {
+                res.sendRedirect("main");
+            }
 
         } catch (Exception e) {
             throw new ServletException("Error processing question addition", e);

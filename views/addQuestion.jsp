@@ -1,84 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <title>Add Question</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a New Question</title>
+    <link rel="stylesheet" href="public/css/reset.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
+
+        .title {
+            font-size: 40px;
+            margin: 0;
         }
 
-        .hidden {
-            display: none;
+        .wrap {
+            padding: 60px 0;
+            justify-content: unset;
+            overflow-y: scroll;
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+            -webkit-scrollbar: none;
+            z-index: -99;
         }
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        .newQuestionForm {
+            transform: scale(0.9);
+            width: 60%;
+            padding: 50px;
+            border-radius: 15px;
+            font-size: 18px;
+            background-color: #45425A;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
+        .newQuestionForm label {
+            font-size: 22px;
+            margin-top: 10px;
         }
 
-        label {
-            display: block;
-            margin-bottom: 10px;
+        .newQuestionForm input,
+        .newQuestionForm select {
+            border: 0;
+            border-radius: 10px;
+            padding: 15px 20px;
+            font-size: 18px;
         }
 
-        input[type="text"],
-        input[type="radio"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        input[type="radio"] {
-            width: auto;
-            margin-right: 10px;
-        }
-
-        .answer {
-            margin-bottom: 10px;
-        }
-
-        button {
-            padding: 10px 20px;
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            border-radius: 4px;
+        .addAnotherAnswerBtn,
+        .addQuestionBtn {
+            all: unset;
+            margin-top: 20px;
+            padding: 20px 50px;
+            border-radius: 15px;
+            font-size: 20px;
+            color: rgb(244, 244, 244);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #0C1B33;
             cursor: pointer;
+            transition-duration: 0.3s;
         }
 
-        button:hover {
-            background-color: #4cae4c;
+        .addAnotherAnswerBtn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #99c252;
+            color: #0C1B33;
         }
 
-        .button-link {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #0275d8;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
+        .addAnotherAnswerBtn:hover,
+        .addQuestionBtn:hover {
+            box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.5);
+        }
+        
+        :focus {
+            outline: none;
+        }
+
+        .mediaType {
             margin-bottom: 20px;
         }
 
-        .button-link:hover {
-            background-color: #025aa5;
-        }
     </style>
     <script>
 
@@ -98,6 +103,13 @@
             document.getElementById('answersContainer').appendChild(answerDiv);
         }
 
+        function addQuestion() {
+            questionCount++;
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('question');
+            questionDiv.innerHTML = `
+                <label for="questionText">Question Text:</label>
+                <input type="text" name="questionText" required>
         // function addQuestion() {
         //     questionCount++;
         //     const questionDiv = document.createElement('div');
@@ -125,24 +137,24 @@
 
     </script>
 </head>
-
 <body>
     <header>
         <form action="home">
             <button class="homeBtn" type="Submit">Home</button>
         </form>
-        <form method="post">
-            <input type="hidden" value="true" name="restart">
-            <button class="restartBtn" type="Submit">Restart</button>
+        <form action="logout">
+            <button class="logoutBtn" type="Submit">Log Out</button>
         </form>
     </header>
-    <div class="container">
-        <h1>Add Question to <%= request.getAttribute("quizName") %>
-        </h1>
 
-        <form method="post" enctype="multipart/form-data">
+    <div class="wrap">
+        <div class="title cherry-cream-soda">
+            Add Question to <%= request.getAttribute("quizName") %>
+        </div>
+
+        <form class="newQuestionForm" method="post" action="addQuestion" enctype="multipart/form-data">
             <label for="questionText">Question Text:</label>
-            <input type="text" id="questionText" name="questionText" required><br>
+            <input type="text" id="questionTextQ1" name="questionTextQ1" required>
 
             <label for="questionType">Question Media Type:</label>
             <select class="mediaType" id="questionType" name="questionType">
@@ -151,7 +163,7 @@
                 <option value="IMG">Image</option>
                 <option value="AUD">Audio</option>
                 <!-- Add other question types as needed -->
-            </select><br><br>
+            </select>
 
             <div id="imageAudioUploadQuestion" style="display: none;">
                 <label for="mediaFile">File:</label>
@@ -162,6 +174,10 @@
                 <label for="audioEnd">Audio End (seconds):</label>
                 <input type="number" id="audioEnd" name="audioEnd" value="0"/>
             </div>
+
+            <div id="videoUrlQ1" style="display: none;">
+                <label for="videoUrlQ1">YouTube Video URL:</label>
+                <input type="text" id="videoUrlQ1" name="videoUrlQ1">
             </div>
 
             <div id="videoUrlQuestion" style="display: none;">
@@ -190,12 +206,14 @@
                     <input type="radio" name="correctAnswer" value="2"> Correct
                 </div>
                 <!-- Add more answers dynamically if needed -->
+                <button class="addAnotherAnswerBtn" type="button" onclick="addAnswer()">Add Another Answer</button>
+
             </div>
             <button id="addAnswerBtn" type="button" onclick="addAnswer()">Add Another Answer</button><br><br>
             <div id="questionsContainer"></div>
 
             <input type="hidden" name="quizName" value="<%= request.getAttribute(" quizName") %>">
-            <button type="submit">Add Question</button>
+            <button class="addQuestionBtn" type="submit">Add Question</button>
         </form>
     </div>
 
@@ -220,5 +238,4 @@
             });
     </script>
 </body>
-
 </html>

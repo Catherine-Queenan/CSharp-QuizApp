@@ -20,11 +20,9 @@ public class MainServlet extends HttpServlet {
         String role = getUserRoleFromDatabase(username);
         StringBuilder adminHtml = new StringBuilder();
         if ("a".equals(role)) {
-            
-            adminHtml.append("<h1>Admin dashboard</h1>\n<div class=\"admin\">\n")
-                     .append("    <button onclick=\"window.location.href='createQuiz'\">Create a new Quiz</button>\n")
+            adminHtml.append("<div class=\"title cherry-cream-soda\">Admin Dashboard</div>\n<div class=\"admin\">\n")
+                     .append("    <button class=\"newQuiz\" onclick=\"window.location.href='createQuiz'\">Create a new Quiz</button>\n")
                      .append("   </div>\n");
-                     
         }
 
         req.setAttribute("adminHtml", adminHtml.toString());
