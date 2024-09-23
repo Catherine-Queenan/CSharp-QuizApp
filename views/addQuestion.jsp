@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
 
+        .hidden {
+            display: none !important;
+        }
+
         .title {
             font-size: 40px;
             margin: 0;
@@ -23,8 +27,8 @@
         }
 
         .newQuestionForm {
-            transform: scale(0.9);
-            width: 60%;
+            width: 55%;
+            margin-top: 50px;
             padding: 50px;
             border-radius: 15px;
             font-size: 18px;
@@ -47,10 +51,16 @@
             font-size: 18px;
         }
 
-        .addAnotherAnswerBtn,
+        #answersContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .addAnswerBtn,
         .addQuestionBtn {
             all: unset;
-            margin-top: 20px;
+            /* margin-top: 20px; */
             padding: 20px 50px;
             border-radius: 15px;
             font-size: 20px;
@@ -63,15 +73,14 @@
             transition-duration: 0.3s;
         }
 
-        .addAnotherAnswerBtn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .addAnswerBtn {
+            width: auto ;
+            display: inline-block;
             background-color: #99c252;
             color: #0C1B33;
         }
 
-        .addAnotherAnswerBtn:hover,
+        .addAnswerBtn:hover,
         .addQuestionBtn:hover {
             box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.5);
         }
@@ -84,11 +93,20 @@
             margin-bottom: 20px;
         }
 
+        #audioStartEnd,
+        #videoUrlQuestion {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
     </style>
     <script>
 
         let answerCount = 2;
         function addAnswer() {
+            console.log("added")
             if (answerCount == 3) {
                 document.getElementById('addAnswerBtn').classList.add('hidden');
             }
@@ -103,34 +121,34 @@
             document.getElementById('answersContainer').appendChild(answerDiv);
         }
 
-        function addQuestion() {
-            questionCount++;
-            const questionDiv = document.createElement('div');
-            questionDiv.classList.add('question');
-            questionDiv.innerHTML = `
-                <label for="questionText">Question Text:</label>
-                <input type="text" name="questionText" required>
         // function addQuestion() {
         //     questionCount++;
         //     const questionDiv = document.createElement('div');
         //     questionDiv.classList.add('question');
         //     questionDiv.innerHTML = `
         //         <label for="questionText">Question Text:</label>
-        //         <input type="text" name="questionText" required><br>
+        //         <input type="text" name="questionText" required>
+        // function addQuestion() {
+        //     questionCount++;
+        //     const questionDiv = document.createElement('div');
+        //     questionDiv.classList.add('question');
+        //     questionDiv.innerHTML = `
+        //         <label for="questionText">Question Text:</label>
+        //         <input type="text" name="questionText" required>
                 
         //         <label for="questionType">Question Type:</label>
-        //         <input type="text" name="questionType" required><br>
+        //         <input type="text" name="questionType" required>
 
         //         <div class="answersContainer" id="answersContainer">
         //             <div class="answer">
         //                 <input type="text" name="answerText" placeholder="Answer 1" required>
         //                 <input type="radio" name="correctAnswer" value="1"> Correct
         //             </div>
-        //             <button type="button" onclick="addAnswer()">Add Another Answer</button><br><br>
+        //             <button type="button" onclick="addAnswer()">Add Another Answer</button>
         //         </div>
 
         //         <label for="mediaFile">Upload Media (optional):</label>
-        //         <input type="file" name="mediaFile" accept="image/*,video/*" /><br />
+        //         <input type="file" name="mediaFile" accept="image/*,video/*" />
         //     `;
         //     document.getElementById('questionsContainer').appendChild(questionDiv);
         // }
@@ -168,11 +186,16 @@
             <div id="imageAudioUploadQuestion" style="display: none;">
                 <label for="mediaFile">File:</label>
                 <input type="file" id="mediaFile" name="mediaFile" accept="audio/*,image/*" />
+            </div>
             <div id="audioStartEnd" style="display: none;">
-                <label for="audioStart">Audio Start (seconds):</label>
-                <input type="number" id="audioStart" name="audioStart" value="0"/>
-                <label for="audioEnd">Audio End (seconds):</label>
-                <input type="number" id="audioEnd" name="audioEnd" value="0"/>
+                <div>
+                    <label for="audioStart">Audio Start (seconds):</label>
+                    <input type="number" id="audioStart" name="audioStart" value="0"/>
+                </div>
+                <div>
+                    <label for="audioEnd">Audio End (seconds):</label>
+                    <input type="number" id="audioEnd" name="audioEnd" value="0"/>
+                </div>
             </div>
 
             <div id="videoUrlQ1" style="display: none;">
@@ -181,21 +204,20 @@
             </div>
 
             <div id="videoUrlQuestion" style="display: none;">
-                <label for="videoUrl">YouTube Video URL:</label>
-                <input type="text" id="videoUrl" name="videoUrl"><br><br>
-                <label for="videoStart">Clip Start (seconds):</label>
-                <input type="number" id="videoStart" name="videoStart" value="0"/>
-                <label for="videoEnd">Clip End (seconds):</label>
-                <input type="number" id="videoEnd" name="videoEnd" value="0"/>
+                <div>
+                    <label for="videoUrl">YouTube Video URL:</label>
+                    <input type="text" id="videoUrl" name="videoUrl">
+                </div>
+                <div>
+                    <label for="videoStart">Clip Start (seconds):</label>
+                    <input type="number" id="videoStart" name="videoStart" value="0"/>
+                </div>
+                <div>
+                    <label for="videoEnd">Clip End (seconds):</label>
+                    <input type="number" id="videoEnd" name="videoEnd" value="0"/>
+                </div>
             </div>
 
-            <label for="answerTypeQ1">Answer Media Type:</label>
-                    <select class="mediaType" id="answerTypeQ1A2" name="answerTypeQ1A2">
-                        <option value="TEXT">None</option>
-                        <option value="VID">Video</option>
-                        <option value="IMG">Image</option>
-                        <option value="AUD">Audio</option>
-                    </select><br><br>
             <div id="answersContainer">
                 <div class="answer">
                     <input type="text" name="answerText" placeholder="Answer 1" required>
@@ -205,11 +227,11 @@
                     <input type="text" name="answerText" placeholder="Answer 2" required>
                     <input type="radio" name="correctAnswer" value="2"> Correct
                 </div>
-                <!-- Add more answers dynamically if needed -->
-                <button class="addAnotherAnswerBtn" type="button" onclick="addAnswer()">Add Another Answer</button>
-
+                <!-- <button class="addAnotherAnswerBtn" type="button" onclick="addAnswer()">Add Another Answer</button> -->
             </div>
-            <button id="addAnswerBtn" type="button" onclick="addAnswer()">Add Another Answer</button><br><br>
+
+            <!-- Add more answers dynamically if needed -->
+            <button class="addAnswerBtn" id="addAnswerBtn" type="button" onclick="addAnswer()">Add Another Answer</button>
             <div id="questionsContainer"></div>
 
             <input type="hidden" name="quizName" value="<%= request.getAttribute(" quizName") %>">
@@ -221,14 +243,14 @@
         let questionMedia = document.getElementById('questionType');
         questionMedia.addEventListener('change', function () {
                 if (questionMedia.value === 'IMG' || questionMedia.value === 'AUD') {
-                    document.getElementById(`imageAudioUploadQuestion`).style.display = 'block';
+                    document.getElementById(`imageAudioUploadQuestion`).style.display = 'flex';
                     document.getElementById(`videoUrlQuestion`).style.display = 'none';
                     if(questionMedia.value === 'AUD'){
-                        document.getElementById("audioStartEnd").style.display = 'block';
+                        document.getElementById("audioStartEnd").style.display = 'flex';
                     }
                 } else if (questionMedia.value === 'VID') {
                     document.getElementById(`imageAudioUploadQuestion`).style.display = 'none';
-                    document.getElementById(`videoUrlQuestion`).style.display = 'block';
+                    document.getElementById(`videoUrlQuestion`).style.display = 'flex';
                     document.getElementById("audioStartEnd").style.display = 'none';
                 } else {
                     document.getElementById(`imageAudioUploadQuestion`).style.display = 'none';

@@ -67,7 +67,7 @@
 
         .quiz:nth-child(4),
         .quiz:nth-child(5n+4) {
-            background-color: #D7E8BA;
+            background-color: #99c252;
             color: #0C1B33;
         }
 
@@ -117,6 +117,20 @@
 
         .adminBtnWrap button:hover {
             transform: scale(1.03);
+            box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.3);
+        }
+
+        .adminBtnWrap button:nth-child(1) {
+            background-color: #D00000;
+            color: rgb(244, 244, 244);
+        }
+
+        .adminBtnWrap button:nth-child(2) {
+            background-color: #DCEED1;
+        }
+
+        .adminBtnWrap button:nth-child(2):hover {
+            box-shadow: inset 5px 5px 5px #5a6a3e8c;
         }
 
     </style>
@@ -130,7 +144,7 @@
             <button class="logoutBtn" type="Submit">Log Out</button>
         </form>
     </header>
-    
+
     <div class="wrap">
         <div class="title cherry-cream-soda">
             Available Quizzes
