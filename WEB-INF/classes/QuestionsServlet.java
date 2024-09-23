@@ -46,7 +46,7 @@ public class QuestionsServlet extends HttpServlet {
 
         if(questions.isEmpty()){
             questionsHtml.append("<p class=\"errorMsg\">The quiz \"").append(quizName).append("\" is empty!</p>")
-                        .append("<form action=\"home\"><button class=\"homeBtn\" type=\"Submit\">Return Home</button></form>");
+                        .append("<form class=\"errorBtnWrap\" action=\"home\"><button class=\"homeBtn errorHome\" type=\"Submit\">Return Home</button></form>");
             req.setAttribute("questionsHtml", questionsHtml);
             req.setAttribute("qNumber", currQuestion);
             req.setAttribute("quizSize", questions.size());

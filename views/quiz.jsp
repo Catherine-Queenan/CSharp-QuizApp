@@ -16,7 +16,7 @@
             padding: 50px 10px;
             overflow-y: scroll;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: flex-start;
             flex-wrap: wrap;
             gap: 30px;
@@ -34,7 +34,7 @@
             width: 31%;
             border: 0;
             border-radius: 15px;
-            padding: 10px;
+            padding: 10px 0 15px 0;
             font-size: 25px;
             color: #0C1B33;
             display: flex;

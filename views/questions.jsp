@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
 
+        .errorHome,
         header button {
             padding: 10px 30px;
             border-radius: 10px;
@@ -19,10 +20,6 @@
 
         header button:hover {
             transform: scale(1.03);
-        }
-        
-        .homeBtn {
-            background-color: #DCEED1;
         }
 
         .restartBtn {
@@ -77,7 +74,6 @@
             transition: all 0.5s ease; /* Smooth transition for the animation */
         }
 
-
         #questionForm {
             width: 45%;
         }
@@ -105,7 +101,33 @@
         .answersOption button:hover {
             transform: scale(1.03);
         }
+
+        /* Error Message */
+
+        .errorMsg {
+            padding: 30px;
+            font-size: 25px;
+        }
+        .errorHome {
+            margin: 0 auto;
+            padding: 20px 50px;
+            font-size: 25px;
+            border-radius: 15px;
+            background-color: #99c252;
+        }
         
+        .errorHome:hover {
+            transform: scale(1.05);
+            box-shadow: 5px 5px 5px rgba(1, 1, 1, 0.3);
+        }
+
+        .errorBtnWrap,
+        .errorMsg {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
     </style>
 </head>
 
