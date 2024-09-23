@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Index?</title>
-    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="public/css/reset.css">
     <style>
         
         .title {
@@ -80,7 +80,8 @@
 <body>
     <header class="header">
         <!-- You may have to change the path depending on what you named the app -->
-        <button class="logout-btn" onclick="window.location.href='/project1/logout';">Logout</button>
+        <button class="logout-btn" onclick="window.location.href='/QuizApp/logout';">Logout</button>
+        <button onclick = "window.location.href='/QuizApp/home';">Home</button>
     </header>
     <div class="wrap">
         <div class="title">

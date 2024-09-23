@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Page</title>
-    <link rel="stylesheet" href="/CS-QuizGame/public/css/reset.css">
+    <link rel="stylesheet" href="public/css/reset.css">
     <style>
         .title {
             text-align: center;
@@ -78,6 +78,15 @@
 </head>
 <body>
     <div class="wrap">
+        <header>
+            <form action="home">
+                <button class="homeBtn" type="Submit">Home</button>
+            </form>
+            <form method="post">
+                <input type="hidden" value="true" name="restart">
+                <button class="restartBtn" type="Submit">Restart</button>
+            </form>
+        </header>
         <div class="title cherry-cream-soda">
             Categories
         </div>
