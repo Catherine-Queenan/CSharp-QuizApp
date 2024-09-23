@@ -66,6 +66,9 @@ header button:hover {
     transform: scaleY(1.2);
 }
 
+textarea {
+    resize: none;
+}
 
 /* Deactivating autofill to change background & font color */
 .login input:-webkit-autofill,

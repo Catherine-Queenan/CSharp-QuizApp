@@ -42,8 +42,8 @@ public class QuizServlet extends HttpServlet {
                 // Show "Add Question" and "Delete Quiz" buttons only for admin users
                 if ("a".equals(role)) {
                     quizzesHtml.append("<div class=\"adminBtnWrap\">")
-                            .append("    <button type=\"button\" onclick=\"window.location.href='addQuestion?quizName=")
-                            .append(quizName).append("'\">Add Question</button>\n")
+                            // .append("    <button type=\"button\" onclick=\"window.location.href='addQuestion?quizName=")
+                            // .append(quizName).append("'\">Add Question</button>\n")
                             .append("    <button type=\"button\" onclick=\"window.location.href='deleteQuiz?quizName=")
                             .append(quizName).append("'\">Delete Quiz</button>\n")
                             .append("    <button type=\"button\" onclick=\"window.location.href='edit?quizName=")

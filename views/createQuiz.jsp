@@ -49,10 +49,6 @@
             font-size: 18px;
         }
 
-        textarea {
-            resize: none;
-        }
-
         .createQuizBtn {
             all: unset;
             margin-top: 20px;
@@ -88,7 +84,7 @@
             <button class="logoutBtn" type="Submit">Log Out</button>
         </form>
     </header>
-    
+
     <div class="wrap">
         <div class="title cherry-cream-soda">
             Create a New Quiz
