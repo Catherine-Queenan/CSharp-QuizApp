@@ -18,7 +18,7 @@ public class DeleteQuestionServlet extends HttpServlet {
             res.sendRedirect("login");
             return;
         }
-        String questionId = req.getParameter("id");
+        String questionText = req.getParameter("text");
         String quizName = req.getParameter("quizName");
 
         Connection con = null;
@@ -32,12 +32,16 @@ public class DeleteQuestionServlet extends HttpServlet {
             // DATABASE CONNECTION LINE
             con = DatabaseUtil.getConnection();
             // Delete the question
-            String deleteQuestionSql = "DELETE FROM questions WHERE id = ?";
+            String deleteQuestionSql = "DELETE FROM questions WHERE question_text = ? AND quiz_name = ?";
+            System.out.println(questionText);
+            System.out.println(questionText);
             ps = con.prepareStatement(deleteQuestionSql);
-            ps.setString(1, questionId);
+            ps.setString(1, questionText);
+            ps.setString(2, quizName);
             ps.executeUpdate();
 
             // Redirect back to the edit questions page after successful deletion
+            System.out.println(questionText);
             res.sendRedirect("editQuestions?quizName=" + quizName);
 
         } catch (Exception e) {

@@ -45,12 +45,12 @@ public class EditQuestionsServlet extends HttpServlet {
             boolean hasQuestions = false;
             while (rs.next()) {
                 hasQuestions = true;
-                String questionId = rs.getString("id");
+                // InputStream questionId = rs.getBinaryStream("id");
                 String questionText = rs.getString("question_text");
 
                 questionsHtml.append("<div class='question'>")
                         .append("<p class='questionTitle'>").append(questionText).append("</p>")
-                        .append("<a class='deleteBtn' href='deleteQuestion?id=").append(questionId).append("&quizName=").append(quizName).append("'>Delete Question</a>")
+                        .append("<a class='deleteBtn' href='deleteQuestion?text=").append(questionText).append("&quizName=").append(quizName).append("'>Delete Question</a>")
                         .append("</div>");
             }
 

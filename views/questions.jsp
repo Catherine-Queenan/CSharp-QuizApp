@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,7 +36,7 @@
             background-color: #FF4B3E;
             color: #DCEED1;
         }
-        
+
         .title {
             text-align: center;
             font-size: 40px;
@@ -98,15 +99,15 @@
         .answer1 {
             background-color: #d00000 !important;
         }
-        
+
         .answer2 {
             background-color: #FF4B3E !important;
         }
-        
+
         .answer3 {
             background-color: #FFB20F !important;
         }
-        
+
         .answer4 {
             background-color: #99c252 !important;
         }
@@ -203,20 +204,46 @@
         <div class="questions">
             <%=request.getAttribute("questionsHtml")%>
         </div>
-        <div id="timer" style="font-size: 20px; text-align: center; margin-top: 20px; display:none;">Time left: 60 seconds</div>
+        <div id="timer" style="font-size: 20px; text-align: center; margin-top: 20px; display:none;">Time left: 60
+            seconds</div>
     </div>
+    <form id="questionForm" method="post" style="display: hidden;"></form>
 </body>
 <script>
+    let correctAnswer = document.getElementById('questionForm');
+    //---------------WRONG BUTTON MECHANICS---------------\\
+    let wrongButtons = document.getElementsByClassName("wrongPlayAnswer");
+    // let container = document.getElementsByClassName("wrap")[0];
+    for (let i = 0; i < wrongButtons.length; i++) {
+        wrongButtons[i].addEventListener('click', () => {
+            wrongButtons[i].classList.add('wrong');
+            wrongButtons[i].style.boxShadow = "0px 0px 50px rgb(244, 0, 0)";
+            setTimeout(() => {
+                wrongButtons[i].classList.remove('wrong');
+                wrongButtons[i].style.boxShadow = "";
+            }, 1500);
+        });
+    }
+
+    let correctAnswerButton = document.getElementById("rightPlayAnswer");
+    correctAnswerButton.addEventListener('click', () => {
+        correctAnswerButton.style.boxShadow = "0px 0px 50px rgb(0, 244, 0)";
+        setTimeout(() => {
+            correctAnswer.submit();
+        }, 500);
+    });
+
+
+
     //---------------AUTOPLAY---------------\\
     let autoplayEnabled = document.getElementById("autoplay").value === "true";
     let autoplayTimer;
     let countdownTime = 60;
     let timerDisplay = document.getElementById('timer');
     let timerInterval;
-    let correctAnswer = document.getElementById('questionForm');
 
-        const autoplayToggleButton = document.getElementById('autoplayToggle');
-        const correctButton = document.querySelector('.answer[id="rightPlayAnswer"]');
+    const autoplayToggleButton = document.getElementById('autoplayToggle');
+    const correctButton = document.querySelector('.answer[id="rightPlayAnswer"]');
 
         function updateAutoplayButton() {
             autoplayToggleButton.textContent = autoplayEnabled ? "Autoplay: ON" : "Autoplay: OFF";
@@ -264,7 +291,10 @@
 
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
-                correctAnswer.submit();
+                correctAnswerButton.style.boxShadow = "0px 0px 50px rgb(0, 244, 0)";
+                setTimeout(() => {
+                    correctAnswer.submit();
+                }, 500);
                 // if (correctButton) {
                 //     correctButton.click();
                 // }
@@ -272,7 +302,10 @@
         }, 1000);
 
         autoplayTimer = setTimeout(() => {
-            correctAnswer.submit();
+            correctAnswerButton.style.boxShadow = "0px 0px 50px rgb(0, 244, 0)";
+            setTimeout(() => {
+                correctAnswer.submit();
+            }, 500);
             // if (correctButton) {
             //     correctButton.click();
             // }
