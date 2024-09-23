@@ -35,6 +35,15 @@ public class QuestionsServlet extends HttpServlet {
         Integer currQuestion = (Integer) session.getAttribute("currQuestion");
         ArrayList<InputStream> questions = (ArrayList<InputStream>) session.getAttribute("questions");
         
+        //Autoplay quiz
+        Boolean autoplayEnabled = (Boolean) session.getAttribute("autoplay");
+        if (autoplayEnabled == null) {
+            autoplayEnabled = false;
+        }
+
+        req.setAttribute("autoplay", autoplayEnabled);
+        //End of Autoplay functionality
+
         if(questions.isEmpty()){
             questionsHtml.append("<p class=\"errorMsg\">The quiz \"").append(quizName).append("\" is empty!</p>")
                         .append("<form action=\"home\"><button class=\"homeBtn\" type=\"Submit\">Return Home</button></form>");
