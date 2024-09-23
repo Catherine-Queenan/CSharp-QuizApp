@@ -50,8 +50,8 @@ public class QuestionsServlet extends HttpServlet {
             // Load MySQL driver
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Database connection
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
+            // DATABASE CONNECTION LINE
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/QuizApp", "root", "Cathgirlh6*"); // MySQL connection
 
             // // Query to get questions
             // String sqlQuestions = "SELECT id, question_text, question_type FROM questions WHERE quiz_name = ?";

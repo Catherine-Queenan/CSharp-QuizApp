@@ -24,7 +24,7 @@ public class AddQuestionServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
 
             // DATABASE CONNECTION LINE
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", ""); // MySQL connection
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/QuizApp", "root", "Cathgirlh6*"); // MySQL connection
 
             // Generate a UUID for the question
             String questionId = UUID.randomUUID().toString();
