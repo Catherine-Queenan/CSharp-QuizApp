@@ -63,7 +63,6 @@ public class QuestionsServlet extends HttpServlet {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
             // Database connection
-           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/quizapp", "root", "");
 
             con = DatabaseUtil.getConnection();
             
