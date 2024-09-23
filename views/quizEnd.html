@@ -1,11 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>You Won!</title>
+    <!-- <link rel="stylesheet" href="/CS-QuizGame/public/css/reset.css"> -->
+    <link rel="stylesheet" href="../public/css/reset.css">
+    <style>
+        .title {
+            text-align: center;
+            font-size: 45px;
+            margin-bottom: 20px;
+        }
+
+        .btnWrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btns {
+            all: unset;
+            margin-top: 20px;
+            padding: 20px 40px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #0C1B33;
+            transition-duration: 0.3s;
+        }
+
+        .btns:hover {
+            transform: scale(1.04);
+            box-shadow: 5px 5px 5px rgba(1, 1, 1, 0.4);
+        }
+
+        .homeBtn {
+            background-color: #FF4B3E;
+        }
+
+        .playAgainBtn {
+            background-color: #DCEED1;
+        }
+
+    </style>
 </head>
 <body>
-    <h1>You Completed the Quiz</h1>
-    <form action="home"><button>Home</button></form>
-    <form method="post"><button>Play Again</button></form>
+
+    <div class="wrap">
+        <div class="title cherry-cream-soda">
+            You Completed the Quiz !
+        </div>
+        <div class="btnWrap">
+            <form action="home"><button class="btns homeBtn">Home</button></form>
+            <form method="post"><button class="btns playAgainBtn">Play Again</button></form>
+        </div>
+    </div>
 </body>
 </html>
