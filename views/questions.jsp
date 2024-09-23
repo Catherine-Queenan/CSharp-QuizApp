@@ -68,6 +68,16 @@
             transition-duration: 0.3s;
         }
 
+        /* Add this CSS for expanding the selected answer */
+        .correct-expand {
+            position: relative;
+            z-index: 10;
+            width: 100% !important;
+            height: 100px; /* Adjust this value as needed */
+            transition: all 0.5s ease; /* Smooth transition for the animation */
+        }
+
+
         #questionForm {
             width: 45%;
         }
@@ -109,8 +119,7 @@
             <button class="restartBtn" type="Submit">Restart</button>
         </form>
         <form method="get" action="updateAutoplay">
-            <input name="enabled" type="hidden" id="autoplay" value="<%= request.getAttribute(" autoplay") !=null &&
-                (Boolean)request.getAttribute("autoplay") ? "true" : "false" %>">
+            <input name="enabled" type="hidden" id="autoplay" value="<%= session.getAttribute("autoplay") != null && (Boolean)session.getAttribute("autoplay") ? "true" : "false" %>">
             <button id="autoplayToggle">Autoplay: OFF</button>
         </form>
     </header>
@@ -154,7 +163,7 @@
 
 
     //---------------AUTOPLAY---------------\\
-    let autoplayEnabled = document.getElementById("autoplay").value === "false";
+    let autoplayEnabled = document.getElementById("autoplay").value === "true";
     let autoplayTimer;
     let countdownTime = 60;
     let timerDisplay = document.getElementById('timer');
@@ -163,36 +172,39 @@
     const autoplayToggleButton = document.getElementById('autoplayToggle');
     const correctButton = document.querySelector('.answer[id="rightPlayAnswer"]');
 
-    // Set up event listener for the autoplay toggle button
-    // NO MORE CONSOLE.LOGS
-    autoplayToggleButton.addEventListener('click', () => {
-        event.preventDefault();
-        autoplayEnabled = !autoplayEnabled;
+        function updateAutoplayButton() {
+            autoplayToggleButton.textContent = autoplayEnabled ? "Autoplay: ON" : "Autoplay: OFF";
+        }
+        // Set up event listener for the autoplay toggle button
+        // NO MORE CONSOLE.LOGS
+        autoplayToggleButton.addEventListener('click', () => {
+            event.preventDefault();
+            autoplayEnabled = !autoplayEnabled;
 
-        console.log(autoplayEnabled);
-        console.log(document.getElementById("autoplay").value);
-        console.log("Please god work");
+            if (autoplayEnabled) {
+                //autoplayToggleButton.textContent = "Autoplay: ON";
+                timerDisplay.style.display = 'block';
+                startAutoplay(correctButton);
+                fetch('updateAutoplay?enabled=true');
+            } else {
+                //autoplayToggleButton.textContent = "Autoplay: OFF";
+                clearTimeout(autoplayTimer);
+                clearInterval(timerInterval);
+                timerDisplay.style.display = 'none';
+                timerDisplay.textContent = "Time left: 60 seconds";
+                fetch('updateAutoplay?enabled=false');
+            }
 
+            updateAutoplayButton();
+        });
+
+        // Start autoplay if enabled on page load
         if (autoplayEnabled) {
-            autoplayToggleButton.textContent = "Autoplay: ON";
+            updateAutoplayButton();
             timerDisplay.style.display = 'block';
             startAutoplay(correctButton);
-            fetch('updateAutoplay?enabled=true');
-        } else {
-            autoplayToggleButton.textContent = "Autoplay: OFF";
-            clearTimeout(autoplayTimer);
-            clearInterval(timerInterval);
-            timerDisplay.style.display = 'none';
-            timerDisplay.textContent = "Time left: 60 seconds";
-            fetch('updateAutoplay?enabled=false');
         }
-    });
-
-    // Start autoplay if enabled on page load
-    if (autoplayEnabled) {
-        startAutoplay(correctButton);
-    }
-
+    
 
     function startAutoplay(correctButton) {
         let timeLeft = countdownTime;
@@ -231,6 +243,7 @@
         timerDisplay.textContent = "Time left: " + timeLeft + " seconds";
     }
 
+    
     //---------------VIDEO PLAYING---------------\\
 
     // Load the IFrame Player API code asynchronously
