@@ -132,6 +132,7 @@
     let countdownTime = 60;
     let timerDisplay = document.getElementById('timer');
     let timerInterval;
+    let correctAnswer = document.getElementById('questionForm');
 
         const autoplayToggleButton = document.getElementById('autoplayToggle');
         const correctButton = document.querySelector('.answer[id="rightPlayAnswer"]');
@@ -179,16 +180,18 @@
 
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
-                if (correctButton) {
-                    correctButton.click();
-                }
+                correctAnswer.submit();
+                // if (correctButton) {
+                //     correctButton.click();
+                // }
             }
         }, 1000);
 
         autoplayTimer = setTimeout(() => {
-            if (correctButton) {
-                correctButton.click();
-            }
+            correctAnswer.submit();
+            // if (correctButton) {
+            //     correctButton.click();
+            // }
         }, countdownTime * 1000);
     }
 

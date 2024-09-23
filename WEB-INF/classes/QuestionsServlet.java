@@ -126,10 +126,8 @@ public class QuestionsServlet extends HttpServlet {
                 String questionType = rsQuestion.getString("question_type");
    
                 if(!questionType.equals("TEXT")){
-                    System.out.println("AAAAAAAAAAAAa");
                     String media = insertMedia(con, "question", qID, questionType);
                     if(media != null){
-                        System.out.println("Fuck");
                         questionsHtml.append(media);
                     }
 
