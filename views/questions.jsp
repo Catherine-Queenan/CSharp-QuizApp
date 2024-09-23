@@ -124,9 +124,6 @@
         </div>
         <div id="timer" style="font-size: 20px; text-align: center; margin-top: 20px; display:none;">Time left: 60 seconds</div>
     </div>
-    
-    
-
 </body>
 <script>
     //---------------AUTOPLAY---------------\\
@@ -248,12 +245,11 @@
             }, 100);
         }
     }
-
     //---------------AUDIO PLAYING---------------\\
     //makes audio loop
     function audio() {
-        if (document.querySelector("audio").currentTime >= endTime) {
-            document.querySelector("audio").currentTime = startTime
+        if (document.querySelector("audio").currentTime >= parseInt(document.getElementById("videoEnd").value)) {
+            document.querySelector("audio").currentTime = parseInt(document.getElementById("videoStart").value);
         }
     }
 

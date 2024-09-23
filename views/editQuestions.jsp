@@ -4,30 +4,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Questions</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Edit Quiz</title>
+    <link rel="stylesheet" href="public/css/reset.css">
     <style>
-        body {
-            padding-top: 20px;
+
+        .wrap {
+            padding: 80px 0;
+            justify-content: unset;
+            overflow-y: scroll;
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+            -webkit-scrollbar: none;
         }
-        .question-card {
-            margin-bottom: 15px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
+
+        .title {
+            font-size: 40px;
+            margin: 0;
         }
-        .btn {
-            margin-right: 10px;
+
+        .questionsWrap {
+            width: 65%;
+            margin-top: 50px;
+            border-radius: 15px;
+            font-size: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
-        .btn-danger {
-            background-color: #dc3545;
-            border-color: #dc3545;
+
+        .question {
+            width: 100%;
+            background-color: #45425A;
+            border-radius: 15px;
+            padding: 40px 40px 30px 40px;
         }
-        .container {
-            max-width: 800px;
+
+        .addQuestionBtn,
+        .deleteBtn {
+            all: unset;
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 40px;
+            border-radius: 15px;
+            font-size: 18px;
+            /* color: rgb(244, 244, 244); */
+            color: #0C1B33;
+            background-color: #FF4B3E;
+            cursor: pointer;
+            transition-duration: 0.3s;
         }
+
+        .addQuestionBtn {
+            margin-top: 20px;
+            background-color: #D7E8BA;
+            font-size: 20px;
+        }
+
+        .deleteBtn:hover {
+            box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.5);
+        }
+
+        .addQuestionBtn:hover {
+            transform: scale(1.03);
+            box-shadow: 5px 5px 5px rgba(1, 1, 1, 0.4);
+        }
+
     </style>
 </head>
 <body>
@@ -35,27 +76,23 @@
         <form action="home">
             <button class="homeBtn" type="Submit">Home</button>
         </form>
-        <form method="post">
-            <input type="hidden" value="true" name="restart">
-            <button class="restartBtn" type="Submit">Restart</button>
+        <form action="logout">
+            <button class="logoutBtn" type="Submit">Log Out</button>
         </form>
     </header>
 
-<div class="container">
-    <h2 class="mb-4">Questions for <%= request.getAttribute("quizName") %></h2>
+    <div class="wrap">
+        <div class="title cherry-cream-soda">
+            Questions for <%= request.getAttribute("quizName") %>
+        </div>
 
-    <div class="row">
-        <%= request.getAttribute("questionsHtml") %>
+        <div class="questionsWrap">
+            <%= request.getAttribute("questionsHtml") %>
+        </div>
+
+        <!-- Add Question button -->
+        <a href="addQuestion?quizName=<%= request.getAttribute("quizName") %>" class="addQuestionBtn">Add Question</a>
     </div>
-
-    <!-- Add Question button -->
-    <a href="addQuestion?quizName=<%= request.getAttribute("quizName") %>" class="btn btn-primary mt-4">Add Question</a>
-</div>
-
-<!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>

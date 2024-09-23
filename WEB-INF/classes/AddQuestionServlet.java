@@ -63,11 +63,14 @@ public class AddQuestionServlet extends HttpServlet {
             String quizName = req.getParameter("quizName");
             String questionText = req.getParameter("questionText");
             String questionType = req.getParameter("questionType");
-            String mediaType = req.getParameter("mediaType");
             String videoUrl = req.getParameter("videoUrl");
-            String imageUrl = req.getParameter("imageUrl");
+            int videoStart = Integer.parseInt(req.getParameter("videoStart"));
+            int videoEnd = Integer.parseInt(req.getParameter("videoEnd"));
+            Part filePart = req.getPart("mediaFile");
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
             String[] answerTexts = req.getParameterValues("answerText");
             String correctAnswer = req.getParameter("correctAnswer");
+            String addAnotherQuestion= req.getParameter("addQuestion");
 
             // Generate a UUID for the question
             UUID questionUUID = UUID.randomUUID();
@@ -89,17 +92,26 @@ public class AddQuestionServlet extends HttpServlet {
             
             // Insert media information into the `media` table
             String mediaUrl = null;
-            if( mediaType.equals("video")){
+            if( questionType.equals("VID")){
                 mediaUrl = videoUrl;
-            } else {
-                mediaUrl = imageUrl;
+            } else if(!questionType.equals("TEXT")){
+                System.out.println("Current folder: " + (new File(".")).getCanonicalPath());
+                File saveFile = new File(getServletContext().getRealPath("/public/media"));
+                File file = new File(saveFile, fileName);
+                filePart.write(file.getAbsolutePath());
+                mediaUrl = "public/media/" + fileName;
+                videoStart = Integer.parseInt(req.getParameter("audioStart"));
+                videoEnd = Integer.parseInt(req.getParameter("audioEnd"));
             }
-            String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path, media_filename) VALUES (?, ?, ?, ?)";
+            
+            String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path, media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?)";
             psMedia = con.prepareStatement(insertMediaSql);
             psMedia.setBytes(1, mediaIdBinary);
-            psMedia.setString(2, mediaType);
+            psMedia.setString(2, questionType);
             psMedia.setString(3, mediaUrl);
             psMedia.setString(4, "fileName");
+            psMedia.setInt(5, videoStart);
+            psMedia.setInt(6, videoEnd);
             psMedia.executeUpdate();
 
             // Insert into `question_media` table to link the question and the media
@@ -126,7 +138,11 @@ public class AddQuestionServlet extends HttpServlet {
             }
 
             // Redirect back to the quiz creation page or show success message
-            res.sendRedirect("main");
+            if(addAnotherQuestion.equals("true")){
+                res.sendRedirect("addQuestion?quizName=" + quizName);
+            } else {
+                res.sendRedirect("main");
+            }
 
         } catch (Exception e) {
             throw new ServletException("Error processing question addition", e);
