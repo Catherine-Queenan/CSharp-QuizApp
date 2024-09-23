@@ -4,13 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quizzes</title>
-    <link rel="stylesheet" href="/CS-QuizGame/public/css/reset.css">
+    <link rel="stylesheet" href="public/css/reset.css">
     <style>
-        .title {
-            text-align: center;
-            font-size: 40px;
-            margin-bottom: 20px;
-        }
 
         .quizzes {
             width: 70%;
@@ -73,6 +68,7 @@
             padding: 20px 40px;
             cursor: pointer;
         }
+        
     </style>
 </head>
 <body>
@@ -81,7 +77,7 @@
             Available Quizzes
         </div>
         <div class="quizzes">
-            <%= request.getAttribute("quizzesHtml") %>
+            <%= request.getAttribute("quizzesHtml")%>
         </div>
     </div>
 </body>

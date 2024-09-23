@@ -4,15 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Question page</title>
-    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="public/css/reset.css">
     <style>
-
-        .title {
-            height: 10%;
-            font-size: 35px;
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
 
         .content {
             width: 70%;
@@ -84,6 +77,16 @@
     </style>
 </head>
 <body>
+
+    <header>
+        <form action="home">
+            <button class="homeBtn" type="Submit">Home</button>
+        </form>
+        <form method="post">
+            <input type="hidden" value="true" name="restart">
+            <button class="restartBtn" type="Submit">Restart</button>
+        </form>
+    </header>
 
     <div class="wrap">
         <div class="title">

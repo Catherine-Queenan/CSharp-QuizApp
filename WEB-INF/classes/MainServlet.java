@@ -21,11 +21,13 @@ public class MainServlet extends HttpServlet {
         StringBuilder adminHtml = new StringBuilder();
         if ("a".equals(role)) {
             
-            adminHtml.append("<div class=\"admin\">\n")
+            adminHtml.append("<h1>Admin dashboard</h1>\n<div class=\"admin\">\n")
                      .append("    <button onclick=\"window.location.href='createQuiz'\">Create a new Quiz</button>\n")
                      .append("   </div>\n");
-                     req.setAttribute("adminHtml", adminHtml.toString());
+                     
         }
+
+        req.setAttribute("adminHtml", adminHtml.toString());
 
 
         if(session.getAttribute("questions") != null){
