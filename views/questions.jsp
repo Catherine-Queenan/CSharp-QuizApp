@@ -7,33 +7,9 @@
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
 
-        header button {
-            padding: 10px 30px;
-            border-radius: 10px;
-            border: 0;
-            margin-right: 10px;
-            font-size: 16px;
-            transition-duration: 0.3s;
-            cursor: pointer;
-        }
-
-        header button:hover {
-            transform: scale(1.03);
-        }
-        
-        .homeBtn {
-            background-color: #DCEED1;
-        }
-
         .restartBtn {
-            background-color: #FF4B3E;
+            background-color: #d00000;
             color: #DCEED1;
-        }
-        
-        .title {
-            text-align: center;
-            font-size: 40px;
-            margin-bottom: 20px;
         }
 
         .questions {
@@ -104,6 +80,9 @@
     <header>
         <form action="home">
             <button class="homeBtn" type="Submit">Home</button>
+        </form>
+        <form action="logout">
+            <button class="logoutBtn" type="Submit">Log Out</button>
         </form>
         <form method="post">
             <input type="hidden" value="true" name="restart">

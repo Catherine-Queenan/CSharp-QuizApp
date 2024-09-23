@@ -45,8 +45,8 @@ public class QuestionsServlet extends HttpServlet {
         //End of Autoplay functionality
 
         if(questions.isEmpty()){
-            questionsHtml.append("<p>The quiz \"").append(quizName).append("\" is empty!</p>")
-                        .append("<form action=\"home\"><button type=\"Submit\">Return Home</button></form>");
+            questionsHtml.append("<p class=\"errorMsg\">The quiz \"").append(quizName).append("\" is empty!</p>")
+                        .append("<form action=\"home\"><button class=\"homeBtn\" type=\"Submit\">Return Home</button></form>");
             req.setAttribute("questionsHtml", questionsHtml);
             req.setAttribute("qNumber", currQuestion);
             req.setAttribute("quizSize", questions.size());
