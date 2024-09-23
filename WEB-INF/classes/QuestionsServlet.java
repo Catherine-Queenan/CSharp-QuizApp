@@ -259,7 +259,7 @@ public class QuestionsServlet extends HttpServlet {
                         mediaHtml.append("<input type=\"hidden\" id=\"videoId\" value=\"").append(filePath).append("\">\n")
                                 .append("<input type=\"hidden\" id=\"videoStart\" value=\"").append(mediaStart).append("\">\n")
                                 .append("<input type=\"hidden\" id=\"videoEnd\" value=\"").append(mediaEnd).append("\">\n")
-                                .append("<div id=\"player\"></div>");
+                                .append("<div class=\"videoWrap\"><div id=\"player\"></div></div>");
                     }
                     
                     break;
@@ -277,9 +277,9 @@ public class QuestionsServlet extends HttpServlet {
                         String mediaStart = rsMedia.getString("media_start");
                         String mediaEnd = rsMedia.getString("media_end");
 
-                        mediaHtml.append("<audio preload controls ontimeupdate=\"audio()\">\n")
+                        mediaHtml.append("<div class=\"audioWrap\"><audio preload controls ontimeupdate=\"audio()\">\n")
                                 .append("<source src=\"").append(filePath).append("#t=").append(mediaStart).append("\" type=\"audio/mp3\">")
-                                .append("</audio>")
+                                .append("</audio></div>")
                                 .append("<input type=\"hidden\" id=\"videoStart\" value=\"").append(mediaStart).append("\">\n")
                                 .append("<input type=\"hidden\" id=\"videoEnd\" value=\"").append(mediaEnd).append("\">\n");
                     }

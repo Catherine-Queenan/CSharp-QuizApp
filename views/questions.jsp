@@ -129,6 +129,27 @@
             object-fit: contain;
         }
 
+        .audioWrap {
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        audio {
+            transform: scale(1.3);
+            margin: 20px 0;
+        }
+
+        .videoWrap {
+            width: 100%;
+            height: 100%;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
         /* Error Message */
 

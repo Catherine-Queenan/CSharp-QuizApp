@@ -100,6 +100,10 @@
             margin-bottom: 20px;
         }
 
+        #imageAudioUploadQuestion {
+            flex-direction: column;
+        }
+
     </style>
     <script>
 
