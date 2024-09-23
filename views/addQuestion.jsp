@@ -10,6 +10,11 @@
             padding: 20px;
             background-color: #f4f4f4;
         }
+
+        .hidden {
+            display: none;
+        }
+
         .container {
             max-width: 600px;
             margin: auto;
@@ -18,28 +23,35 @@
             border-radius: 8px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             text-align: center;
             margin-bottom: 20px;
         }
+
         label {
             display: block;
             margin-bottom: 10px;
         }
-        input[type="text"], input[type="radio"] {
+
+        input[type="text"],
+        input[type="radio"] {
             width: calc(100% - 22px);
             padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+
         input[type="radio"] {
             width: auto;
             margin-right: 10px;
         }
+
         .answer {
             margin-bottom: 10px;
         }
+
         button {
             padding: 10px 20px;
             background-color: #5cb85c;
@@ -48,9 +60,11 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
         button:hover {
             background-color: #4cae4c;
         }
+
         .button-link {
             display: inline-block;
             padding: 10px 20px;
@@ -60,16 +74,22 @@
             border-radius: 4px;
             margin-bottom: 20px;
         }
+
         .button-link:hover {
             background-color: #025aa5;
         }
     </style>
     <script>
 
-         function addAnswer() {
+        let answerCount = 2;
+        function addAnswer() {
+            if (answerCount == 3) {
+                document.getElementById('addAnswerBtn').classList.add('hidden');
+            }
+            answerCount++;
             const answerDiv = document.createElement('div');
-            answerDiv.classList.add('answer');
-            const answerCount = document.querySelectorAll('input[name="answerText"]').length + 1;
+            answerDiv.classList.add(`answer`);
+            answerDiv.id = `answer`;
             answerDiv.innerHTML = `
                 <input type="text" name="answerText" placeholder="Answer ${answerCount}" required>
                 <input type="radio" name="correctAnswer" value="${answerCount}"> Correct
@@ -77,62 +97,61 @@
             document.getElementById('answersContainer').appendChild(answerDiv);
         }
 
-        function addQuestion() {
-            const questionDiv = document.createElement('div');
-            questionDiv.classList.add('question');
-            questionDiv.innerHTML = `
-                <label for="questionText">Question Text:</label>
-                <input type="text" name="questionText" required><br>
+        // function addQuestion() {
+        //     questionCount++;
+        //     const questionDiv = document.createElement('div');
+        //     questionDiv.classList.add('question');
+        //     questionDiv.innerHTML = `
+        //         <label for="questionText">Question Text:</label>
+        //         <input type="text" name="questionText" required><br>
                 
-                <label for="questionType">Question Type:</label>
-                <input type="text" name="questionType" required><br>
+        //         <label for="questionType">Question Type:</label>
+        //         <input type="text" name="questionType" required><br>
 
-                <div class="answersContainer" id="answersContainer">
-                    <div class="answer">
-                        <input type="text" name="answerText" placeholder="Answer 1" required>
-                        <input type="radio" name="correctAnswer" value="1"> Correct
-                    </div>
-                </div>
-                <button type="button" onclick="addAnswer()">Add Another Answer</button><br><br>
-                <label for="mediaFile">Upload Media (optional):</label>
-                <input type="file" name="mediaFile" accept="image/*,video/*" /><br />
-            `;
-            document.getElementById('questionsContainer').appendChild(questionDiv);
-        }
+        //         <div class="answersContainer" id="answersContainer">
+        //             <div class="answer">
+        //                 <input type="text" name="answerText" placeholder="Answer 1" required>
+        //                 <input type="radio" name="correctAnswer" value="1"> Correct
+        //             </div>
+        //             <button type="button" onclick="addAnswer()">Add Another Answer</button><br><br>
+        //         </div>
+
+        //         <label for="mediaFile">Upload Media (optional):</label>
+        //         <input type="file" name="mediaFile" accept="image/*,video/*" /><br />
+        //     `;
+        //     document.getElementById('questionsContainer').appendChild(questionDiv);
+        // }
+
     </script>
 </head>
+
 <body>
     <div class="container">
-        <h1>Add Question to <%= request.getAttribute("quizName") %></h1>
+        <h1>Add Question to <%= request.getAttribute("quizName") %>
+        </h1>
 
         <form method="post" action="addQuestion" enctype="multipart/form-data">
             <label for="questionText">Question Text:</label>
             <input type="text" id="questionText" name="questionText" required><br>
-            
-            <label for="questionType">Question Type:</label>
-        <select id="questionType" name="questionType">
-            <option value="multipleChoice">Multiple Choice</option>
-            <option value="trueFalse">True/False</option>
-            <!-- Add other question types as needed -->
-        </select><br><br>
 
-        <label for="mediaType">Media Type:</label>
-        <select id="mediaType" name="mediaType">
-            <option value="none">None</option>
-            <option value="image">Image</option>
-            <option value="video">YouTube Video</option>
-        </select><br><br>
+            <label for="questionType">Question Media Type:</label>
+            <select class="mediaType" id="questionType" name="questionType">
+                <option value="TEXT">None</option>
+                <option value="VID">Video</option>
+                <option value="IMG">Image</option>
+                <option value="AUD">Audio</option>
+                <!-- Add other question types as needed -->
+            </select><br><br>
 
-        <div id="imageUrl" style="display: none;">
-            <label for="imageUrl">Image URL:</label>
-            <input type="text" id="imageUrl" name="imageUrl"><br><br>
-        </div>
-        <div id="videoUrl" style="display: none;">
-            <label for="videoUrl">YouTube Video URL:</label>
-            <input type="text" id="videoUrl" name="videoUrl"><br><br>
-        </div>
-        <!-- <label for="mediaFile">Upload Media (optional):</label>
-        <input type="file" name="mediaFile" accept="image/*,video/*" /><br /> -->
+            <div id="imageAudioUpload" style="display: none;">
+                <label for="mediaFile">File:</label>
+                <input type="file" id="mediaFile" name="mediaFile" accept="audio/*,image/*" />
+            </div>
+
+            <div id="videoUrl" style="display: none;">
+                <label for="videoUrl">YouTube Video URL:</label>
+                <input type="text" id="videoUrl" name="videoUrl"><br><br>
+            </div>
 
             <div id="answersContainer">
                 <div class="answer">
@@ -144,29 +163,33 @@
                     <input type="radio" name="correctAnswer" value="2"> Correct
                 </div>
                 <!-- Add more answers dynamically if needed -->
+                
             </div>
+            <button id="addAnswerBtn" type="button" onclick="addAnswer()">Add Another Answer</button><br><br>
             <div id="questionsContainer"></div>
-            <button type="button" onclick="addAnswer()">Add Another Answer</button><br><br>
 
-            <input type="hidden" name="quizName" value="<%= request.getAttribute("quizName") %>">
-            <button type="button" onclick="addQuestion()">Add Another Question</button><br><br>
-            <button type="submit">Submit All Questions</button>        </form>
+            <input type="hidden" name="quizName" value="<%= request.getAttribute(" quizName") %>">
+            <button type="submit">Add Question</button>
+        </form>
     </div>
 
     <script>
-        document.getElementById('mediaType').addEventListener('change', function() {
-            if (this.value === 'image') {
-                document.getElementById('imageUrl').style.display = 'block';
-                document.getElementById('videoUrl').style.display = 'none';
-            } else if (this.value === 'video') {
-                document.getElementById('imageUrl').style.display = 'none';
-                document.getElementById('videoUrl').style.display = 'block';
-            } else {
-                document.getElementById('imageUrl').style.display = 'none';
-                document.getElementById('videoUrl').style.display = 'none';
-            }
+        document.getElementsByClassName('mediaType').array.forEach(element => {
+            element.addEventListener('change', function () {
+                let mediaId = element.id.split("Type")[1];
+                if (this.value === 'image') {
+                    document.getElementById(`imageAudioUpload${mediaId}`).style.display = 'block';
+                    document.getElementById(`videoUrl${mediaId}`).style.display = 'none';
+                } else if (this.value === 'video') {
+                    document.getElementById(`imageAudioUpload${mediaId}`).style.display = 'none';
+                    document.getElementById(`videoUrl${mediaId}`).style.display = 'block';
+                } else {
+                    document.getElementById(`imageAudioUpload${mediaId}`).style.display = 'none';
+                    document.getElementById(`videoUrl${mediaId}`).style.display = 'none';
+               }
+            });
+
         });
     </script>
 </body>
 </html>
-
