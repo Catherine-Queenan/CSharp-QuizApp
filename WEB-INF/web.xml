@@ -113,4 +113,31 @@
   <servlet-name>MainServlet</servlet-name>
   <url-pattern>/main</url-pattern>
 </servlet-mapping>
+
+<servlet>
+  <servlet-name>UpdateAutoplay</servlet-name>
+  <servlet-class>UpdateAutoplay</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>UpdateAutoplay</servlet-name>
+  <url-pattern>/updateAutoplay</url-pattern>
+</servlet-mapping>
+
+<servlet>
+    <servlet-name>CreateQuizServlet</servlet-name>
+    <servlet-class>CreateQuizServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+    <servlet-name>CreateQuizServlet</servlet-name>
+    <url-pattern>/createQuiz</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+    <servlet-name>DeleteQuizServlet</servlet-name>
+    <servlet-class>DeleteQuizServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+    <servlet-name>DeleteQuizServlet</servlet-name>
+    <url-pattern>/deleteQuiz</url-pattern>
+    </servlet-mapping>
 </web-app>

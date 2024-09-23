@@ -42,9 +42,8 @@ public class SignupServlet extends HttpServlet {
                 // Class.forName("oracle.jdbc.OracleDriver");
             } catch (Exception ex) {}
 
-            // DATABASE CONNECTION LINE
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/QuizApp", "root", "Cathgirlh6*"); // MySQL connection
-            // con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "oracle1");
+            //DATABASE CONNECTION LINE 
+            con = DatabaseUtil.getConnection();
              Statement statement = con.createStatement();
 
             //Query database for the user name

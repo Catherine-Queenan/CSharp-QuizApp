@@ -6,24 +6,27 @@ import java.sql.*;
 public class EditServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
-        if (session == null) {
-            res.setStatus(302);
+        if (session == null || session.getAttribute("USER_ID") == null) {
             res.sendRedirect("login");
             return;
         }
 
+        String username = (String) session.getAttribute("USER_ID");
+        String role = getUserRoleFromDatabase(username);
+
+        if (!"a".equals(role)) {
+            res.sendRedirect("login");
+            return;
+        }
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         StringBuilder editHtml = new StringBuilder();
 
         try {
-            // DATABASE CONNECTION LINE
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
-
             // DATABASE CONNECTION LINE
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/QuizApp", "root", "Cathgirlh6*"); // MySQL connection
-
+            con = DatabaseUtil.getConnection();
             // Get quiz name from request parameters
             String quizName = req.getParameter("quizName");
             if (quizName == null || quizName.isEmpty()) {
@@ -42,20 +45,18 @@ public class EditServlet extends HttpServlet {
                 String quizDescription = rs.getString("description");
 
                 // Generate the edit form for the quiz
-                editHtml.append("<h2>Edit Quiz: ").append(quizTitle).append("</h2>")
-        .append("<form method='post' action='edit'>")
-        .append("<label for='title'>Quiz Title:</label>")
-        .append("<input type='text' id='title' name='title' value='").append(quizTitle).append("'><br>")
-        .append("<label for='description'>Description:</label>")
-        .append("<textarea id='description' name='description'>").append(quizDescription).append("</textarea><br>")
-        .append("<input type='hidden' name='quizName' value='").append(quizName).append("'>")
-        .append("<div class='button-container'>")
-        .append("<a href='editQuestions?quizName=").append(quizName).append("' class='button-link'>Edit Questions</a>")
-        .append("<button type='submit'>Save Changes</button>")
-        .append("</div>")
-        .append("</form>");
-
-
+                editHtml.append("<div class=\"title cherry-cream-soda\">Edit Quiz: ").append(quizTitle).append("</div>")
+                    .append("<form class=\"eidtQuizForm\" method='post' action='edit'>")
+                    .append("<label for='title'>Quiz Title:</label>")
+                    .append("<input type='text' id='title' name='title' value='").append(quizTitle).append("'>")
+                    .append("<label for='description'>Description:</label>")
+                    .append("<textarea id='description' name='description'>").append(quizDescription).append("</textarea>")
+                    .append("<input type='hidden' name='quizName' value='").append(quizName).append("'>")
+                    .append("<div class='button-container'>")
+                    .append("<a href='editQuestions?quizName=").append(quizName).append("' class='button-link'>Go to List of Questions</a>")
+                    .append("<button class=\"saveBtn\" type='submit'>Save Changes</button>")
+                    .append("</div>")
+                    .append("</form>");
             }
 
         } catch (Exception e) {
@@ -77,11 +78,9 @@ public class EditServlet extends HttpServlet {
         PreparedStatement ps = null;
 
         try {
-            // DATABASE CONNECTION LINE
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
-
             // DATABASE CONNECTION LINE
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", ""); // MySQL connection
+            con = DatabaseUtil.getConnection();
 
             // Get form data from the request
             String quizName = req.getParameter("quizName");
@@ -105,5 +104,35 @@ public class EditServlet extends HttpServlet {
             try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
             try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
         }
+    }
+    private String getUserRoleFromDatabase(String username) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String role = null;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+            // Database connection
+            con = DatabaseUtil.getConnection();
+
+            // Query to get the user's role
+            String sql = "SELECT role FROM users WHERE username = ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, username);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                role = rs.getString("role");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+        }
+
+        return role;
     }
 }

@@ -29,14 +29,9 @@ public class LoginServlet extends HttpServlet {
         res.setContentType("text/html");
 
         try {
-            try {
-                //DATABASE CONNECTION LINE
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                // Class.forName("oracle.jdbc.OracleDriver");
-            } catch (Exception ex) {}
-
-            // DATABASE CONNECTION LINE
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/QuizApp", "root", "Cathgirlh6*"); // MySQL connection
+            
+            //DATABASE CONNECTION LINE
+            con = DatabaseUtil.getConnection();
             // con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "oracle1");
             
             Statement statement = con.createStatement();
