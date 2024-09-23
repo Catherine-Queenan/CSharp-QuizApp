@@ -132,7 +132,7 @@ public class CreateQuizServlet extends HttpServlet {
                     // Log or use quizId as needed
                 }
                 // res.sendRedirect("index");
-                res.sendRedirect("addQuestion?quizName=" + URLEncoder.encode(quizName, "UTF-8"));
+                res.sendRedirect("quizzes?categoryName=" + categoryName);
 
             } else {
                 req.setAttribute("error", "Failed to create quiz. Please try again.");

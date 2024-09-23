@@ -170,9 +170,10 @@
             Add Question to <%= request.getAttribute("quizName") %>
         </div>
 
-        <form class="newQuestionForm" method="post" action="addQuestion" enctype="multipart/form-data">
+        <form class="newQuestionForm" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="quizName" id="quizName" value="<%= request.getAttribute(" quizName") %>">
             <label for="questionText">Question Text:</label>
-            <input type="text" id="questionTextQ1" name="questionTextQ1" required>
+            <input type="text" id="questionTextQ1" name="questionText" required>
 
             <label for="questionType">Question Media Type:</label>
             <select class="mediaType" id="questionType" name="questionType">
@@ -186,21 +187,16 @@
             <div id="imageAudioUploadQuestion" style="display: none;">
                 <label for="mediaFile">File:</label>
                 <input type="file" id="mediaFile" name="mediaFile" accept="audio/*,image/*" />
-            </div>
-            <div id="audioStartEnd" style="display: none;">
-                <div>
-                    <label for="audioStart">Audio Start (seconds):</label>
-                    <input type="number" id="audioStart" name="audioStart" value="0"/>
+                <div id="audioStartEnd" style="display: none;">
+                    <div>
+                        <label for="audioStart">Audio Start (seconds):</label>
+                        <input type="number" id="audioStart" name="audioStart" value="0"/>
+                    </div>
+                    <div>
+                        <label for="audioEnd">Audio End (seconds):</label>
+                        <input type="number" id="audioEnd" name="audioEnd" value="0"/>
+                    </div>
                 </div>
-                <div>
-                    <label for="audioEnd">Audio End (seconds):</label>
-                    <input type="number" id="audioEnd" name="audioEnd" value="0"/>
-                </div>
-            </div>
-
-            <div id="videoUrlQ1" style="display: none;">
-                <label for="videoUrlQ1">YouTube Video URL:</label>
-                <input type="text" id="videoUrlQ1" name="videoUrlQ1">
             </div>
 
             <div id="videoUrlQuestion" style="display: none;">
@@ -221,7 +217,7 @@
             <div id="answersContainer">
                 <div class="answer">
                     <input type="text" name="answerText" placeholder="Answer 1" required>
-                    <input type="radio" name="correctAnswer" value="1"> Correct
+                    <input type="radio" name="correctAnswer" value="1" selected> Correct
                 </div>
                 <div class="answer">
                     <input type="text" name="answerText" placeholder="Answer 2" required>
@@ -234,12 +230,13 @@
             <button class="addAnswerBtn" id="addAnswerBtn" type="button" onclick="addAnswer()">Add Another Answer</button>
             <div id="questionsContainer"></div>
 
-            <input type="hidden" name="quizName" value="<%= request.getAttribute(" quizName") %>">
+            
             <button class="addQuestionBtn" type="submit">Add Question</button>
         </form>
     </div>
 
     <script>
+        console.log(document.getElementById("quizName").value);
         let questionMedia = document.getElementById('questionType');
         questionMedia.addEventListener('change', function () {
                 if (questionMedia.value === 'IMG' || questionMedia.value === 'AUD') {
