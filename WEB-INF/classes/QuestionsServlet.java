@@ -160,7 +160,7 @@ public class QuestionsServlet extends HttpServlet {
 
                     answerDisplay = answerDisplay != null ? answerDisplay : answerText;
                     if(isCorrect){
-                        questionsHtml.append("<form id=\"questionForm\" method=\"post\">").append("<button class=\"answer").append(countAnswer).append("\"id=\"rightPlayAnswer\">").append(answerDisplay).append("</button></form>\n");
+                        questionsHtml.append("<button class=\"answer").append(countAnswer).append("\"id=\"rightPlayAnswer\">").append(answerDisplay).append("</button>\n");
                     } else {
                         questionsHtml.append("<button class=\"wrongPlayAnswer answer").append(countAnswer).append("\">").append(answerDisplay).append("</button>\n");
                     }

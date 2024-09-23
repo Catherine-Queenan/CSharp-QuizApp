@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Questions</title>
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
-
         header button {
             padding: 10px 30px;
             border-radius: 10px;
@@ -20,7 +20,7 @@
         header button:hover {
             transform: scale(1.03);
         }
-        
+
         .homeBtn {
             background-color: #DCEED1;
         }
@@ -29,7 +29,7 @@
             background-color: #FF4B3E;
             color: #DCEED1;
         }
-        
+
         .title {
             text-align: center;
             font-size: 40px;
@@ -79,15 +79,15 @@
         .answer1 {
             background-color: #d00000 !important;
         }
-        
+
         .answer2 {
             background-color: #FF4B3E !important;
         }
-        
+
         .answer3 {
             background-color: #FFB20F !important;
         }
-        
+
         .answer4 {
             background-color: #99c252 !important;
         }
@@ -95,7 +95,6 @@
         .answersOption button:hover {
             transform: scale(1.03);
         }
-        
     </style>
 </head>
 
@@ -110,7 +109,8 @@
             <button class="restartBtn" type="Submit">Restart</button>
         </form>
         <form method="get" action="updateAutoplay">
-            <input name="enabled" type="hidden" id="autoplay" value="<%= request.getAttribute("autoplay") != null && (Boolean)request.getAttribute("autoplay") ? "true" : "false" %>">
+            <input name="enabled" type="hidden" id="autoplay" value="<%= request.getAttribute(" autoplay") !=null &&
+                (Boolean)request.getAttribute("autoplay") ? "true" : "false" %>">
             <button id="autoplayToggle">Autoplay: OFF</button>
         </form>
     </header>
@@ -122,51 +122,77 @@
         <div class="questions">
             <%=request.getAttribute("questionsHtml")%>
         </div>
-        <div id="timer" style="font-size: 20px; text-align: center; margin-top: 20px; display:none;">Time left: 60 seconds</div>
+        <div id="timer" style="font-size: 20px; text-align: center; margin-top: 20px; display:none;">Time left: 60
+            seconds</div>
     </div>
+    <form id="questionForm" method="post" style="display: hidden;"></form>
 </body>
 <script>
+    let correctAnswer = document.getElementById('questionForm');
+    //---------------WRONG BUTTON MECHANICS---------------\\
+    let wrongButtons = document.getElementsByClassName("wrongPlayAnswer");
+    // let container = document.getElementsByClassName("wrap")[0];
+    for (let i = 0; i < wrongButtons.length; i++) {
+        wrongButtons[i].addEventListener('click', () => {
+            wrongButtons[i].classList.add('wrong');
+            wrongButtons[i].style.boxShadow = "0px 0px 50px rgb(244, 0, 0)";
+            setTimeout(() => {
+                wrongButtons[i].classList.remove('wrong');
+                wrongButtons[i].style.boxShadow = "";
+            }, 1500);
+        });
+    }
+
+    let correctAnswerButton = document.getElementById("rightPlayAnswer");
+    correctAnswerButton.addEventListener('click', () => {
+        correctAnswerButton.style.boxShadow = "0px 0px 50px rgb(0, 244, 0)";
+        setTimeout(() => {
+            correctAnswer.submit();
+        }, 500);
+    });
+
+
+
     //---------------AUTOPLAY---------------\\
     let autoplayEnabled = document.getElementById("autoplay").value === "false";
     let autoplayTimer;
     let countdownTime = 60;
     let timerDisplay = document.getElementById('timer');
     let timerInterval;
-    let correctAnswer = document.getElementById('questionForm');
 
-        const autoplayToggleButton = document.getElementById('autoplayToggle');
-        const correctButton = document.querySelector('.answer[id="rightPlayAnswer"]');
+    const autoplayToggleButton = document.getElementById('autoplayToggle');
+    const correctButton = document.querySelector('.answer[id="rightPlayAnswer"]');
 
-        // Set up event listener for the autoplay toggle button
-        // NO MORE CONSOLE.LOGS
-        autoplayToggleButton.addEventListener('click', () => {
-            event.preventDefault();
-            autoplayEnabled = !autoplayEnabled;
+    // Set up event listener for the autoplay toggle button
+    // NO MORE CONSOLE.LOGS
+    autoplayToggleButton.addEventListener('click', () => {
+        event.preventDefault();
+        autoplayEnabled = !autoplayEnabled;
 
-            console.log(autoplayEnabled);
-            console.log(document.getElementById("autoplay").value);
-            console.log("Please god work");
+        console.log(autoplayEnabled);
+        console.log(document.getElementById("autoplay").value);
+        console.log("Please god work");
 
-            if (autoplayEnabled) {
-                autoplayToggleButton.textContent = "Autoplay: ON";
-                timerDisplay.style.display = 'block';
-                startAutoplay(correctButton);
-                fetch('updateAutoplay?enabled=true');
-            } else {
-                autoplayToggleButton.textContent = "Autoplay: OFF";
-                clearTimeout(autoplayTimer);
-                clearInterval(timerInterval);
-                timerDisplay.style.display = 'none';
-                timerDisplay.textContent = "Time left: 60 seconds";
-                fetch('updateAutoplay?enabled=false');
-            }
-        });
-
-        // Start autoplay if enabled on page load
         if (autoplayEnabled) {
+            autoplayToggleButton.textContent = "Autoplay: ON";
+            timerDisplay.style.display = 'block';
             startAutoplay(correctButton);
+            fetch('updateAutoplay?enabled=true');
+        } else {
+            autoplayToggleButton.textContent = "Autoplay: OFF";
+            clearTimeout(autoplayTimer);
+            clearInterval(timerInterval);
+            timerDisplay.style.display = 'none';
+            timerDisplay.textContent = "Time left: 60 seconds";
+            fetch('updateAutoplay?enabled=false');
         }
-    
+    });
+
+    // Start autoplay if enabled on page load
+    if (autoplayEnabled) {
+        startAutoplay(correctButton);
+    }
+
 
     function startAutoplay(correctButton) {
         let timeLeft = countdownTime;
@@ -180,7 +206,10 @@
 
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
-                correctAnswer.submit();
+                correctAnswerButton.style.boxShadow = "0px 0px 50px rgb(0, 244, 0)";
+                setTimeout(() => {
+                    correctAnswer.submit();
+                }, 500);
                 // if (correctButton) {
                 //     correctButton.click();
                 // }
@@ -188,7 +217,10 @@
         }, 1000);
 
         autoplayTimer = setTimeout(() => {
-            correctAnswer.submit();
+            correctAnswerButton.style.boxShadow = "0px 0px 50px rgb(0, 244, 0)";
+            setTimeout(() => {
+                correctAnswer.submit();
+            }, 500);
             // if (correctButton) {
             //     correctButton.click();
             // }
