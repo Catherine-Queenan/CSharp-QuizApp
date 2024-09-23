@@ -13,7 +13,7 @@
             width: 70%;
             padding: 50px;
             display: flex;
-            justify-content: space-between;
+            /* justify-content: space-between; */
             align-items: center;
             flex-wrap: wrap;
             gap: 30px;

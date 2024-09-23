@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
 
+        .wrap {
+            padding: 60px 0;
+            /* justify-content: unset; */
+            overflow-y: scroll;
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+            -webkit-scrollbar: none;
+        }
+
+        .errorHome,
         header button {
             padding: 10px 30px;
             border-radius: 10px;
@@ -20,10 +30,6 @@
         header button:hover {
             transform: scale(1.03);
         }
-        
-        .homeBtn {
-            background-color: #DCEED1;
-        }
 
         .restartBtn {
             background-color: #FF4B3E;
@@ -33,14 +39,18 @@
         .title {
             text-align: center;
             font-size: 40px;
-            margin-bottom: 20px;
+            margin-bottom: 0;
         }
 
         .questions {
             width: 80%;
+            transform: scale(0.9);
         }
 
         .question>p {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: 23px;
         }
 
@@ -77,7 +87,6 @@
             transition: all 0.5s ease; /* Smooth transition for the animation */
         }
 
-
         #questionForm {
             width: 45%;
         }
@@ -105,7 +114,69 @@
         .answersOption button:hover {
             transform: scale(1.03);
         }
+
+        /* Displaying media */
+        .imgWrap {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .audioWrap {
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        audio {
+            transform: scale(1.3);
+            margin: 20px 0;
+        }
+
+        .videoWrap {
+            width: 100%;
+            height: 100%;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Error Message */
+
+        .errorMsg {
+            padding: 30px;
+            font-size: 25px;
+        }
+        .errorHome {
+            margin: 0 auto;
+            padding: 20px 50px;
+            font-size: 25px;
+            border-radius: 15px;
+            background-color: #99c252;
+        }
         
+        .errorHome:hover {
+            transform: scale(1.05);
+            box-shadow: 5px 5px 5px rgba(1, 1, 1, 0.3);
+        }
+
+        .errorBtnWrap,
+        .errorMsg {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
     </style>
 </head>
 

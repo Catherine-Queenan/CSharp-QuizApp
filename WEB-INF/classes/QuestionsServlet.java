@@ -46,7 +46,7 @@ public class QuestionsServlet extends HttpServlet {
 
         if(questions.isEmpty()){
             questionsHtml.append("<p class=\"errorMsg\">The quiz \"").append(quizName).append("\" is empty!</p>")
-                        .append("<form action=\"home\"><button class=\"homeBtn\" type=\"Submit\">Return Home</button></form>");
+                        .append("<form class=\"errorBtnWrap\" action=\"home\"><button class=\"homeBtn errorHome\" type=\"Submit\">Return Home</button></form>");
             req.setAttribute("questionsHtml", questionsHtml);
             req.setAttribute("qNumber", currQuestion);
             req.setAttribute("quizSize", questions.size());
@@ -124,17 +124,16 @@ public class QuestionsServlet extends HttpServlet {
                 String questionText = rsQuestion.getString("question_text");
                 String questionType = rsQuestion.getString("question_type");
    
+                // // Display question
+                questionsHtml.append("<div class=\"question\"").append(">\n")
+                             .append("<p>").append(questionText).append("</p>\n");
+                             
                 if(!questionType.equals("TEXT")){
                     String media = insertMedia(con, "question", qID, questionType);
                     if(media != null){
                         questionsHtml.append(media);
                     }
-
                 }
-                // // Display question
-                questionsHtml.append("<div class=\"question\"").append(">\n")
-                             .append("<p>").append(questionText).append("</p>\n");
-                             
 
                 // Query to get answers for this question
                 // String sqlAnswers = "SELECT answer_text, is_correct, answer_type FROM answers WHERE question_id = ?";
@@ -260,7 +259,7 @@ public class QuestionsServlet extends HttpServlet {
                         mediaHtml.append("<input type=\"hidden\" id=\"videoId\" value=\"").append(filePath).append("\">\n")
                                 .append("<input type=\"hidden\" id=\"videoStart\" value=\"").append(mediaStart).append("\">\n")
                                 .append("<input type=\"hidden\" id=\"videoEnd\" value=\"").append(mediaEnd).append("\">\n")
-                                .append("<div id=\"player\"></div>");
+                                .append("<div class=\"videoWrap\"><div id=\"player\"></div></div>");
                     }
                     
                     break;
@@ -269,9 +268,8 @@ public class QuestionsServlet extends HttpServlet {
                         String filePath = rsMedia.getString("media_file_path");
                         String alt = rsMedia.getString("description");
 
-                        mediaHtml.append("<img alt=\"").append(alt).append("\"width=\"300\" height=\"200\" src=\"").append(filePath).append("\">\n");
+                        mediaHtml.append("<div class=\"imgWrap\"><img alt=\"").append(alt).append("\"width=\"300\" height=\"200\" src=\"").append(filePath).append("\"></div>\n");
                     }
-                    System.out.println("aaaaa");
                     break;
                 case "AUD":
                     while(rsMedia.next()){
@@ -279,9 +277,9 @@ public class QuestionsServlet extends HttpServlet {
                         String mediaStart = rsMedia.getString("media_start");
                         String mediaEnd = rsMedia.getString("media_end");
 
-                        mediaHtml.append("<audio preload controls ontimeupdate=\"audio()\">\n")
+                        mediaHtml.append("<div class=\"audioWrap\"><audio preload controls ontimeupdate=\"audio()\">\n")
                                 .append("<source src=\"").append(filePath).append("#t=").append(mediaStart).append("\" type=\"audio/mp3\">")
-                                .append("</audio>")
+                                .append("</audio></div>")
                                 .append("<input type=\"hidden\" id=\"videoStart\" value=\"").append(mediaStart).append("\">\n")
                                 .append("<input type=\"hidden\" id=\"videoEnd\" value=\"").append(mediaEnd).append("\">\n");
                     }
