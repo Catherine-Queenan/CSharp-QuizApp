@@ -71,7 +71,6 @@
             cursor: pointer;
         }
 
-
         .adminWrap {
             margin-top: 20px;
         }
