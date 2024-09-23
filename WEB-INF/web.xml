@@ -115,6 +115,15 @@
 </servlet-mapping>
 
 <servlet>
+  <servlet-name>UpdateAutoplay</servlet-name>
+  <servlet-class>UpdateAutoplay</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>UpdateAutoplay</servlet-name>
+  <url-pattern>/updateAutoplay</url-pattern>
+</servlet-mapping>
+
+<servlet>
     <servlet-name>CreateQuizServlet</servlet-name>
     <servlet-class>CreateQuizServlet</servlet-class>
     </servlet>

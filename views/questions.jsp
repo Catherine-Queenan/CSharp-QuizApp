@@ -109,6 +109,10 @@
             <input type="hidden" value="true" name="restart">
             <button class="restartBtn" type="Submit">Restart</button>
         </form>
+        <form method="get" action="updateAutoplay">
+            <input name="enabled" type="hidden" id="autoplay" value="<%= request.getAttribute("autoplay") != null && (Boolean)request.getAttribute("autoplay") ? "true" : "false" %>">
+            <button id="autoplayToggle">Autoplay: OFF</button>
+        </form>
     </header>
 
     <div class="wrap">
@@ -118,13 +122,82 @@
         <div class="questions">
             <%=request.getAttribute("questionsHtml")%>
         </div>
+        <div id="timer" style="font-size: 20px; text-align: center; margin-top: 20px; display:none;">Time left: 60 seconds</div>
     </div>
     
     
-    <%= request.getAttribute("mediaHtml") %>
 
 </body>
 <script>
+    //---------------AUTOPLAY---------------\\
+    let autoplayEnabled = document.getElementById("autoplay").value === "false";
+    let autoplayTimer;
+    let countdownTime = 60;
+    let timerDisplay = document.getElementById('timer');
+    let timerInterval;
+
+        const autoplayToggleButton = document.getElementById('autoplayToggle');
+        const correctButton = document.querySelector('.answer[id="rightPlayAnswer"]');
+
+        // Set up event listener for the autoplay toggle button
+        // NO MORE CONSOLE.LOGS
+        autoplayToggleButton.addEventListener('click', () => {
+            event.preventDefault();
+            autoplayEnabled = !autoplayEnabled;
+
+            console.log(autoplayEnabled);
+            console.log(document.getElementById("autoplay").value);
+            console.log("Please god work");
+
+            if (autoplayEnabled) {
+                autoplayToggleButton.textContent = "Autoplay: ON";
+                timerDisplay.style.display = 'block';
+                startAutoplay(correctButton);
+                fetch('updateAutoplay?enabled=true');
+            } else {
+                autoplayToggleButton.textContent = "Autoplay: OFF";
+                clearTimeout(autoplayTimer);
+                clearInterval(timerInterval);
+                timerDisplay.style.display = 'none';
+                timerDisplay.textContent = "Time left: 60 seconds";
+                fetch('updateAutoplay?enabled=false');
+            }
+        });
+
+        // Start autoplay if enabled on page load
+        if (autoplayEnabled) {
+            startAutoplay(correctButton);
+        }
+    
+
+    function startAutoplay(correctButton) {
+        let timeLeft = countdownTime;
+        updateTimerDisplay(timeLeft);
+
+        clearInterval(timerInterval);
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay(timeLeft);
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                if (correctButton) {
+                    correctButton.click();
+                }
+            }
+        }, 1000);
+
+        autoplayTimer = setTimeout(() => {
+            if (correctButton) {
+                correctButton.click();
+            }
+        }, countdownTime * 1000);
+    }
+
+    function updateTimerDisplay(timeLeft) {
+        timerDisplay.textContent = "Time left: " + timeLeft + " seconds";
+    }
 
     //---------------VIDEO PLAYING---------------\\
 
