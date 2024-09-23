@@ -77,7 +77,7 @@
             Available Quizzes
         </div>
         <div class="quizzes">
-            <%= request.getAttribute("quizzesHtml") %>
+            <%= request.getAttribute("quizzesHtml")%>
         </div>
     </div>
 </body>

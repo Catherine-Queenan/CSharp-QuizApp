@@ -74,7 +74,8 @@
 <body>
     <header class="header">
         <!-- You may have to change the path depending on what you named the app -->
-        <button class="logout-btn" onclick="window.location.href='/project1/logout';">Logout</button>
+        <button class="logout-btn" onclick="window.location.href='/QuizApp/logout';">Logout</button>
+        <button onclick = "window.location.href='/QuizApp/home';">Home</button>
     </header>
     <div class="wrap">
         <div class="title">
