@@ -124,9 +124,15 @@ public class QuestionsServlet extends HttpServlet {
 
                 String questionText = rsQuestion.getString("question_text");
                 String questionType = rsQuestion.getString("question_type");
-
+   
                 if(!questionType.equals("TEXT")){
-                    questionsHtml.append(insertMedia(con, "question", qID, questionType));
+                    System.out.println("AAAAAAAAAAAAa");
+                    String media = insertMedia(con, "question", qID, questionType);
+                    if(media != null){
+                        System.out.println("Fuck");
+                        questionsHtml.append(media);
+                    }
+
                 }
                 // // Display question
                 questionsHtml.append("<div class=\"question\"").append(">\n")
@@ -228,23 +234,22 @@ public class QuestionsServlet extends HttpServlet {
         ResultSet rsMedia = null;
         ResultSet rsMediaId = null;
         StringBuilder mediaHtml = new StringBuilder();
-        
+
         try {
             if(table.equalsIgnoreCase("answer")){
-                pstmntMediaId = con.prepareStatement("SELECT media_id FROM answer_media WHERE id = ?");
+                pstmntMediaId = con.prepareStatement("SELECT media_id FROM answer_media WHERE  answer_id = ?");
             } else if (table.equalsIgnoreCase("question")) {
-                pstmntMediaId = con.prepareStatement("SELECT media_id FROM question_media WHERE id = ?");
+                pstmntMediaId = con.prepareStatement("SELECT media_id FROM question_media WHERE  question_id = ?");
             } else {
                 return null;
             }
-
             pstmntMediaId.setBinaryStream(1, id);
             rsMediaId = pstmntMediaId.executeQuery();
             InputStream mediaId = null;
             while(rsMediaId.next()){
                 mediaId = rsMediaId.getBinaryStream("media_id");
             }
-            
+
             pstmntMedia = con.prepareStatement("SELECT media_file_path, media_start, media_end, description FROM media WHERE id = ?");
             pstmntMedia.setBinaryStream(1, mediaId);
             rsMedia = pstmntMedia.executeQuery();
@@ -269,16 +274,19 @@ public class QuestionsServlet extends HttpServlet {
 
                         mediaHtml.append("<img alt=\"").append(alt).append("\"width=\"300\" height=\"200\" src=\"").append(filePath).append("\">\n");
                     }
-
+                    System.out.println("aaaaa");
                     break;
                 case "AUD":
                     while(rsMedia.next()){
-                        String filePath = rsMedia.getString("media_file_path").split("=")[1];
+                        String filePath = rsMedia.getString("media_file_path");
                         String mediaStart = rsMedia.getString("media_start");
+                        String mediaEnd = rsMedia.getString("media_end");
 
                         mediaHtml.append("<audio preload controls ontimeupdate=\"audio()\">\n")
                                 .append("<source src=\"").append(filePath).append("#t=").append(mediaStart).append("\" type=\"audio/mp3\">")
-                                .append("</audio>");
+                                .append("</audio>")
+                                .append("<input type=\"hidden\" id=\"videoStart\" value=\"").append(mediaStart).append("\">\n")
+                                .append("<input type=\"hidden\" id=\"videoEnd\" value=\"").append(mediaEnd).append("\">\n");
                     }
                     
                     break;                
@@ -290,9 +298,10 @@ public class QuestionsServlet extends HttpServlet {
             rsMedia.close(); 
             pstmntMediaId.close();       
             rsMediaId.close();       
-            return rsMedia.toString();
+            return mediaHtml.toString();
             
         } catch (Exception e) {
+            e.printStackTrace();
             try { if (pstmntMedia != null) pstmntMedia.close(); } catch (SQLException sqlEx) { sqlEx.printStackTrace(); }
             try { if (rsMedia != null) rsMedia.close(); } catch (SQLException sqlEx) { sqlEx.printStackTrace(); }
             try { if (pstmntMediaId != null) pstmntMediaId.close(); } catch (SQLException sqlEx) { sqlEx.printStackTrace(); }
