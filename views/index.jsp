@@ -4,14 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Index?</title>
-    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="public/css/reset.css">
     <style>
-        
-        .title {
-            text-align: center;
-            font-size: 40px;
-            margin-bottom: 50px;
-        }
 
         .categories {
             width: 85%;
@@ -78,16 +72,21 @@
     </style>
 </head>
 <body>
-    <header class="header">
-        <!-- You may have to change the path depending on what you named the app -->
-        <button class="logout-btn" onclick="window.location.href='/project1/logout';">Logout</button>
+    <header>
+        <form action="home">
+            <button class="homeBtn" type="Submit">Home</button>
+        </form>
+        <form action="logout">
+            <button class="logoutBtn" type="Submit">Log Out</button>
+        </form>
     </header>
+
     <div class="wrap">
         <div class="title">
             Trivia Game
         </div>
-        
     </div>
+    
     <h1>Quiz Dashboard</h1>
     <div id="content">
         <%= request.getAttribute("contentHtml") %>

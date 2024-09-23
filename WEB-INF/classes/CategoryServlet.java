@@ -20,8 +20,7 @@ public class CategoryServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             // Connect to the database
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "");
-
+            con = DatabaseUtil.getConnection();
             // Create a statement to execute SQL queries
             stmt = con.createStatement();
 

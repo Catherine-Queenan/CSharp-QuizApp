@@ -5,68 +5,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Quiz</title>
+    <link rel="stylesheet" href="public/css/reset.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
+
+        .title {
+            font-size: 40px;
+            margin: 0;
         }
-        form {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: auto;
+
+        .eidtQuizForm {
+            transform: scale(0.9);
+            width: 60%;
+            padding: 50px;
+            border-radius: 15px;
+            font-size: 18px;
+            background-color: #45425A;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
+
+        .eidtQuizForm label {
+            font-size: 22px;
+            margin-top: 10px;
         }
-        label {
-            display: block;
-            margin-bottom: 10px;
+
+        .eidtQuizForm input,
+        .eidtQuizForm textarea {
+            border: 0;
+            border-radius: 10px;
+            padding: 15px 20px;
+            font-size: 18px;
         }
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+
         .button-container {
             display: flex;
-            justify-content: space-between;
+            /* flex-direction: column; */
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
         }
-        button {
-            padding: 10px 20px;
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            border-radius: 4px;
+        
+        .button-container a,
+        .saveBtn {
+            all: unset;
+            margin-top: 20px;
+            padding: 20px 50px;
+            border-radius: 15px;
+            font-size: 20px;
+            color: rgb(244, 244, 244);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #0C1B33;
             cursor: pointer;
+            transition-duration: 0.3s;
         }
-        button:hover {
-            background-color: #4cae4c;
+
+        .button-container a {
+            background-color: #99c252;
+            color: #0C1B33;
         }
-        .button-link {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #0275d8;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
+
+        .button-container a:hover,
+        .saveBtn:hover {
+            box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.5);
         }
-        .button-link:hover {
-            background-color: #025aa5;
+        
+        :focus {
+            outline: none;
         }
+
+        .mediaType {
+            margin-bottom: 20px;
+        }
+
     </style>
 </head>
 <body>
+    <header>
+        <form action="home">
+            <button class="homeBtn" type="Submit">Home</button>
+        </form>
+        <form action="logout">
+            <button class="logoutBtn" type="Submit">Log Out</button>
+        </form>
+    </header>
 
-<%-- Render the form generated in the servlet --%>
-<%= request.getAttribute("editFormHtml") %>
+    <div class="wrap">
+        <%-- Render the form generated in the servlet --%>
+        <%= request.getAttribute("editFormHtml") %>    
+    </div>
 
 </body>
 </html>

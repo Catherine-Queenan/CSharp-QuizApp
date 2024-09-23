@@ -4,14 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Index?</title>
-    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="public/css/reset.css">
     <style>
-        
-        .title {
-            text-align: center;
-            font-size: 40px;
-            margin-bottom: 50px;
-        }
 
         .categories {
             width: 85%;
