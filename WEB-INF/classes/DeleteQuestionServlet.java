@@ -2,6 +2,7 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DeleteQuestionServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -18,9 +19,11 @@ public class DeleteQuestionServlet extends HttpServlet {
             res.sendRedirect("login");
             return;
         }
-        String questionText = req.getParameter("text");
+        int idIndex = Integer.parseInt(req.getParameter("id"));
         String quizName = req.getParameter("quizName");
-
+        ArrayList<InputStream> qIDs = (ArrayList<InputStream>)session.getAttribute("questions");
+        System.out.println(qIDs);
+        session.removeAttribute("questions");
         Connection con = null;
         PreparedStatement ps = null;
 
@@ -32,16 +35,12 @@ public class DeleteQuestionServlet extends HttpServlet {
             // DATABASE CONNECTION LINE
             con = DatabaseUtil.getConnection();
             // Delete the question
-            String deleteQuestionSql = "DELETE FROM questions WHERE question_text = ? AND quiz_name = ?";
-            System.out.println(questionText);
-            System.out.println(questionText);
+            String deleteQuestionSql = "DELETE FROM questions WHERE id = ?";
             ps = con.prepareStatement(deleteQuestionSql);
-            ps.setString(1, questionText);
-            ps.setString(2, quizName);
+            ps.setBinaryStream(1, qIDs.get(idIndex));
             ps.executeUpdate();
 
             // Redirect back to the edit questions page after successful deletion
-            System.out.println(questionText);
             res.sendRedirect("editQuestions?quizName=" + quizName);
 
         } catch (Exception e) {
