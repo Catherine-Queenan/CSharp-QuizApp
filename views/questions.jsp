@@ -7,13 +7,14 @@
     <title>Questions</title>
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
-
         .wrap {
             padding: 60px 0;
             /* justify-content: unset; */
             overflow-y: scroll;
-            -ms-overflow-style: none;  /* Internet Explorer 10+ */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            /* Internet Explorer 10+ */
+            scrollbar-width: none;
+            /* Firefox */
             -webkit-scrollbar: none;
         }
 
@@ -84,8 +85,10 @@
             position: relative;
             z-index: 10;
             width: 100% !important;
-            height: 100px; /* Adjust this value as needed */
-            transition: all 0.5s ease; /* Smooth transition for the animation */
+            height: 100px;
+            /* Adjust this value as needed */
+            transition: all 0.5s ease;
+            /* Smooth transition for the animation */
         }
 
         #questionForm {
@@ -158,6 +161,7 @@
             padding: 30px;
             font-size: 25px;
         }
+
         .errorHome {
             margin: 0 auto;
             padding: 20px 50px;
@@ -165,7 +169,7 @@
             border-radius: 15px;
             background-color: #99c252;
         }
-        
+
         .errorHome:hover {
             transform: scale(1.05);
             box-shadow: 5px 5px 5px rgba(1, 1, 1, 0.3);
@@ -177,7 +181,6 @@
             justify-content: center;
             align-items: center;
         }
-
     </style>
 </head>
 
@@ -192,7 +195,8 @@
             <button class="restartBtn" type="Submit">Restart</button>
         </form>
         <form method="get" action="updateAutoplay">
-            <input name="enabled" type="hidden" id="autoplay" value="<%= session.getAttribute("autoplay") != null && (Boolean)session.getAttribute("autoplay") ? "true" : "false" %>">
+            <input name="enabled" type="hidden" id="autoplay" value="<%= session.getAttribute(" autoplay") !=null &&
+                (Boolean)session.getAttribute("autoplay") ? "true" : "false" %>">
             <button id="autoplayToggle">Autoplay: OFF</button>
         </form>
     </header>
@@ -204,12 +208,182 @@
         <div class="questions">
             <%=request.getAttribute("questionsHtml")%>
         </div>
+        <textarea id="echoText" rows="5" cols="30"></textarea>
+        <div id="guestAnswersContainer"></div>
+
+        <div id="answerCounts" style="margin-top: 20px;">
+            <h3>Answer Counts:</h3>
+            <!-- Count data will be dynamically added here -->
+        </div>
         <div id="timer" style="font-size: 20px; text-align: center; margin-top: 20px; display:none;">Time left: 60
             seconds</div>
     </div>
     <form id="questionForm" method="post" style="display: hidden;"></form>
 </body>
-<script>
+<script type="text/javascript">
+let socket = new WebSocket("ws://localhost:8081/project1/questions");
+
+// Event handlers
+socket.onopen = function (event) {
+    console.log("WebSocket is open now.");
+};
+
+socket.onmessage = function (event) {
+    console.log("Received message: " + event.data);
+};
+
+socket.onclose = function (event) {
+    console.log("WebSocket is closed now.");
+};
+
+socket.onerror = function (error) {
+    console.log("WebSocket error: " + error);
+};
+
+// Sending a message
+function sendMessage() {
+    let message = document.getElementById("messageInput").value;
+    socket.send(message);
+}
+
+
+
+//     let answerCounts = {};
+//     let webSocket = new WebSocket("ws://localhost:8081/examples/websocket/chat");
+//     let echoText = document.getElementById("echoText");
+//     echoText.value = "";
+//     let message1 = document.querySelectorAll(".answersOption");
+//     let guestAnswersContainer = document.getElementById("guestAnswersContainer");
+
+//     let currentQuestion = document.querySelector(".questionText").innerHTML;
+//     let currentAnswers = [];
+//     document.querySelectorAll('[class*="PlayAnswer"]').forEach((answer) => {
+//        currentAnswers.push(answer.textContent);
+//     });
+//     let data ={
+//         question: currentQuestion,
+//         answers: currentAnswers
+//     }
+
+
+//     webSocket.onopen = function (message) {
+//         wsOpen(message);
+//     }
+//     webSocket.onmessage = function (message) {
+//         let clientData = JSON.parse(message);
+//         if(clientData.type === "answer") {
+//             let totals = clientData.totals;
+//             webSocket.clients.forEach(client => {
+//                 client.send(JSON.stringify({type: "totals", totals: totals}));
+//             });
+//         }
+//     }
+
+//     webSocket.onclose = function (message) {
+//         wsClose(message);
+//     }
+
+//     webSocket.onerror = function (message) {
+//         wsError(message);
+//     }
+
+//     function wsOpen(message) {
+//         echoText.value += "Connected ... \n";
+//     }
+//     function wsSendMessage(message) {
+//         webSocket.send(JSON.stringify({type: "question", question: data.question, answers: data.answers}));
+//         // updateAnswerCount(message);
+//         // webSocket.send( );
+
+//         // // Update counts for selected answers
+//         // displayAnswerCounts();
+//     }
+//     function wsCloseConnection() {
+//         webSocket.close();
+//     }
+//     function wsGetMessage(message) {
+//         echoText.value += "Message received from the server: " + message.data + "\n";
+//         let guestAnswer = document.createElement("div");
+//         guestAnswer.textContent = message.data;
+//         guestAnswersContainer.appendChild(guestAnswer);
+
+//     }
+// webSocket.onmessage = (event) => {
+//         const message = JSON.parse(event.data);
+//         if (message.type === "totals") {
+//             answerCounts = message.totals;
+//             displayAnswerCounts();
+//         }
+//         if (message.type === "question") {
+//             const question = message.question;
+//             const answers = message.answers;
+//             displayQuestion(question, answers);
+//         }
+
+//     };
+
+//     function displayQuestion(question, answers) {
+//         const questionElement = document.createElement("div");
+//         questionElement.textContent = question;
+//         guestAnswersContainer.appendChild(questionElement);
+
+//         answers.forEach((answer) => {
+//             const answerElement = document.createElement("div");
+//             answerElement.textContent = answer;
+//             guestAnswersContainer.appendChild(answerElement);
+//         });
+//     }
+
+//     function displayAnswerCounts() {
+//         const answerCountsElement = document.getElementById("answerCounts");
+//         answerCountsElement.innerHTML = "<h3>Answer Counts:??</h3>";
+
+//         for (const answer in answerCounts) {
+//             const answerCountElement = document.createElement("div");
+//             answerCountElement.textContent = `${answer}: ${answerCounts[answer]}`;
+//             answerCountsElement.appendChild(answerCountElement);
+//         }
+//     }
+
+
+//     function wsClose(message) {
+//         echoText.value += "Disconnect ... \n";
+//     }
+
+//     function wsError(message) {
+//         echoText.value += "Error ... \n";
+//     }
+
+//     window.addEventListener("beforeunload", () => {
+//         wsCloseConnection();
+//     });
+
+//     document.querySelectorAll(".wrongPlayAnswer").forEach((answer) => {
+//         answer.addEventListener("click", () => {
+//             wsSendMessage(answer.textContent);
+//         });
+
+//     });
+//     document.querySelectorAll(".correctPlayAnswer").forEach((answer) => {
+//         answer.addEventListener("click", () => {
+//             wsSendMessage(answer.textContent);
+//         });
+
+//     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     let correctAnswer = document.getElementById('questionForm');
     //---------------WRONG BUTTON MECHANICS---------------\\
     let wrongButtons = document.getElementsByClassName("wrongPlayAnswer");
@@ -245,39 +419,39 @@
     const autoplayToggleButton = document.getElementById('autoplayToggle');
     const correctButton = document.querySelector('.answer[id="rightPlayAnswer"]');
 
-        function updateAutoplayButton() {
-            autoplayToggleButton.textContent = autoplayEnabled ? "Autoplay: ON" : "Autoplay: OFF";
-        }
-        // Set up event listener for the autoplay toggle button
-        // NO MORE CONSOLE.LOGS
-        autoplayToggleButton.addEventListener('click', () => {
-            event.preventDefault();
-            autoplayEnabled = !autoplayEnabled;
+    function updateAutoplayButton() {
+        autoplayToggleButton.textContent = autoplayEnabled ? "Autoplay: ON" : "Autoplay: OFF";
+    }
+    // Set up event listener for the autoplay toggle button
+    // NO MORE CONSOLE.LOGS
+    autoplayToggleButton.addEventListener('click', () => {
+        event.preventDefault();
+        autoplayEnabled = !autoplayEnabled;
 
-            if (autoplayEnabled) {
-                //autoplayToggleButton.textContent = "Autoplay: ON";
-                timerDisplay.style.display = 'block';
-                startAutoplay(correctButton);
-                fetch('updateAutoplay?enabled=true');
-            } else {
-                //autoplayToggleButton.textContent = "Autoplay: OFF";
-                clearTimeout(autoplayTimer);
-                clearInterval(timerInterval);
-                timerDisplay.style.display = 'none';
-                timerDisplay.textContent = "Time left: 60 seconds";
-                fetch('updateAutoplay?enabled=false');
-            }
-
-            updateAutoplayButton();
-        });
-
-        // Start autoplay if enabled on page load
         if (autoplayEnabled) {
-            updateAutoplayButton();
+            //autoplayToggleButton.textContent = "Autoplay: ON";
             timerDisplay.style.display = 'block';
             startAutoplay(correctButton);
+            fetch('updateAutoplay?enabled=true');
+        } else {
+            //autoplayToggleButton.textContent = "Autoplay: OFF";
+            clearTimeout(autoplayTimer);
+            clearInterval(timerInterval);
+            timerDisplay.style.display = 'none';
+            timerDisplay.textContent = "Time left: 60 seconds";
+            fetch('updateAutoplay?enabled=false');
         }
-    
+
+        updateAutoplayButton();
+    });
+
+    // Start autoplay if enabled on page load
+    if (autoplayEnabled) {
+        updateAutoplayButton();
+        timerDisplay.style.display = 'block';
+        startAutoplay(correctButton);
+    }
+
 
     function startAutoplay(correctButton) {
         let timeLeft = countdownTime;
@@ -316,7 +490,7 @@
         timerDisplay.textContent = "Time left: " + timeLeft + " seconds";
     }
 
-    
+
     //---------------VIDEO PLAYING---------------\\
 
     // Load the IFrame Player API code asynchronously
