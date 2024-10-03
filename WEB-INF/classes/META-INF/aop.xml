@@ -1,0 +1,12 @@
+<!-- aop.xml -->
+
+<aspectj>
+    <aspects>
+        <aspect name="aspects.LoggingAspect"/>
+    </aspects>
+
+    <weaver options="-verbose -showWeaveInfo -debug -Xlint:ignore">
+        <include within="aspects.LoggingAspect"/> <!-- Include the logging aspect -->
+        <include within="*Servlet"/> <!-- Apply to all servlets -->
+    </weaver>
+</aspectj>

@@ -10,6 +10,7 @@ public class LoginServlet extends HttpServlet {
 
     //Sends the html file to the res, displaying the page
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        
         RequestDispatcher view = req.getRequestDispatcher("/views/login.html");
         view.forward(req, res);
     }
