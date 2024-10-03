@@ -15,9 +15,12 @@ public class EditServlet extends HttpServlet {
         String role = getUserRoleFromDatabase(username);
 
         if (!"a".equals(role)) {
-            res.sendRedirect("login");
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
+            RequestDispatcher view = req.getRequestDispatcher("/views/401.jsp");
+            view.forward(req, res);
             return;
         }
+        
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
