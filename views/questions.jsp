@@ -256,7 +256,7 @@
             setTimeout(() => {
                 wrongButtons[i].classList.remove('wrong');
                 wrongButtons[i].style.boxShadow = "";
-            }, 1500);
+            }, 700);
         });
     }
 
