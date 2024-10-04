@@ -2,7 +2,8 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class QuizServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -20,7 +21,9 @@ public class QuizServlet extends HttpServlet {
         Connection con = null;
         Statement stmnt = null;
         ResultSet rs = null;
-        StringBuilder quizzesHtml = new StringBuilder();
+        //StringBuilder quizzesHtml = new StringBuilder();
+
+        List<Map<String, String>> quizzes = new ArrayList<>();
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
@@ -29,10 +32,17 @@ public class QuizServlet extends HttpServlet {
             rs = stmnt.executeQuery("SELECT name, description FROM quizzes WHERE category_name = \"" + category + "\";");
 
             while (rs.next()) {
-                String quizName = rs.getString("name");
-                String quizDescription = rs.getString("description");
+                //Changes here
+                Map<String, String> quizData = new HashMap<>();
+                quizData.put("name", rs.getString("name"));
+                quizData.put("description", rs.getString("description"));
+                quizzes.add(quizData);
 
-                quizzesHtml.append("<div class=\"quiz\">\n")
+                //String quizName = rs.getString("name");
+                //String quizDescription = rs.getString("description");
+
+                
+                /*quizzesHtml.append("<div class=\"quiz\">\n")
                         .append("<form method=\"post\">\n")
                         .append("    <input type=\"hidden\" name=\"quizName\" value=\"").append(quizName).append("\" />\n")
                         .append("    <input type=\"submit\" value=\"").append(quizName).append("\" />\n")
@@ -49,9 +59,9 @@ public class QuizServlet extends HttpServlet {
                             .append(quizName).append("'\">Delete Quiz</button>\n")
                             .append("    <button type=\"button\" onclick=\"window.location.href='edit?quizName=")
                             .append(quizName).append("'\">Edit Quiz</button>\n</div>");
-                }
+                }*/
 
-                quizzesHtml.append("</div>\n");
+                //quizzesHtml.append("</div>\n");
             }
 
         } catch (Exception e) {
@@ -68,10 +78,46 @@ public class QuizServlet extends HttpServlet {
             } catch (SQLException e) { e.printStackTrace(); }
         }
 
-        req.setAttribute("quizzesHtml", quizzesHtml.toString());
+        //Functional Programming
+        //Use Stream API to generate HTML
+        String quizzesHtml = quizzes.stream()
+            .map(quiz -> {
+                String quizName = quiz.get("name");
+                String quizDescription = quiz.get("description");
+                
+                StringBuilder html = new StringBuilder();
+                html.append("<div class=\"quiz\">\n")
+                    .append("<form method=\"post\">\n")
+                    .append("    <input type=\"hidden\" name=\"quizName\" value=\"").append(quizName).append("\" />\n")
+                    .append("    <input type=\"submit\" value=\"").append(quizName).append("\" />\n")
+                    .append("<p class=\"quiz-description\">").append(quizDescription).append("</p>\n")
+                    .append("</form>\n");
+
+                // Show "Add Question" and "Delete Quiz" buttons only for admin users
+                if ("a".equals(role)) {
+                    html.append("<div class=\"adminBtnWrap\">")
+                        .append("    <button type=\"button\" onclick=\"window.location.href='deleteQuiz?quizName=")
+                        .append(quizName).append("'\">Delete Quiz</button>\n")
+                        .append("    <button type=\"button\" onclick=\"window.location.href='edit?quizName=")
+                        .append(quizName).append("'\">Edit Quiz</button>\n</div>");
+                }
+
+                html.append("</div>\n");
+                return html.toString();
+            })
+            .collect(Collectors.joining());
+
+        req.setAttribute("quizzesHtml", quizzesHtml);
         // Forward the request to the quiz.jsp
         RequestDispatcher view = req.getRequestDispatcher("/views/quiz.jsp");
         view.forward(req, res);
+
+
+
+        /*req.setAttribute("quizzesHtml", quizzesHtml.toString());
+        // Forward the request to the quiz.jsp
+        RequestDispatcher view = req.getRequestDispatcher("/views/quiz.jsp");
+        view.forward(req, res);*/
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
