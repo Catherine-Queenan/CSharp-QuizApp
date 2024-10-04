@@ -40,17 +40,14 @@
     </style>
 </head>
 <body>
-    <header>
-        <form action="home">
-            <button class="homeBtn" type="Submit">Home</button>
-        </form>
-        <form action="logout">
-            <button class="logoutBtn" type="Submit">Log Out</button>
-        </form>
-    </header>
     <div class="wrap">
         <i class="fa-solid fa-triangle-exclamation"></i>
-        <div class="errorMsg cherry-cream-soda">You are not authorized to access this page !</div>
+        <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
+            <% if (errorMessage != null) { %>
+                <div class="errorMsg cherry-cream-soda">
+                    <%= errorMessage %>
+                </div>
+            <% } %>
         <button class="redirectHome" onclick="window.location.href='home'">Go Back to Home</button>
     </div>
 </body>
