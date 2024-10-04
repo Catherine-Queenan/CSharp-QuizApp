@@ -71,8 +71,11 @@ public class LoginServlet extends HttpServlet {
             //Redirect to home page
             res.sendRedirect("home");
         } else {
-            PrintWriter out = res.getWriter(); //This is temporary just to test stuff
-            out.append("Failed login"); //temporary way to notify of a failed login
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
+            req.setAttribute("errorMessage", "Invalid Login Details.");
+            RequestDispatcher view = req.getRequestDispatcher("/views/401.jsp");
+            view.forward(req, res);
+            return;
         }
 
         

@@ -28,7 +28,15 @@
     </style>
 </head>
 <body>
-    <div class="unauthorized-message">You are not authorized to access this page.</div>
-    <button class="back-home-button" onclick="window.location.href='main'">Go Back to Home</button>
+    <div class="wrap">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
+            <% if (errorMessage != null) { %>
+                <div class="errorMsg cherry-cream-soda">
+                    <%= errorMessage %>
+                </div>
+            <% } %>
+        <button class="redirectHome" onclick="window.location.href='home'">Go Back to Home</button>
+    </div>
 </body>
 </html>
