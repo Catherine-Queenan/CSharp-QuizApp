@@ -2,7 +2,7 @@
     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
-<web-app>
+    <web-app >
  <servlet>
     <servlet-name>login</servlet-name>
     <servlet-class>LoginServlet</servlet-class>
@@ -97,15 +97,6 @@
 </servlet-mapping>
 
 <servlet>
-  <servlet-name>QuizEndServlet</servlet-name>
-  <servlet-class>QuizEndServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-  <servlet-name>QuizEndServlet</servlet-name>
-  <url-pattern>/end</url-pattern>
-</servlet-mapping>
-
-<servlet>
   <servlet-name>MainServlet</servlet-name>
   <servlet-class>MainServlet</servlet-class>
 </servlet>
@@ -122,6 +113,7 @@
   <servlet-name>UpdateAutoplay</servlet-name>
   <url-pattern>/updateAutoplay</url-pattern>
 </servlet-mapping>
+
 
 <servlet>
     <servlet-name>CreateQuizServlet</servlet-name>
@@ -140,4 +132,5 @@
     <servlet-name>DeleteQuizServlet</servlet-name>
     <url-pattern>/deleteQuiz</url-pattern>
     </servlet-mapping>
+
 </web-app>

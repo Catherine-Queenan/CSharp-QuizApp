@@ -208,168 +208,117 @@
         <div class="questions">
             <%=request.getAttribute("questionsHtml")%>
         </div>
-        <textarea id="echoText" rows="5" cols="30"></textarea>
-        <div id="guestAnswersContainer"></div>
-
-        <div id="answerCounts" style="margin-top: 20px;">
-            <h3>Answer Counts:</h3>
-            <!-- Count data will be dynamically added here -->
-        </div>
+        <div id="answerCounts"></div>
+        <textarea name="echoText" id="echoText"></textarea>
         <div id="timer" style="font-size: 20px; text-align: center; margin-top: 20px; display:none;">Time left: 60
             seconds</div>
     </div>
     <form id="questionForm" method="post" style="display: hidden;"></form>
 </body>
 <script type="text/javascript">
-let socket = new WebSocket("ws://localhost:8081/project1/questions");
-
-// Event handlers
-socket.onopen = function (event) {
-    console.log("WebSocket is open now.");
-};
-
-socket.onmessage = function (event) {
-    console.log("Received message: " + event.data);
-};
-
-socket.onclose = function (event) {
-    console.log("WebSocket is closed now.");
-};
-
-socket.onerror = function (error) {
-    console.log("WebSocket error: " + error);
-};
-
-// Sending a message
-function sendMessage() {
-    let message = document.getElementById("messageInput").value;
-    socket.send(message);
-}
+    let currentQuestion = document.querySelector(".questionText").innerHTML;
+    let currentAnswers = [];
+    let webSocket = new WebSocket('ws://localhost:8081/project1/questionsws');
 
 
 
-//     let answerCounts = {};
-//     let webSocket = new WebSocket("ws://localhost:8081/examples/websocket/chat");
-//     let echoText = document.getElementById("echoText");
-//     echoText.value = "";
-//     let message1 = document.querySelectorAll(".answersOption");
-//     let guestAnswersContainer = document.getElementById("guestAnswersContainer");
+    let answerCounts = {};
+    let echoText = document.getElementById("echoText");
+    echoText.value = "";
+    // let message1 = document.querySelectorAll(".answersOption");
+    // let guestAnswersContainer = document.getElementById("guestAnswersContainer");
 
-//     let currentQuestion = document.querySelector(".questionText").innerHTML;
-//     let currentAnswers = [];
-//     document.querySelectorAll('[class*="PlayAnswer"]').forEach((answer) => {
-//        currentAnswers.push(answer.textContent);
-//     });
-//     let data ={
-//         question: currentQuestion,
-//         answers: currentAnswers
-//     }
+    document.querySelectorAll('[class*="PlayAnswer"]').forEach((answer) => {
+        currentAnswers.push(answer.textContent);
+    });
+    let data ={
+        question: currentQuestion,
+        answers: currentAnswers
+    }
 
-
-//     webSocket.onopen = function (message) {
-//         wsOpen(message);
-//     }
-//     webSocket.onmessage = function (message) {
-//         let clientData = JSON.parse(message);
-//         if(clientData.type === "answer") {
-//             let totals = clientData.totals;
-//             webSocket.clients.forEach(client => {
-//                 client.send(JSON.stringify({type: "totals", totals: totals}));
-//             });
-//         }
-//     }
-
-//     webSocket.onclose = function (message) {
-//         wsClose(message);
-//     }
-
-//     webSocket.onerror = function (message) {
-//         wsError(message);
-//     }
-
-//     function wsOpen(message) {
-//         echoText.value += "Connected ... \n";
-//     }
-//     function wsSendMessage(message) {
-//         webSocket.send(JSON.stringify({type: "question", question: data.question, answers: data.answers}));
-//         // updateAnswerCount(message);
-//         // webSocket.send( );
-
-//         // // Update counts for selected answers
-//         // displayAnswerCounts();
-//     }
-//     function wsCloseConnection() {
-//         webSocket.close();
-//     }
-//     function wsGetMessage(message) {
-//         echoText.value += "Message received from the server: " + message.data + "\n";
-//         let guestAnswer = document.createElement("div");
-//         guestAnswer.textContent = message.data;
-//         guestAnswersContainer.appendChild(guestAnswer);
-
-//     }
-// webSocket.onmessage = (event) => {
-//         const message = JSON.parse(event.data);
-//         if (message.type === "totals") {
-//             answerCounts = message.totals;
-//             displayAnswerCounts();
-//         }
-//         if (message.type === "question") {
-//             const question = message.question;
-//             const answers = message.answers;
-//             displayQuestion(question, answers);
-//         }
-
-//     };
-
-//     function displayQuestion(question, answers) {
-//         const questionElement = document.createElement("div");
-//         questionElement.textContent = question;
-//         guestAnswersContainer.appendChild(questionElement);
-
-//         answers.forEach((answer) => {
-//             const answerElement = document.createElement("div");
-//             answerElement.textContent = answer;
-//             guestAnswersContainer.appendChild(answerElement);
-//         });
-//     }
-
-//     function displayAnswerCounts() {
-//         const answerCountsElement = document.getElementById("answerCounts");
-//         answerCountsElement.innerHTML = "<h3>Answer Counts:??</h3>";
-
-//         for (const answer in answerCounts) {
-//             const answerCountElement = document.createElement("div");
-//             answerCountElement.textContent = `${answer}: ${answerCounts[answer]}`;
-//             answerCountsElement.appendChild(answerCountElement);
-//         }
-//     }
+    // webSocket.wsSendMessage = function (message) {
+    //     let clientData = JSON.parse(message);
+    //     if(clientData.type === "answer") {
+    //         let totals = clientData.totals;
+    //         webSocket.clients.forEach(client => {
+    //             client.send(JSON.stringify({type: "totals", totals: totals}));
+    //         });
+    //     }
+    //     // console.log("Message sent to the serverrrr: " + message);
+    // }
 
 
-//     function wsClose(message) {
-//         echoText.value += "Disconnect ... \n";
-//     }
+        function wsSendMessage(message) {
+            console.log("Message sent to the sssserver: " + message);
+            webSocket.send(message);
+            webSocket.onmessage = function (message) {
+                wsGetMessage(message);
+            }
+            // updateAnswerCount(message);
+            displayAnswerCounts();
+        }
 
-//     function wsError(message) {
-//         echoText.value += "Error ... \n";
-//     }
+        function updateAnswerCount(answer) {
+            if (answerCounts[answer]) {
+                answerCounts[answer]++;
+            } else {
+                answerCounts[answer] = 1;
+            }
+        }
+        function wsGetMessage(message) {
+            console.log("Message received from the server: " + message.data);
+            showTotal(message.data);
+        }
 
-//     window.addEventListener("beforeunload", () => {
-//         wsCloseConnection();
-//     });
+        function showTotal(message) {
+            let totals = JSON.parse(message);
+            let totalElement = document.getElementById("answerCounts");
+            totalElement.innerHTML = "<h3>Answer Counts:</h3>";
 
-//     document.querySelectorAll(".wrongPlayAnswer").forEach((answer) => {
-//         answer.addEventListener("click", () => {
-//             wsSendMessage(answer.textContent);
-//         });
+            for (const answer in totals) {
+                const answerCountElement = document.createElement("div");
+                answerCountElement.textContent = `${answer}: ${totals[answer]}`;
+                totalElement.appendChild(answerCountElement);
+            }
+        }
+        
 
-//     });
-//     document.querySelectorAll(".correctPlayAnswer").forEach((answer) => {
-//         answer.addEventListener("click", () => {
-//             wsSendMessage(answer.textContent);
-//         });
+        function displayAnswerCounts() {
+            const answerCountsElement = document.getElementById("answerCounts");
+            answerCountsElement.innerHTML = "<h3>Answer Counts:??</h3>";
 
-//     });
+            for (const answer in answerCounts) {
+                const answerCountElement = document.createElement("div");
+                answerCountElement.textContent = `${answer}: ${answerCounts[answer]}`;
+                answerCountsElement.appendChild(answerCountElement);
+            }
+        }
+
+
+        function wsClose(message) {
+            echoText.value += "Disconnect ... \n";
+        }
+
+        function wsError(message) {
+            echoText.value += "Error ... \n";
+        }
+
+        // window.addEventListener("beforeunload", () => {
+        //     wsCloseConnection();
+        // });
+
+    document.querySelectorAll(".wrongPlayAnswer").forEach((answer) => {
+        answer.addEventListener("click", () => {
+            wsSendMessage(answer.textContent);
+        });
+
+    });
+    document.querySelectorAll(".correctPlayAnswer").forEach((answer) => {
+        answer.addEventListener("click", () => {
+            wsSendMessage(answer.textContent);
+        });
+
+    });
 
 
 
