@@ -92,7 +92,7 @@
         <% if (request.getAttribute("error") != null) { %>
             <p><%= request.getAttribute("error") %></p>
         <% } %>
-        <form class="newQuizForm" method="post" action="createQuiz">
+        <form class="newQuizForm" method="post" action="createQuiz" enctype="multipart/form-data">
             <label for="quizName">Quiz Name:</label>
             <input type="text" id="quizName" name="quizName" required />
 
@@ -107,10 +107,22 @@
             <div id="newCatDiv" style="display:none;">
                 <label for="newCategory">Other Category:</label>
                 <input id="newCategory" name="newCategory" type="text" />
+                <input type="checkbox" name="categoryImage" id="categoryImage">
+                <label for="categoryImage">Add Category Image</label>
+                <div id="imageUploadCategory" style="display: none;">
+                    <label for="categoryMediaFile">File:</label>
+                    <input type="file" id="categoryMediaFile" name="categoryMedia" accept="image/*" />
+                </div>
             </div>
 
             <label for="description">Description:</label>
             <textarea id="description" name="description"></textarea>
+            <input type="checkbox" name="quizImage" id="quizImage">
+                <label for="quizImage">Add Quiz Image</label>
+                <div id="imageUploadQuiz" style="display: none;">
+                    <label for="quizMediaFile">File:</label>
+                    <input type="file" id="quizMediaFile" name="quizMedia" accept="image/*" />
+                </div>
             <button class="createQuizBtn" type="submit">Create Quiz</button>
 
         </form>
@@ -121,6 +133,7 @@
             <!-- Button to add questions to the newly created quiz -->
             <form method="post" action="addQuestion">
                 <input type="hidden" name="quizName" value="<%= request.getAttribute("quizName") %>" />
+                // ADD IMAGES
                 <button type="submit">Add Questions to "<%= request.getAttribute("quizName") %>"</button>
             </form>
         <% } %>
@@ -136,6 +149,26 @@
         `;
         document.getElementById('answersContainer').appendChild(answerDiv);
     }
+
+    let categoryImage = document.getElementById("categoryImage");
+    let categoryMediaFile = document.getElementById("imageUploadCategory");
+    categoryImage.addEventListener('change', () => {
+        if(categoryImage.checked){
+            categoryMediaFile.style.display = "block";
+        } else {
+            categoryMediaFile.style.display = "none";
+        }
+    });
+
+    let quizImage = document.getElementById("quizImage");
+    let quizMediaFile = document.getElementById("imageUploadQuiz");
+    quizImage.addEventListener('change', () => {
+        if(quizImage.checked){
+            quizMediaFile.style.display = "block";
+        } else {
+            quizMediaFile.style.display = "none";
+        }
+    });
 
     let newCatInput = document.getElementById("newCategory");
     let newCatDiv = document.getElementById("newCatDiv");
