@@ -2,7 +2,7 @@
     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
-    <web-app >
+<web-app>
  <servlet>
     <servlet-name>login</servlet-name>
     <servlet-class>LoginServlet</servlet-class>
@@ -97,6 +97,15 @@
 </servlet-mapping>
 
 <servlet>
+  <servlet-name>QuizEndServlet</servlet-name>
+  <servlet-class>QuizEndServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>QuizEndServlet</servlet-name>
+  <url-pattern>/end</url-pattern>
+</servlet-mapping>
+
+<servlet>
   <servlet-name>MainServlet</servlet-name>
   <servlet-class>MainServlet</servlet-class>
 </servlet>
@@ -114,6 +123,22 @@
   <url-pattern>/updateAutoplay</url-pattern>
 </servlet-mapping>
 
+<servlet>
+  <servlet-name>WebSocketServlet</servlet-name>
+  <servlet-class>WebSocketEndpoint</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>WebSocketServlet</servlet-name>
+  <url-pattern>/websocket</url-pattern>
+</servlet-mapping>
+<servlet>
+  <servlet-name>ModerateModeServlet</servlet-name>
+  <servlet-class>ModerateModeServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>ModerateModeServlet</servlet-name>
+  <url-pattern>/moderateMode</url-pattern>
+</servlet-mapping>
 
 <servlet>
     <servlet-name>CreateQuizServlet</servlet-name>

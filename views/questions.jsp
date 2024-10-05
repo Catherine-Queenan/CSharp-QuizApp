@@ -7,14 +7,13 @@
     <title>Questions</title>
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
+
         .wrap {
             padding: 60px 0;
             /* justify-content: unset; */
             overflow-y: scroll;
-            -ms-overflow-style: none;
-            /* Internet Explorer 10+ */
-            scrollbar-width: none;
-            /* Firefox */
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
             -webkit-scrollbar: none;
         }
 
@@ -85,10 +84,8 @@
             position: relative;
             z-index: 10;
             width: 100% !important;
-            height: 100px;
-            /* Adjust this value as needed */
-            transition: all 0.5s ease;
-            /* Smooth transition for the animation */
+            height: 100px; /* Adjust this value as needed */
+            transition: all 0.5s ease; /* Smooth transition for the animation */
         }
 
         #questionForm {
@@ -161,7 +158,6 @@
             padding: 30px;
             font-size: 25px;
         }
-
         .errorHome {
             margin: 0 auto;
             padding: 20px 50px;
@@ -169,7 +165,7 @@
             border-radius: 15px;
             background-color: #99c252;
         }
-
+        
         .errorHome:hover {
             transform: scale(1.05);
             box-shadow: 5px 5px 5px rgba(1, 1, 1, 0.3);
@@ -181,6 +177,7 @@
             justify-content: center;
             align-items: center;
         }
+
     </style>
 </head>
 
@@ -195,8 +192,7 @@
             <button class="restartBtn" type="Submit">Restart</button>
         </form>
         <form method="get" action="updateAutoplay">
-            <input name="enabled" type="hidden" id="autoplay" value="<%= session.getAttribute(" autoplay") !=null &&
-                (Boolean)session.getAttribute("autoplay") ? "true" : "false" %>">
+            <input name="enabled" type="hidden" id="autoplay" value="<%= session.getAttribute("autoplay") != null && (Boolean)session.getAttribute("autoplay") ? "true" : "false" %>">
             <button id="autoplayToggle">Autoplay: OFF</button>
         </form>
     </header>
@@ -208,131 +204,12 @@
         <div class="questions">
             <%=request.getAttribute("questionsHtml")%>
         </div>
-        <div id="answerCounts"></div>
-        <textarea name="echoText" id="echoText"></textarea>
         <div id="timer" style="font-size: 20px; text-align: center; margin-top: 20px; display:none;">Time left: 60
             seconds</div>
     </div>
     <form id="questionForm" method="post" style="display: hidden;"></form>
 </body>
-<script type="text/javascript">
-    let currentQuestion = document.querySelector(".questionText").innerHTML;
-    let currentAnswers = [];
-    let webSocket = new WebSocket('ws://localhost:8081/project1/questionsws');
-
-
-
-    let answerCounts = {};
-    let echoText = document.getElementById("echoText");
-    echoText.value = "";
-    // let message1 = document.querySelectorAll(".answersOption");
-    // let guestAnswersContainer = document.getElementById("guestAnswersContainer");
-
-    document.querySelectorAll('[class*="PlayAnswer"]').forEach((answer) => {
-        currentAnswers.push(answer.textContent);
-    });
-    let data ={
-        question: currentQuestion,
-        answers: currentAnswers
-    }
-
-    // webSocket.wsSendMessage = function (message) {
-    //     let clientData = JSON.parse(message);
-    //     if(clientData.type === "answer") {
-    //         let totals = clientData.totals;
-    //         webSocket.clients.forEach(client => {
-    //             client.send(JSON.stringify({type: "totals", totals: totals}));
-    //         });
-    //     }
-    //     // console.log("Message sent to the serverrrr: " + message);
-    // }
-
-
-        function wsSendMessage(message) {
-            console.log("Message sent to the sssserver: " + message);
-            webSocket.send(message);
-            webSocket.onmessage = function (message) {
-                wsGetMessage(message);
-            }
-            // updateAnswerCount(message);
-            displayAnswerCounts();
-        }
-
-        function updateAnswerCount(answer) {
-            if (answerCounts[answer]) {
-                answerCounts[answer]++;
-            } else {
-                answerCounts[answer] = 1;
-            }
-        }
-        function wsGetMessage(message) {
-            console.log("Message received from the server: " + message.data);
-            showTotal(message.data);
-        }
-
-        function showTotal(message) {
-            let totals = JSON.parse(message);
-            let totalElement = document.getElementById("answerCounts");
-            totalElement.innerHTML = "<h3>Answer Counts:</h3>";
-
-            for (const answer in totals) {
-                const answerCountElement = document.createElement("div");
-                answerCountElement.textContent = `${answer}: ${totals[answer]}`;
-                totalElement.appendChild(answerCountElement);
-            }
-        }
-        
-
-        function displayAnswerCounts() {
-            const answerCountsElement = document.getElementById("answerCounts");
-            answerCountsElement.innerHTML = "<h3>Answer Counts:??</h3>";
-
-            for (const answer in answerCounts) {
-                const answerCountElement = document.createElement("div");
-                answerCountElement.textContent = `${answer}: ${answerCounts[answer]}`;
-                answerCountsElement.appendChild(answerCountElement);
-            }
-        }
-
-
-        function wsClose(message) {
-            echoText.value += "Disconnect ... \n";
-        }
-
-        function wsError(message) {
-            echoText.value += "Error ... \n";
-        }
-
-        // window.addEventListener("beforeunload", () => {
-        //     wsCloseConnection();
-        // });
-
-    document.querySelectorAll(".wrongPlayAnswer").forEach((answer) => {
-        answer.addEventListener("click", () => {
-            wsSendMessage(answer.textContent);
-        });
-
-    });
-    document.querySelectorAll(".correctPlayAnswer").forEach((answer) => {
-        answer.addEventListener("click", () => {
-            wsSendMessage(answer.textContent);
-        });
-
-    });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<script>
     let correctAnswer = document.getElementById('questionForm');
     //---------------WRONG BUTTON MECHANICS---------------\\
     let wrongButtons = document.getElementsByClassName("wrongPlayAnswer");
@@ -368,39 +245,39 @@
     const autoplayToggleButton = document.getElementById('autoplayToggle');
     const correctButton = document.querySelector('.answer[id="rightPlayAnswer"]');
 
-    function updateAutoplayButton() {
-        autoplayToggleButton.textContent = autoplayEnabled ? "Autoplay: ON" : "Autoplay: OFF";
-    }
-    // Set up event listener for the autoplay toggle button
-    // NO MORE CONSOLE.LOGS
-    autoplayToggleButton.addEventListener('click', () => {
-        event.preventDefault();
-        autoplayEnabled = !autoplayEnabled;
+        function updateAutoplayButton() {
+            autoplayToggleButton.textContent = autoplayEnabled ? "Autoplay: ON" : "Autoplay: OFF";
+        }
+        // Set up event listener for the autoplay toggle button
+        // NO MORE CONSOLE.LOGS
+        autoplayToggleButton.addEventListener('click', () => {
+            event.preventDefault();
+            autoplayEnabled = !autoplayEnabled;
 
+            if (autoplayEnabled) {
+                //autoplayToggleButton.textContent = "Autoplay: ON";
+                timerDisplay.style.display = 'block';
+                startAutoplay(correctButton);
+                fetch('updateAutoplay?enabled=true');
+            } else {
+                //autoplayToggleButton.textContent = "Autoplay: OFF";
+                clearTimeout(autoplayTimer);
+                clearInterval(timerInterval);
+                timerDisplay.style.display = 'none';
+                timerDisplay.textContent = "Time left: 60 seconds";
+                fetch('updateAutoplay?enabled=false');
+            }
+
+            updateAutoplayButton();
+        });
+
+        // Start autoplay if enabled on page load
         if (autoplayEnabled) {
-            //autoplayToggleButton.textContent = "Autoplay: ON";
+            updateAutoplayButton();
             timerDisplay.style.display = 'block';
             startAutoplay(correctButton);
-            fetch('updateAutoplay?enabled=true');
-        } else {
-            //autoplayToggleButton.textContent = "Autoplay: OFF";
-            clearTimeout(autoplayTimer);
-            clearInterval(timerInterval);
-            timerDisplay.style.display = 'none';
-            timerDisplay.textContent = "Time left: 60 seconds";
-            fetch('updateAutoplay?enabled=false');
         }
-
-        updateAutoplayButton();
-    });
-
-    // Start autoplay if enabled on page load
-    if (autoplayEnabled) {
-        updateAutoplayButton();
-        timerDisplay.style.display = 'block';
-        startAutoplay(correctButton);
-    }
-
+    
 
     function startAutoplay(correctButton) {
         let timeLeft = countdownTime;
@@ -439,7 +316,7 @@
         timerDisplay.textContent = "Time left: " + timeLeft + " seconds";
     }
 
-
+    
     //---------------VIDEO PLAYING---------------\\
 
     // Load the IFrame Player API code asynchronously

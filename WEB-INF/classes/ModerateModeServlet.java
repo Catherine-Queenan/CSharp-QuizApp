@@ -4,8 +4,10 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 import javax.print.attribute.standard.RequestingUserName;
+import org.json.JSONArray;
 
-public class QuestionsServlet extends HttpServlet {
+
+public class ModerateModeServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         //Check if user is logged in, if not send them to login
         HttpSession session = req.getSession(false);
@@ -16,7 +18,7 @@ public class QuestionsServlet extends HttpServlet {
         }
 
         //Check if a quiz has been selected
-        String quizName = session.getAttribute("quiz").toString();
+        String quizName = req.getParameter("quizName");
         if (quizName == null || quizName.trim().isEmpty()) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing quiz name");
             return;
@@ -25,44 +27,14 @@ public class QuestionsServlet extends HttpServlet {
         //
         Connection con = null;
         PreparedStatement stmntQuestion = null;
-        PreparedStatement stmnmedia = null;
-        PreparedStatement stmnQuestionmedia = null;
-        PreparedStatement stmntAnswer = null;
         ResultSet rsQuestion = null;
-        ResultSet rsAnswer = null;
         StringBuilder questionsHtml = new StringBuilder();
-        StringBuilder mediaHtml = new StringBuilder();  // For holding the media HTML
-        Integer currQuestion = (Integer) session.getAttribute("currQuestion");
-        ArrayList<InputStream> questions = (ArrayList<InputStream>) session.getAttribute("questions");
        
         String username = (String) session.getAttribute("USER_ID");
         String role = getUserRoleFromDatabase(username);
         req.setAttribute("role", role);
         
-        //Autoplay quiz
-        Boolean autoplayEnabled = (Boolean) session.getAttribute("autoplay");
-        if (autoplayEnabled == null) {
-            autoplayEnabled = false;
-        }
-
-        req.setAttribute("autoplay", autoplayEnabled);
-        //End of Autoplay functionality
-
-        if(questions.isEmpty()){
-            questionsHtml.append("<p class=\"errorMsg\">The quiz \"").append(quizName).append("\" is empty!</p>")
-                        .append("<form class=\"errorBtnWrap\" action=\"home\"><button class=\"homeBtn errorHome\" type=\"Submit\">Return Home</button></form>");
-            req.setAttribute("questionsHtml", questionsHtml);
-            req.setAttribute("qNumber", currQuestion);
-            req.setAttribute("quizSize", questions.size());
-
-            RequestDispatcher view = req.getRequestDispatcher("/views/questions.jsp");
-            view.forward(req, res);
-            return;
-        }
-
-        InputStream qID = questions.get(currQuestion);
-
-        // ArrayList<String> colors = new ArrayList<>("#A40E4C", "#D00000", "#FF4B3E", "#FFB20F");
+       
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
@@ -71,128 +43,49 @@ public class QuestionsServlet extends HttpServlet {
             con = DatabaseUtil.getConnection();
             
             // // Query to get questions
-            // String sqlQuestions = "SELECT id, question_text, question_type FROM questions WHERE quiz_name = ?";
-            stmntQuestion = con.prepareStatement("SELECT question_text, question_type FROM questions WHERE quiz_name = ? AND id = ?");
+            stmntQuestion = con.prepareStatement("SELECT questionText, answers,indexOfCorrect FROM QuestionsWithAnswers WHERE quizName = ?");
             stmntQuestion.setString(1, quizName);
-            stmntQuestion.setBinaryStream(2, qID);
             rsQuestion = stmntQuestion.executeQuery();
 
-            // Generate HTML for questions
+
+            // Generate HTML for each question
+            int questionNumber = 1;
             while (rsQuestion.next()) {
-                        
-            // stmnmedia = con.prepareStatement("SELECT  media_id  FROM question_media WHERE  question_id = ?");
-            // stmnmedia.setBinaryStream(1, qID);
-            // ResultSet rsmedia = stmnmedia.executeQuery();
+                String questionText = rsQuestion.getString("questionText");
+                String answers = rsQuestion.getString("answers");
+                JSONArray answersArray = new JSONArray(answers);
+                int indexOfCorrect = rsQuestion.getInt("indexOfCorrect");
 
-            // while(rsmedia.next()){
-            //     InputStream media_id = rsmedia.getBinaryStream("media_id");
-            //     req.setAttribute("media_id", media_id);
-            // }
+                questionsHtml.append("<div class='question'>")
+                        .append("<p class='questionTitle'>").append(questionText).append("</p>")
+                        .append("<div class='answers'>");
 
-            // stmnQuestionmedia = con.prepareStatement("SELECT media_file_path, media_type FROM media WHERE id = ?");
-            // stmnQuestionmedia.setBinaryStream(1, (InputStream)req.getAttribute("media_id"));
-            // ResultSet rsQuestionmedia = stmnQuestionmedia.executeQuery();
-
-            // while(rsQuestionmedia.next()){
-            //     String media_file_path = rsQuestionmedia.getString("media_file_path");
-            //     String media_type = rsQuestionmedia.getString("media_type");
-            //     req.setAttribute("media_file_path", media_file_path);
-            //     req.setAttribute("media_type", media_type);
-            //     // Check if it's a YouTube link
-            //     if (media_file_path.contains("youtube.com/watch")) {
-            //         // Convert YouTube URL to embed format
-            //         String youtubeEmbedUrl = media_file_path.replace("watch?v=", "embed/");
-            //         mediaHtml.append("<div class=\"media-item\">\n")
-            //                  .append("<iframe width=\"560\" height=\"315\" src=\"" + youtubeEmbedUrl + "\" frameborder=\"0\" allowfullscreen></iframe>\n")
-            //                  .append("</div>\n");
-            //     } else if ("image".equalsIgnoreCase(media_type)) {
-            //         // For image media types
-            //         mediaHtml.append("<div class=\"media-item\">\n")
-            //                  .append("<img src=\"" + media_file_path + "\" alt=\"Image\" width=\"300\" height=\"200\" />\n")
-            //                  .append("</div>\n");
-            //     } else if ("video".equalsIgnoreCase(media_type)) {
-            //         // For local video media types
-            //         mediaHtml.append("<div class=\"media-item\">\n")
-            //                  .append("<video width=\"300\" height=\"200\" controls>\n")
-            //                  .append("  <source src=\"" + media_file_path + "\" type=\"video/mp4\">\n")
-            //                  .append("  Your browser does not support the video tag.\n")
-            //                  .append("</video>\n")
-            //                  .append("</div>\n");
-            //     }
-            // }
-
-
-            // Set the media HTML as request attribute (after the loop has finished)
-            // req.setAttribute("mediaHtml", mediaHtml.toString());
-
-                String questionText = rsQuestion.getString("question_text");
-                String questionType = rsQuestion.getString("question_type");
-   
-                // // Display question
-                questionsHtml.append("<div class=\"question\"").append(">\n")
-                             .append("<p class=\"questionText\">").append(questionText).append("</p>\n");
-                             
-                if(!questionType.equals("TEXT")){
-                    String media = insertMedia(con, "question", qID, questionType);
-                    if(media != null){
-                        questionsHtml.append(media);
-                    }
-                }
-
-                // Query to get answers for this question
-                // String sqlAnswers = "SELECT answer_text, is_correct, answer_type FROM answers WHERE question_id = ?";
-                // psAnswers = con.prepareStatement(sqlAnswers);
-                // psAnswers.setBinaryStream(1, questionId);
-                // rsAnswers = psAnswers.executeQuery();
-                stmntAnswer = con.prepareStatement("SELECT id, answer_text, is_correct, answer_type FROM answers WHERE question_id = ? ORDER BY rand()");
-                stmntAnswer.setBinaryStream(1, qID);
-                rsAnswer = stmntAnswer.executeQuery();
-
-                questionsHtml.append("<div class=\"answersOption\">");
-                
-                int countAnswer = 1;
-
-                // Display answers
-                while (rsAnswer.next()) {
-                    InputStream answerId = rsAnswer.getBinaryStream("id");
-                    String answerText = rsAnswer.getString("answer_text");
-                    boolean isCorrect = rsAnswer.getBoolean("is_correct");
-                    String answerType = rsAnswer.getString("answer_type");
-                    String answerDisplay = answerType.equalsIgnoreCase("TEXT") ? answerText : insertMedia(con, "answer", answerId, answerType);
-
-                    answerDisplay = answerDisplay != null ? answerDisplay : answerText;
-                    if(isCorrect){
-                        questionsHtml.append("<button class=\"correctPlayAnswer answer").append(countAnswer).append("\"id=\"rightPlayAnswer\">").append(answerDisplay).append("</button>\n");
+                for (int i = 0; i < answersArray.length(); i++) {
+                    String answer = answersArray.getString(i);
+                    if (i == indexOfCorrect) {
+                        //append correct answer with class name containing 'questionNumber' and 'correct'
+                        questionsHtml.append("<p data-question="+questionNumber+" class='answer correct'>").append(answer).append("</p>");
                     } else {
-                        questionsHtml.append("<button class=\"wrongPlayAnswer answer").append(countAnswer).append("\">").append(answerDisplay).append("</button>\n");
+                        questionsHtml.append("<p data-question="+questionNumber+" class='answer'>").append(answer).append("</p>");
                     }
-
-                    countAnswer++;
                 }
-                questionsHtml.append("</div>");
-                
-                questionsHtml.append("</div>\n");
+                questionNumber++;
             }
 
-            // Set question, total number of questions, and current question as request attribute           
-            req.setAttribute("questionsHtml", questionsHtml);
-            req.setAttribute("qNumber", currQuestion + 1);
-            req.setAttribute("quizSize", questions.size());
+            req.setAttribute("questionsHtml", questionsHtml.toString());
 
         } catch (Exception e) {
             e.printStackTrace();
             res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while fetching questions");
             return;
         } finally {
-            try { if (stmntAnswer != null) stmntAnswer.close(); } catch (SQLException e) { e.printStackTrace(); }
             try { if (stmntQuestion != null) stmntQuestion.close(); } catch (SQLException e) { e.printStackTrace(); }
             try { if (rsQuestion != null) rsQuestion.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { if (rsAnswer != null) rsAnswer.close(); } catch (SQLException e) { e.printStackTrace(); }
             try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
         }
 
         // Forward the request to questions.jsp
-        RequestDispatcher view = req.getRequestDispatcher("/views/questions.jsp");
+        RequestDispatcher view = req.getRequestDispatcher("/views/moderateMode.jsp");
         view.forward(req, res);
     }
 
