@@ -249,6 +249,30 @@ public class CreateQuizServlet extends HttpServlet {
                 e.printStackTrace();
             }
             try {
+                if (psQuizMedia != null)
+                    ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (psMediaQ != null)
+                    ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (psCategoryMedia != null)
+                    ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (psMediaC != null)
+                    ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
                 if (con != null)
                     con.close();
             } catch (SQLException e) {
