@@ -2,6 +2,7 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Arrays;
 
 public class MainServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -34,35 +35,59 @@ public class MainServlet extends HttpServlet {
         }
 
         Connection con = null;
-        Statement statement = null;
-        ResultSet rs = null;
+        PreparedStatement psCategories = null;
+        ResultSet rsCategories = null;
+        PreparedStatement psMedia = null;
+        PreparedStatement psCategoryMedia = null;
         StringBuilder categoriesHtml = new StringBuilder();
+        StringBuilder mediaHtml = new StringBuilder();
+        ResultSet rsMedia = null;
+        ResultSet rsCategoryMedia = null;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
             // Load MySQL driver
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             // Database connection
             con = DatabaseUtil.getConnection();
-            statement = con.createStatement();
 
-            // Query database for categories
-            String sql = "SELECT name FROM categories";
-            rs = statement.executeQuery(sql);
+            psCategories = con.prepareStatement("SELECT name FROM categories");
+            rsCategories = psCategories.executeQuery();
 
+            psMedia = con.prepareStatement("SELECT media_id FROM category_media WHERE category_name = ?");
+            psCategoryMedia = con.prepareStatement("SELECT media_file_path FROM media WHERE id = ?");
+            
             // Generate HTML for each category
-            while (rs.next()) {
-                String categoryName = rs.getString("name");
+            while (rsCategories.next()) {
+                String categoryName = rsCategories.getString("name");
+
+                mediaHtml.setLength(0);
+
+                psMedia.setString(1, categoryName);
+                rsMedia = psMedia.executeQuery();
+
+                while(rsMedia.next()){
+
+                    InputStream mediaId = rsMedia.getBinaryStream("media_id");
+                    
+                    if(mediaId != null) {
+                        psCategoryMedia.setBinaryStream(1, mediaId);
+                        rsCategoryMedia = psCategoryMedia.executeQuery();
+                        if(rsCategoryMedia.next()) {
+                            String mediaFilePath = rsCategoryMedia.getString("media_file_path");
+                            mediaHtml.append("<img src=\"").append(mediaFilePath).append("\" alt=\"").append(categoryName).append("\" class=\"categoryImg\">");
+                        }
+                    }
+                }
 
                 // Create a form for each category to redirect to the quizzes page
                 categoriesHtml.append("<div class=\"category\">\n")
                              .append("<form action=\"quizzes\" method=\"get\">\n")
                              .append("    <input type=\"hidden\" name=\"categoryName\" value=\"" + categoryName + "\" />\n")
                              .append("    <input type=\"submit\" value=\"" + categoryName + "\" />\n")
-                             .append("</form>\n")
-                             .append("  <div class=\"img\"></div>\n")
-                             .append("</div>\n");
+                             .append("  <div class=\"img\">").append(mediaHtml.toString()).append("</div>\n")
+                             .append("</div>\n")
+                             .append("</form>\n");
             }
 
             // Set categories as request attribute
@@ -71,9 +96,13 @@ public class MainServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { if (statement != null) statement.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { if (rsCategories != null) rsCategories.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { if (rsMedia != null) rsMedia.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { if (rsCategoryMedia != null) rsCategoryMedia.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { if (psCategories != null) psCategories.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { if (psMedia != null) psMedia.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { if (psCategoryMedia != null) psCategoryMedia.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { if (con != null) con.close(); } catch (Exception e) { e.printStackTrace(); }
         }
 
         // Forward the request to the main.jsp or any other page you use to display categories
