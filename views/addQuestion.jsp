@@ -73,7 +73,7 @@
         }
 
         .addAnswerBtn {
-            width: auto ;
+            width: fit-content;
             display: inline-block;
             background-color: #99c252;
             color: #0C1B33;
@@ -124,38 +124,6 @@
             `;
             document.getElementById('answersContainer').appendChild(answerDiv);
         }
-
-        // function addQuestion() {
-        //     questionCount++;
-        //     const questionDiv = document.createElement('div');
-        //     questionDiv.classList.add('question');
-        //     questionDiv.innerHTML = `
-        //         <label for="questionText">Question Text:</label>
-        //         <input type="text" name="questionText" required>
-        // function addQuestion() {
-        //     questionCount++;
-        //     const questionDiv = document.createElement('div');
-        //     questionDiv.classList.add('question');
-        //     questionDiv.innerHTML = `
-        //         <label for="questionText">Question Text:</label>
-        //         <input type="text" name="questionText" required>
-                
-        //         <label for="questionType">Question Type:</label>
-        //         <input type="text" name="questionType" required>
-
-        //         <div class="answersContainer" id="answersContainer">
-        //             <div class="answer">
-        //                 <input type="text" name="answerText" placeholder="Answer 1" required>
-        //                 <input type="radio" name="correctAnswer" value="1"> Correct
-        //             </div>
-        //             <button type="button" onclick="addAnswer()">Add Another Answer</button>
-        //         </div>
-
-        //         <label for="mediaFile">Upload Media (optional):</label>
-        //         <input type="file" name="mediaFile" accept="image/*,video/*" />
-        //     `;
-        //     document.getElementById('questionsContainer').appendChild(questionDiv);
-        // }
 
     </script>
 </head>

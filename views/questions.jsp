@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +9,6 @@
 
         .wrap {
             padding: 60px 0;
-            /* justify-content: unset; */
             overflow-y: scroll;
             -ms-overflow-style: none;  /* Internet Explorer 10+ */
             scrollbar-width: none;  /* Firefox */
@@ -152,6 +150,22 @@
             align-items: center;
         }
 
+        /* Timer */
+        #timer {
+            display: none;
+            width: 700px;
+            height: 20px;
+            background-color: #DCEED1;
+            border-radius: 1000px;
+            overflow: hidden;
+        }
+
+        #timerCountdown {
+            height: 100%;
+            background-color: #d00000;
+            transition-duration: 0.2s;
+        }
+
         /* Error Message */
 
         .errorMsg {
@@ -180,7 +194,6 @@
 
     </style>
 </head>
-
 <body>
 
     <header>
@@ -210,6 +223,28 @@
     <form id="questionForm" method="post" style="display: hidden;"></form>
 </body>
 <script>
+    
+    // Making all answer options have the same height value
+    window.onload = function() {
+        // Get all buttons inside the div with class "answersOption"
+        var buttons = document.querySelectorAll('.answersOption button');
+        
+        var maxHeight = 0;
+        
+        // Loop through each button to determine the maximum height
+        buttons.forEach(function(button) {
+            var buttonHeight = button.offsetHeight;  // Get the height of the current button
+            if (buttonHeight > maxHeight) {
+                maxHeight = buttonHeight;  // Update the maxHeight if current button's height is greater
+            }
+        });
+        
+        // Set all buttons to the maximum height
+        buttons.forEach(function(button) {
+            button.style.height = maxHeight + "px";
+        });
+    };
+
     let correctAnswer = document.getElementById('questionForm');
     // Declare the player variable
     var playerQuestion = null;
@@ -225,7 +260,7 @@
             setTimeout(() => {
                 wrongButtons[i].classList.remove('wrong');
                 wrongButtons[i].style.boxShadow = "";
-            }, 1500);
+            }, 700);
         });
     }
 
@@ -267,45 +302,46 @@
     //---------------AUTOPLAY---------------\\
     let autoplayEnabled = document.getElementById("autoplay").value === "true";
     let autoplayTimer;
-    let countdownTime = 60;
+    let countdownTime = 30;
     let timerDisplay = document.getElementById('timer');
     let timerInterval;
 
     const autoplayToggleButton = document.getElementById('autoplayToggle');
     const correctButton = document.querySelector('.answer[id="rightPlayAnswer"]');
 
-        function updateAutoplayButton() {
-            autoplayToggleButton.textContent = autoplayEnabled ? "Autoplay: ON" : "Autoplay: OFF";
-        }
-        // Set up event listener for the autoplay toggle button
-        // NO MORE CONSOLE.LOGS
-        autoplayToggleButton.addEventListener('click', () => {
-            event.preventDefault();
-            autoplayEnabled = !autoplayEnabled;
+    function updateAutoplayButton() {
+        autoplayToggleButton.textContent = autoplayEnabled ? "Autoplay: ON" : "Autoplay: OFF";
+    }
 
-            if (autoplayEnabled) {
-                //autoplayToggleButton.textContent = "Autoplay: ON";
-                timerDisplay.style.display = 'block';
-                startAutoplay(correctButton);
-                fetch('updateAutoplay?enabled=true');
-            } else {
-                //autoplayToggleButton.textContent = "Autoplay: OFF";
-                clearTimeout(autoplayTimer);
-                clearInterval(timerInterval);
-                timerDisplay.style.display = 'none';
-                timerDisplay.textContent = "Time left: 60 seconds";
-                fetch('updateAutoplay?enabled=false');
-            }
+    // Set up event listener for the autoplay toggle button
+    // NO MORE CONSOLE.LOGS
+    autoplayToggleButton.addEventListener('click', () => {
+        event.preventDefault();
+        autoplayEnabled = !autoplayEnabled;
 
-            updateAutoplayButton();
-        });
-
-        // Start autoplay if enabled on page load
         if (autoplayEnabled) {
-            updateAutoplayButton();
+            autoplayToggleButton.textContent = "Autoplay: ON";
             timerDisplay.style.display = 'block';
             startAutoplay(correctButton);
+            fetch('updateAutoplay?enabled=true');
+        } else {
+            autoplayToggleButton.textContent = "Autoplay: OFF";
+            clearTimeout(autoplayTimer);
+            clearInterval(timerInterval);
+            timerDisplay.style.display = 'none';
+            // timerDisplay.textContent = "Time left: 60 seconds";
+            fetch('updateAutoplay?enabled=false');
         }
+
+        updateAutoplayButton();
+    });
+
+    // Start autoplay if enabled on page load
+    if (autoplayEnabled) {
+        updateAutoplayButton();
+        timerDisplay.style.display = 'block';
+        startAutoplay(correctButton);
+    }
     
 
     function startAutoplay(correctButton) {
@@ -338,7 +374,8 @@
     }
 
     function updateTimerDisplay(timeLeft) {
-        timerDisplay.textContent = "Time left: " + timeLeft + " seconds";
+        timerDisplay.innerHTML = `<div id="timerCountdown" style="width:${timeLeft / 30 * 100}%"></div>`;
+        // console.log(timeLeft / 30 * 100);
     }
 
     
@@ -446,5 +483,4 @@
 
 
 </script>
-
 </html>
