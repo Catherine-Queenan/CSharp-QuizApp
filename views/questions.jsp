@@ -257,10 +257,6 @@
         }
     }
 
-    function autoPlayMediaAnswers() {
-        
-    }
-
     let correctAnswerButton = document.getElementById("rightPlayAnswer");
     let answerMedia = document.getElementById("mediaAnswer");
     correctAnswerButton.addEventListener('click', () => {
