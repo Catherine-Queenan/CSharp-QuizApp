@@ -9,6 +9,10 @@
     <style>
         * { font-weight: 800; box-sizing: border-box; }
 
+        .wrap {
+            padding: 30px 0;
+        }
+
         .categoryBtnWrap {
             width: 85%;
             display: flex;
@@ -42,8 +46,7 @@
         }
 
         .category:hover {
-            transform: scale(1.04);
-            box-shadow: 5px 5px 10px rgb(14, 1, 47);
+            box-shadow: inset 5px 5px 10px rgba(14, 1, 47, 0.7);
         }
 
         /* Category colors */
@@ -77,15 +80,33 @@
         .category form {
             width: 100%;
             height: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .category input {
             all: unset;
             width: 100%;
-            height: 100%;
+            /* height: 100%; */
             cursor: pointer;
         }
+        
+        /* Category img */
+        .category img {
+            margin-top: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            width: 100%;
+            max-height: 200px;
+            height: 100%;
+            object-fit: cover;
+        }
 
+
+        /* Slide buttons */
         .btn {
             all: unset;
             font-size: 30px;
@@ -101,7 +122,8 @@
 
         /* admin section */
         .adminWrap {
-            margin-top: 40px;
+            margin-top: 60px;
+            transform: scale(0.9);
         }
 
         .admin {
