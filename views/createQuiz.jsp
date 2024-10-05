@@ -132,8 +132,8 @@
             <button class="createQuizBtn" type="submit">Create Quiz</button>
 
         </form>
-            <!-- Check if the quiz was successfully created -->
-            <% if (request.getAttribute("quizName") != null) { %>
+         <!-- Check if the quiz was successfully created -->
+         <% if (request.getAttribute("quizName") != null) { %>
             <h2>Quiz "<%= request.getAttribute("quizName") %>" created successfully!</h2>
 
             <!-- Button to add questions to the newly created quiz -->

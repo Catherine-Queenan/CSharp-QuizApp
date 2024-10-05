@@ -5,29 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quizzes</title>
     <link rel="stylesheet" href="public/css/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
 
         .wrap {
             padding: 50px;
         }
 
-        .quizzes {
-            width: 80%;
-            padding: 50px 10px;
-            overflow-y: scroll;
+        .quizzesBtnWrap {
+            width: 85%;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 30px;
-
-            /* Hiding scroll bar */
-            -ms-overflow-style: none;  /* Internet Explorer 10+ */
-            scrollbar-width: none;  /* Firefox */
+            align-items: center;
         }
 
-        .quizzes::-webkit-scrollbar { 
-            display: none;  /* Safari and Chrome */
+        #quizzesWrap {
+            width: 90%;
+            /* padding: 0 100px; */
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden; /* Hides overflow categories */
+        }
+
+        .quizzes {
+            width: max-content; /* Dynamically adjust width */
+            display: flex;
+            gap: 30px;
+            overflow: hidden;
+            transition: transform 0.4s ease-in-out;
         }
 
         .quiz {
@@ -45,8 +50,7 @@
         }
 
         .quiz:hover {
-            transform: scale(1.04);
-            box-shadow: 5px 5px 10px rgb(14, 1, 47);
+            box-shadow: inset 5px 5px 10px rgba(14, 1, 47, 0.7);
         }
 
         .quiz:nth-child(1),
@@ -79,12 +83,17 @@
         .quiz form {
             width: 100%;
             height: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .quiz input {
             all: unset;
             width: 100%;
-            height: 100%;
+            /* height: 100%; */
             padding: 20px 40px;
             box-sizing: border-box;
             text-align: center;
@@ -98,6 +107,41 @@
             justify-content: center;
             align-items: center;
         }
+
+        /* Quiz img */
+        .quiz img {
+            margin-top: 20px;
+            max-width: 90%;
+            width: 100%;
+            max-height: 200px;
+            height: 100%;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .img {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Slide buttons */
+        .btn {
+            all: unset;
+            font-size: 30px;
+            color: #DCEED1;
+            border: none;
+            cursor: pointer;
+            transition-duration: 0.2s;
+        }
+
+        .btn:hover {
+            color: #45425A;
+        }
+
+        /* Admin section */
 
         .adminBtnWrap {
             margin-top: 10px;
@@ -149,9 +193,73 @@
         <div class="title cherry-cream-soda">
             Available Quizzes
         </div>
-        <div class="quizzes">
-            <%= request.getAttribute("quizzesHtml")%>
+
+        <div class="quizzesBtnWrap">
+            <button class="btn prev"><i class="fa-solid fa-chevron-left"></i></button>
+            <div id="quizzesWrap">
+                <div class="quizzes" id="quizzes">
+                    <%= request.getAttribute("quizzesHtml")%>
+                </div>
+            </div>
+            <button class="btn next"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
+
+    <script>
+
+        // ------ Making quizzes display able to slide ------
+        
+        const quizzes = document.getElementById('quizzes');
+        const prevBtn = document.querySelector('.prev');
+        const nextBtn = document.querySelector('.next');
+        const totalQuizzes = quizzes.children.length;
+        const visibleQuizzes = 3; // Display 3 at a time
+        let index = 0;
+
+        // Adjust width dynamically based on the number of quizzes
+        quizzes.style.width = `${(totalQuizzes / visibleQuizzes) * 100}%`;
+
+        // Function to slide quizzes
+        function updatequizzes() {
+            const offset = -index * (document.getElementById("quizzesWrap").clientWidth / visibleQuizzes); // Calculate the offset
+            quizzes.style.transform = `translateX(${offset}px)`;
+        }
+
+        // Event listener for next button
+        nextBtn.addEventListener('click', () => {
+            if (index < totalQuizzes - visibleQuizzes) {
+                index++;
+            } else {
+                index = 0; // Loop back to the first page
+            }
+            updatequizzes();
+        });
+
+        // Event listener for previous button
+        prevBtn.addEventListener('click', () => {
+            if (index > 0) {
+                index--;
+            } else {
+                index = totalQuizzes - visibleQuizzes; // Loop back to the last page
+            }
+            updatequizzes();
+        });
+
+        // Disable buttons if there are not enough quizzes
+        if (totalQuizzes <= visibleQuizzes) {
+            nextBtn.style.display = 'none';
+            prevBtn.style.display = 'none';
+        }
+
+        // If there are less than three quizzes
+        window.onload = function() {
+            if (totalQuizzes < 3) {
+                quizzes.style.display = "flex";
+                quizzes.style.justifyContent = "center"
+                quizzes.style.width = `${100}%`;
+            }
+        };
+
+    </script>
 </body>
 </html>

@@ -61,14 +61,13 @@ public class QuizServlet extends HttpServlet {
                 }
 
                 quizzesHtml.append("<div class=\"quiz\">\n")
-                        .append("<form method=\"post\">\n")
-                        .append("    <input type=\"hidden\" name=\"quizName\" value=\"").append(quizName).append("\" />\n")
-                        .append("    <input type=\"submit\" value=\"").append(quizName).append("\" />\n")
+                        .append("       <form method=\"post\">\n")
+                        .append("           <input type=\"hidden\" name=\"quizName\" value=\"").append(quizName).append("\" />\n")
+                        .append("           <input type=\"submit\" value=\"").append(quizName).append("\" />\n")
                         // .append("    <label for=\"").append(quizName).append("\">").append(quizName).append("</label>")
-                        .append("<p class=\"quiz-description\">").append(quizDescription).append("</p>\n")
-                        .append("  <div class=\"img\">").append(mediaHtml.toString()).append("</div>\n")
-                        .append("</div>\n")
-                        .append("</form>\n");
+                        .append("           <p class=\"quiz-description\">").append(quizDescription).append("</p>\n")
+                        .append("               <div class=\"img\">").append(mediaHtml.toString()).append("</div>\n")
+                        .append("       </form>\n");
                 
                 // Show "Add Question" and "Delete Quiz" buttons only for admin users
                 if ("a".equals(role)) {

@@ -105,6 +105,11 @@
             object-fit: cover;
         }
 
+        .img {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
         /* Slide buttons */
         .btn {
@@ -223,6 +228,15 @@
             nextBtn.style.display = 'none';
             prevBtn.style.display = 'none';
         }
+
+        // If there are less than three categories
+        window.onload = function() {
+            if (totalCategories < 3) {
+                categories.style.display = "flex";
+                categories.style.justifyContent = "center"
+                categories.style.width = `${100}%`;
+            }
+        };
 
     </script>
 </body>
