@@ -46,7 +46,7 @@ public class QuestionsServlet extends HttpServlet {
 
         if(questions.isEmpty()){
             questionsHtml.append("<p class=\"errorMsg\">The quiz \"").append(quizName).append("\" is empty!</p>")
-                        .append("<form action=\"home\"><button class=\"homeBtn\" type=\"Submit\">Return Home</button></form>");
+                        .append("<form class=\"errorBtnWrap\" action=\"home\"><button class=\"homeBtn errorHome\" type=\"Submit\">Return Home</button></form>");
             req.setAttribute("questionsHtml", questionsHtml);
             req.setAttribute("qNumber", currQuestion);
             req.setAttribute("quizSize", questions.size());
@@ -63,7 +63,6 @@ public class QuestionsServlet extends HttpServlet {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
             // Database connection
-           con = DriverManager.getConnection("jdbc:mysql://localhost:3306/quizapp", "root", "");
 
             con = DatabaseUtil.getConnection();
             
@@ -125,17 +124,16 @@ public class QuestionsServlet extends HttpServlet {
                 String questionText = rsQuestion.getString("question_text");
                 String questionType = rsQuestion.getString("question_type");
    
+                // // Display question
+                questionsHtml.append("<div class=\"question\"").append(">\n")
+                             .append("<p>").append(questionText).append("</p>\n");
+                             
                 if(!questionType.equals("TEXT")){
                     String media = insertMedia(con, "question", qID, questionType);
                     if(media != null){
                         questionsHtml.append(media);
                     }
-
                 }
-                // // Display question
-                questionsHtml.append("<div class=\"question\"").append(">\n")
-                             .append("<p>").append(questionText).append("</p>\n");
-                             
 
                 // Query to get answers for this question
                 // String sqlAnswers = "SELECT answer_text, is_correct, answer_type FROM answers WHERE question_id = ?";
@@ -151,23 +149,27 @@ public class QuestionsServlet extends HttpServlet {
                 int countAnswer = 1;
 
                 // Display answers
+                StringBuilder answerVidAud = new StringBuilder();
                 while (rsAnswer.next()) {
                     InputStream answerId = rsAnswer.getBinaryStream("id");
                     String answerText = rsAnswer.getString("answer_text");
                     boolean isCorrect = rsAnswer.getBoolean("is_correct");
                     String answerType = rsAnswer.getString("answer_type");
-                    String answerDisplay = answerType.equalsIgnoreCase("TEXT") ? answerText : insertMedia(con, "answer", answerId, answerType);
+                    String answerDisplay = answerType.equalsIgnoreCase("IMG") ? insertMedia(con, "answer", answerId, answerType) : answerText;
 
                     answerDisplay = answerDisplay != null ? answerDisplay : answerText;
                     if(isCorrect){
-                        questionsHtml.append("<form id=\"questionForm\" method=\"post\">").append("<button class=\"answer").append(countAnswer).append("\"id=\"rightPlayAnswer\">").append(answerDisplay).append("</button></form>\n");
+                        questionsHtml.append("<button class=\"answer").append(countAnswer).append("\"id=\"rightPlayAnswer\">").append(answerDisplay).append("</button>\n");
+                        if(answerType.equalsIgnoreCase("VID")||answerType.equalsIgnoreCase("AUD")){
+                            answerVidAud.append("<div id=\"mediaAnswer\" style=\"display:none;\">").append(insertMedia(con, "answer", answerId, answerType)).append("</div>");
+                        }
                     } else {
                         questionsHtml.append("<button class=\"wrongPlayAnswer answer").append(countAnswer).append("\">").append(answerDisplay).append("</button>\n");
                     }
 
                     countAnswer++;
                 }
-                questionsHtml.append("</div>");
+                questionsHtml.append(answerVidAud).append("</div>");
                 
                 questionsHtml.append("</div>\n");
             }
@@ -258,10 +260,10 @@ public class QuestionsServlet extends HttpServlet {
                         String mediaStart = rsMedia.getString("media_start");
                         String mediaEnd = rsMedia.getString("media_end");
 
-                        mediaHtml.append("<input type=\"hidden\" id=\"videoId\" value=\"").append(filePath).append("\">\n")
-                                .append("<input type=\"hidden\" id=\"videoStart\" value=\"").append(mediaStart).append("\">\n")
-                                .append("<input type=\"hidden\" id=\"videoEnd\" value=\"").append(mediaEnd).append("\">\n")
-                                .append("<div id=\"player\"></div>");
+                        mediaHtml.append("<input type=\"hidden\" id=\"videoId-").append(table).append("\" value=\"").append(filePath).append("\">\n")
+                                .append("<input type=\"hidden\" id=\"videoStart-").append(table).append("\" value=\"").append(mediaStart).append("\">\n")
+                                .append("<input type=\"hidden\" id=\"videoEnd-").append(table).append("\" value=\"").append(mediaEnd).append("\">\n")
+                                .append("<div class=\"videoWrap\"><div id=\"player-") .append(table).append("\"></div></div>");
                     }
                     
                     break;
@@ -270,9 +272,8 @@ public class QuestionsServlet extends HttpServlet {
                         String filePath = rsMedia.getString("media_file_path");
                         String alt = rsMedia.getString("description");
 
-                        mediaHtml.append("<img alt=\"").append(alt).append("\"width=\"300\" height=\"200\" src=\"").append(filePath).append("\">\n");
+                        mediaHtml.append("<div class=\"imgWrap\"><img alt=\"").append(alt).append("\"width=\"300\" height=\"200\" src=\"").append(filePath).append("\"></div>\n");
                     }
-                    System.out.println("aaaaa");
                     break;
                 case "AUD":
                     while(rsMedia.next()){
@@ -280,11 +281,11 @@ public class QuestionsServlet extends HttpServlet {
                         String mediaStart = rsMedia.getString("media_start");
                         String mediaEnd = rsMedia.getString("media_end");
 
-                        mediaHtml.append("<audio preload controls ontimeupdate=\"audio()\">\n")
+                        mediaHtml.append("<div class=\"audioWrap\"><audio id=\"audio-").append(table).append("\" preload controls ontimeupdate=\"").append(table).append("Audio()\">\n")
                                 .append("<source src=\"").append(filePath).append("#t=").append(mediaStart).append("\" type=\"audio/mp3\">")
-                                .append("</audio>")
-                                .append("<input type=\"hidden\" id=\"videoStart\" value=\"").append(mediaStart).append("\">\n")
-                                .append("<input type=\"hidden\" id=\"videoEnd\" value=\"").append(mediaEnd).append("\">\n");
+                                .append("</audio></div>")
+                                .append("<input type=\"hidden\" id=\"videoStart-").append(table).append("\" value=\"").append(mediaStart).append("\">\n")
+                                .append("<input type=\"hidden\" id=\"videoEnd-").append(table).append("\" value=\"").append(mediaEnd).append("\">\n");
                     }
                     
                     break;                

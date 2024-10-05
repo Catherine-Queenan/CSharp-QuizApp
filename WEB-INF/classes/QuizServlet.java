@@ -3,6 +3,7 @@ import jakarta.servlet.*;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class QuizServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -18,25 +19,55 @@ public class QuizServlet extends HttpServlet {
         String category = req.getParameter("categoryName");
 
         Connection con = null;
-        Statement stmnt = null;
-        ResultSet rs = null;
+        PreparedStatement psQuiz = null;
+        ResultSet rsQuiz = null;
+        PreparedStatement psMedia = null;
+        PreparedStatement psQuizMedia = null;
         StringBuilder quizzesHtml = new StringBuilder();
+        StringBuilder mediaHtml = new StringBuilder();
+        ResultSet rsMedia = null;
+        ResultSet rsQuizMedia = null;
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
-            con = DatabaseUtil.getConnection();
-            stmnt = con.createStatement();
-            rs = stmnt.executeQuery("SELECT name, description FROM quizzes WHERE category_name = \"" + category + "\";");
 
-            while (rs.next()) {
-                String quizName = rs.getString("name");
-                String quizDescription = rs.getString("description");
+            con = DatabaseUtil.getConnection();
+
+            psQuiz = con.prepareStatement("SELECT name, description FROM quizzes WHERE category_name = \"" + category + "\";");
+            rsQuiz = psQuiz.executeQuery();
+
+            psMedia = con.prepareStatement("SELECT media_id FROM quiz_media WHERE quiz_name = ?");
+            psQuizMedia = con.prepareStatement("SELECT media_file_path FROM media WHERE id = ?");
+
+            while (rsQuiz.next()) {
+                String quizName = rsQuiz.getString("name");
+                String quizDescription = rsQuiz.getString("description");
+
+                psMedia.setString(1, quizName);
+                rsMedia = psMedia.executeQuery();
+
+                while(rsMedia.next()) {
+
+                    InputStream mediaId = rsMedia.getBinaryStream("media_id");
+
+                    if(mediaId != null) {
+                        psQuizMedia.setBinaryStream(1, mediaId);
+                        rsQuizMedia = psQuizMedia.executeQuery();
+                        if(rsQuizMedia.next()) {
+                            String mediaFilePath = rsQuizMedia.getString("media_file_path");
+                            mediaHtml.append("<img src=\"").append(mediaFilePath).append("\" alt=\"").append(quizName).append("\" class=\"categoryImg\">");
+                        }
+                    }
+                }
 
                 quizzesHtml.append("<div class=\"quiz\">\n")
                         .append("<form method=\"post\">\n")
                         .append("    <input type=\"hidden\" name=\"quizName\" value=\"").append(quizName).append("\" />\n")
                         .append("    <input type=\"submit\" value=\"").append(quizName).append("\" />\n")
+                        // .append("    <label for=\"").append(quizName).append("\">").append(quizName).append("</label>")
                         .append("<p class=\"quiz-description\">").append(quizDescription).append("</p>\n")
+                        .append("  <div class=\"img\">").append(mediaHtml.toString()).append("</div>\n")
+                        .append("</div>\n")
                         .append("</form>\n");
                 
                 // Show "Add Question" and "Delete Quiz" buttons only for admin users
@@ -56,15 +87,13 @@ public class QuizServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (rs != null) rs.close();
-            } catch (SQLException e) { e.printStackTrace(); }
-            try {
-                if (stmnt != null) stmnt.close();
-            } catch (SQLException e) { e.printStackTrace(); }
-            try {
-                if (con != null) con.close();
-            } catch (SQLException e) { e.printStackTrace(); }
+            try { if (rsQuiz != null) rsQuiz.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { if (rsMedia != null) rsMedia.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { if (rsQuizMedia != null) rsQuizMedia.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { if (psQuiz != null) psQuiz.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { if (psMedia != null) psMedia.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { if (psQuizMedia != null) psQuizMedia.close(); } catch (Exception e) { e.printStackTrace(); }
+            try { if (con != null) con.close(); } catch (Exception e) { e.printStackTrace(); }
         }
 
         req.setAttribute("quizzesHtml", quizzesHtml.toString());

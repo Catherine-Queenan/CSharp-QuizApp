@@ -13,8 +13,8 @@
             width: 70%;
             padding: 50px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: center;
+            align-items: flex-start;
             flex-wrap: wrap;
             gap: 30px;
         }

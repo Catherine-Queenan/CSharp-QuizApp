@@ -2,8 +2,10 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class EditQuestionsServlet extends HttpServlet {
+
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("USER_ID") == null) {
@@ -15,7 +17,10 @@ public class EditQuestionsServlet extends HttpServlet {
         String role = getUserRoleFromDatabase(username);
 
         if (!"a".equals(role)) {
-            res.sendRedirect("login");
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
+            req.setAttribute("errorMessage", "You are not authorized to access this page.");
+            RequestDispatcher view = req.getRequestDispatcher("/views/401.jsp");
+            view.forward(req, res);
             return;
         }
 
@@ -23,6 +28,7 @@ public class EditQuestionsServlet extends HttpServlet {
         PreparedStatement ps = null;
         ResultSet rs = null;
         StringBuilder questionsHtml = new StringBuilder();
+        ArrayList<InputStream> qIDs = new ArrayList<>();
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
@@ -43,23 +49,28 @@ public class EditQuestionsServlet extends HttpServlet {
 
             // Generate HTML for questions
             boolean hasQuestions = false;
+            int numOfQs = 0;
             while (rs.next()) {
                 hasQuestions = true;
-                String questionId = rs.getString("id");
+                // InputStream questionId = rs.getBinaryStream("id");
                 String questionText = rs.getString("question_text");
-
+                InputStream questionId = rs.getBinaryStream("id");
+                qIDs.add(questionId);
                 questionsHtml.append("<div class='question'>")
                         .append("<p class='questionTitle'>").append(questionText).append("</p>")
-                        .append("<a class='deleteBtn' href='deleteQuestion?id=").append(questionId).append("&quizName=").append(quizName).append("'>Delete Question</a>")
+                        .append("<a class='deleteBtn' href='deleteQuestion?id=").append(numOfQs++).append("&quizName=").append(quizName).append("'>Delete Question</a>")
                         .append("</div>");
+           
             }
 
             if (!hasQuestions) {
                 questionsHtml.append("<p class='errorMsg'>There are currently no questions for this quiz.</p>");
             }
-
+            
             // Set quiz name and questions HTML as request attributes
             req.setAttribute("quizName", quizName);
+            System.out.println(qIDs);
+            session.setAttribute("questions", qIDs);
             req.setAttribute("questionsHtml", questionsHtml.toString());
 
         } catch (Exception e) {

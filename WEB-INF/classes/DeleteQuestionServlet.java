@@ -2,6 +2,7 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DeleteQuestionServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -15,12 +16,17 @@ public class DeleteQuestionServlet extends HttpServlet {
         String role = getUserRoleFromDatabase(username);
 
         if (!"a".equals(role)) {
-            res.sendRedirect("login");
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
+            req.setAttribute("errorMessage", "You are not authorized to access this page.");
+            RequestDispatcher view = req.getRequestDispatcher("/views/401.jsp");
+            view.forward(req, res);
             return;
         }
-        String questionId = req.getParameter("id");
+        int idIndex = Integer.parseInt(req.getParameter("id"));
         String quizName = req.getParameter("quizName");
-
+        ArrayList<InputStream> qIDs = (ArrayList<InputStream>)session.getAttribute("questions");
+        System.out.println(qIDs);
+        session.removeAttribute("questions");
         Connection con = null;
         PreparedStatement ps = null;
 
@@ -34,7 +40,7 @@ public class DeleteQuestionServlet extends HttpServlet {
             // Delete the question
             String deleteQuestionSql = "DELETE FROM questions WHERE id = ?";
             ps = con.prepareStatement(deleteQuestionSql);
-            ps.setString(1, questionId);
+            ps.setBinaryStream(1, qIDs.get(idIndex));
             ps.executeUpdate();
 
             // Redirect back to the edit questions page after successful deletion

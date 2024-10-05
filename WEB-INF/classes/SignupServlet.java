@@ -89,8 +89,11 @@ public class SignupServlet extends HttpServlet {
 
             res.sendRedirect("home");
         } else {
-            PrintWriter out = res.getWriter(); //This is temporary just to test stuff
-            out.append("Failed signup, username in use");
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
+            req.setAttribute("errorMessage", "This username is already in use.");
+            RequestDispatcher view = req.getRequestDispatcher("/views/401.jsp");
+            view.forward(req, res);
+            return;
         }
         
 
