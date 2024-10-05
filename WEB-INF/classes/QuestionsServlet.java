@@ -149,23 +149,27 @@ public class QuestionsServlet extends HttpServlet {
                 int countAnswer = 1;
 
                 // Display answers
+                StringBuilder answerVidAud = new StringBuilder();
                 while (rsAnswer.next()) {
                     InputStream answerId = rsAnswer.getBinaryStream("id");
                     String answerText = rsAnswer.getString("answer_text");
                     boolean isCorrect = rsAnswer.getBoolean("is_correct");
                     String answerType = rsAnswer.getString("answer_type");
-                    String answerDisplay = answerType.equalsIgnoreCase("TEXT") ? answerText : insertMedia(con, "answer", answerId, answerType);
+                    String answerDisplay = answerType.equalsIgnoreCase("IMG") ? insertMedia(con, "answer", answerId, answerType) : answerText;
 
                     answerDisplay = answerDisplay != null ? answerDisplay : answerText;
                     if(isCorrect){
                         questionsHtml.append("<button class=\"answer").append(countAnswer).append("\"id=\"rightPlayAnswer\">").append(answerDisplay).append("</button>\n");
+                        if(answerType.equalsIgnoreCase("VID")||answerType.equalsIgnoreCase("AUD")){
+                            answerVidAud.append("<div id=\"mediaAnswer\" style=\"display:none;\">").append(insertMedia(con, "answer", answerId, answerType)).append("</div>");
+                        }
                     } else {
                         questionsHtml.append("<button class=\"wrongPlayAnswer answer").append(countAnswer).append("\">").append(answerDisplay).append("</button>\n");
                     }
 
                     countAnswer++;
                 }
-                questionsHtml.append("</div>");
+                questionsHtml.append(answerVidAud).append("</div>");
                 
                 questionsHtml.append("</div>\n");
             }
@@ -256,10 +260,10 @@ public class QuestionsServlet extends HttpServlet {
                         String mediaStart = rsMedia.getString("media_start");
                         String mediaEnd = rsMedia.getString("media_end");
 
-                        mediaHtml.append("<input type=\"hidden\" id=\"videoId\" value=\"").append(filePath).append("\">\n")
-                                .append("<input type=\"hidden\" id=\"videoStart\" value=\"").append(mediaStart).append("\">\n")
-                                .append("<input type=\"hidden\" id=\"videoEnd\" value=\"").append(mediaEnd).append("\">\n")
-                                .append("<div class=\"videoWrap\"><div id=\"player\"></div></div>");
+                        mediaHtml.append("<input type=\"hidden\" id=\"videoId-").append(table).append("\" value=\"").append(filePath).append("\">\n")
+                                .append("<input type=\"hidden\" id=\"videoStart-").append(table).append("\" value=\"").append(mediaStart).append("\">\n")
+                                .append("<input type=\"hidden\" id=\"videoEnd-").append(table).append("\" value=\"").append(mediaEnd).append("\">\n")
+                                .append("<div class=\"videoWrap\"><div id=\"player-") .append(table).append("\"></div></div>");
                     }
                     
                     break;
@@ -277,11 +281,11 @@ public class QuestionsServlet extends HttpServlet {
                         String mediaStart = rsMedia.getString("media_start");
                         String mediaEnd = rsMedia.getString("media_end");
 
-                        mediaHtml.append("<div class=\"audioWrap\"><audio preload controls ontimeupdate=\"audio()\">\n")
+                        mediaHtml.append("<div class=\"audioWrap\"><audio id=\"audio-").append(table).append("\" preload controls ontimeupdate=\"").append(table).append("Audio()\">\n")
                                 .append("<source src=\"").append(filePath).append("#t=").append(mediaStart).append("\" type=\"audio/mp3\">")
                                 .append("</audio></div>")
-                                .append("<input type=\"hidden\" id=\"videoStart\" value=\"").append(mediaStart).append("\">\n")
-                                .append("<input type=\"hidden\" id=\"videoEnd\" value=\"").append(mediaEnd).append("\">\n");
+                                .append("<input type=\"hidden\" id=\"videoStart-").append(table).append("\" value=\"").append(mediaStart).append("\">\n")
+                                .append("<input type=\"hidden\" id=\"videoEnd-").append(table).append("\" value=\"").append(mediaEnd).append("\">\n");
                     }
                     
                     break;                
