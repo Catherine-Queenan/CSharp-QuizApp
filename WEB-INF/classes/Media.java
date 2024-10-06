@@ -3,10 +3,12 @@ import org.json.JSONObject;
 
 public class Media extends AClass {
     private byte[] id;
-    private String description; // Fixed typo from "descripition"
-    private String media_type;
+    private String description = "";
+    private String media_type = "";
     private String media_file_path;
-    private String media_filename;
+    private String media_filename = "";
+    private Integer media_start = 0;
+    private Integer media_end = 0;
 
     public Media() {
         super("media");
@@ -32,6 +34,12 @@ public class Media extends AClass {
                     break;
                 case "media_filename":
                     this.media_filename = keyvaluePair[1];
+                    break;
+                case "media_start":
+                    this.media_start = Integer.valueOf(keyvaluePair[1]);
+                    break;
+                case "media_end":
+                    this.media_end = Integer.valueOf(keyvaluePair[1]);
                     break;
             }
         }
@@ -77,14 +85,33 @@ public class Media extends AClass {
         this.media_filename = media_filename;
     }
 
+    public Integer getMediaStart() {
+        return this.media_start;
+    }
+
+    public void setMediaStart(Integer media_start) {
+        this.media_start = media_start;
+    }
+
+    public Integer getMediaEnd() {
+        return this.media_end;
+    }
+
+    public void setMediaEnd(Integer media_end) {
+        this.media_end = media_end;
+    }
+
     @Override
     JSONObject serialize() {
-        JSONObject jo = new JSONObject(
-                "{\"id\":\"" + new String(this.id, StandardCharsets.UTF_8)
-                        + "\", \"description\":\"" + this.description
-                        + "\", \"media_type\":\"" + this.media_type
-                        + "\", \"media_file_path\":\"" + this.media_file_path
-                        + "\", \"media_filename\":\"" + this.media_filename + "\"}");
+        JSONObject jo = new JSONObject();
+        jo.put("id", new String(this.id, StandardCharsets.UTF_8));
+        jo.put("description", this.description);
+        jo.put("media_type", this.media_type);
+        jo.put("media_file_path", this.media_file_path);
+        jo.put("media_filename", this.media_filename);
+        jo.put("media_start", this.media_start);
+        jo.put("media_end", this.media_end);
+
         return jo;
     }
 

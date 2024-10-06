@@ -3,9 +3,9 @@ import org.json.JSONObject;
 
 public class Quiz extends AClass {
     private String name;
-    private String category_name;
-    private String description;
-    private byte[] media_id;
+    private String category_name = "";
+    private String description = "";
+    private byte[] media_id = null;
 
     public Quiz() {
         super("quiz");
@@ -67,12 +67,11 @@ public class Quiz extends AClass {
 
     @Override
     JSONObject serialize() {
-        JSONObject jo = new JSONObject(
-                "{\"name\":\"" + this.name
-                        + "\", \"category_name\":\"" + this.category_name
-                        + "\", \"description\":\"" + this.description
-                        + "\", \"media_id\":\"" + new String(this.media_id, StandardCharsets.UTF_8) + "\"}"
-                    );
+        JSONObject jo = new JSONObject();
+        jo.put("name", this.name);
+        jo.put("category_name", this.category_name);
+        jo.put("description", this.description);
+        jo.put("media_id", new String(this.media_id, StandardCharsets.UTF_8));
         return jo;
     }
 

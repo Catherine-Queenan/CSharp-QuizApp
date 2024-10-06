@@ -1,3 +1,4 @@
+import com.sun.source.tree.SwitchExpressionTree;
 import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.sql.*;
@@ -25,6 +26,7 @@ public class LoginServlet extends HttpServlet {
         String password = req.getParameter("password");
 
         String dbUserPassword = "";
+        String userRole = "";
 
         //Test
         res.setContentType("text/html");
@@ -38,10 +40,11 @@ public class LoginServlet extends HttpServlet {
             Statement statement = con.createStatement();
 
             //Query database for the user name
-            ResultSet rs = statement.executeQuery("SELECT password FROM users WHERE username  =\"" + username + "\"");
+            ResultSet rs = statement.executeQuery("SELECT password, role FROM users WHERE username  =\"" + username + "\"");
 
             if (rs.next()) { //if something is returned get the password
                 dbUserPassword = rs.getString("password");
+                userRole = rs.getString("role");
             } else {
                 dbUserPassword = null;
             }
@@ -66,6 +69,7 @@ public class LoginServlet extends HttpServlet {
             //Session creation
             HttpSession session = req.getSession(true);
             session.setAttribute("USER_ID", username);
+            session.setAttribute("USER_ROLE", userRole);
             res.setStatus(302);
 
             //Redirect to home page

@@ -4,10 +4,10 @@ import org.json.JSONObject;
 
 public class Question extends AClass {
     private byte[] id;
-    private String quiz_name;
-    private String question_text;
-    private String question_type;
-    private byte[] media_id;
+    private String quiz_name = "";
+    private String question_text = "";
+    private String question_type = "";
+    private byte[] media_id = null;
 
     public Question() {
         super("question");
@@ -80,13 +80,12 @@ public class Question extends AClass {
 
     @Override
     JSONObject serialize() {
-        JSONObject jo = new JSONObject(
-                "{\"id\":\"" + new String(this.id, StandardCharsets.UTF_8)
-                        + "\", \"quiz_name\":\"" + this.quiz_name
-                        + "\", \"question_text\":\"" + this.question_text
-                        + "\", \"question_type\":\"" + this.question_type + "\"}"
-                        + "\", \"media_id\":\"" + new String(this.media_id, StandardCharsets.UTF_8) + "\"}"
-                    );
+        JSONObject jo = new JSONObject();
+        jo.put("id", new String(this.id, StandardCharsets.UTF_8));
+        jo.put("quiz_name", this.quiz_name);
+        jo.put("question_text", this.question_text);
+        jo.put("question_type", this.question_type);
+        jo.put("media_id", new String(this.media_id, StandardCharsets.UTF_8));
         return jo;
     }
 

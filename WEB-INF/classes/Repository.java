@@ -1,5 +1,8 @@
 
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.json.JSONObject;
 
@@ -12,15 +15,15 @@ public class Repository implements IRepository {
 
     private void insertCategory(JSONObject entry) {
         try {
-            //Insert Category
+            // Insert Category
             String query = "INSERT INTO categories (name) VALUES (?)";
             PreparedStatement ps = con.prepareStatement(query);
-            
+
             ps.setString(1, entry.getString("name"));
             ps.executeUpdate();
 
-            if(entry.getString("media_id") != null){
-                //Associate quiz with respective media
+            if (!entry.isNull("media_id")) {
+                // Associate quiz with respective media
                 String mediaQuery = "INSERT INTO category_media (category_name, media_id) VALUES (?, ?)";
                 PreparedStatement mediaPs = con.prepareStatement(mediaQuery);
 
@@ -28,7 +31,7 @@ public class Repository implements IRepository {
                 mediaPs.setBytes(2, entry.getString("media_id").getBytes());
                 mediaPs.executeUpdate();
             }
-            
+
         } catch (SQLException ex) {
             throw new RuntimeException("Error inserting entry into \"categories\" table", ex);
         }
@@ -39,103 +42,145 @@ public class Repository implements IRepository {
             // Insert Quiz
             String query = "INSERT INTO quizzes (name, category_name, description) VALUES (?, ?, ?)";
             PreparedStatement ps = con.prepareStatement(query);
-    
+
             ps.setString(1, entry.getString("name"));
             ps.setString(2, entry.getString("category_name"));
             ps.setString(3, entry.getString("description"));
             ps.executeUpdate();
-    
-            if (entry.getString("media_id") != null) {
+            System.out.println(entry);
+            
+            if (!entry.isNull("media_id")) {
                 // Associate quiz with respective media
                 String mediaQuery = "INSERT INTO quiz_media (quiz_name, media_id) VALUES (?, ?)";
                 PreparedStatement mediaPs = con.prepareStatement(mediaQuery);
-    
+
                 mediaPs.setString(1, entry.getString("name"));
                 mediaPs.setBytes(2, entry.getString("media_id").getBytes());
                 mediaPs.executeUpdate();
             }
-    
+
         } catch (SQLException ex) {
             throw new RuntimeException("Error inserting entry into \"quizzes\" table", ex);
         }
     }
-    
 
     private void insertQuestion(JSONObject entry) {
         try {
             // Insert Question
             String query = "INSERT INTO questions (id, quiz_name, question_text, question_type) VALUES (?, ?, ?, ?)";
             PreparedStatement ps = con.prepareStatement(query);
-    
+
             ps.setBytes(1, entry.getString("id").getBytes());
             ps.setString(2, entry.getString("quiz_name"));
             ps.setString(3, entry.getString("question_text"));
             ps.setString(4, entry.getString("question_type"));
             ps.executeUpdate();
-    
-            if (entry.getString("media_id") != null) {
+
+            if (!entry.isNull("media_id")) {
                 // Associate question with respective media
                 String mediaQuery = "INSERT INTO question_media (question_id, media_id) VALUES (?, ?)";
                 PreparedStatement mediaPs = con.prepareStatement(mediaQuery);
-    
+
                 mediaPs.setBytes(1, entry.getString("id").getBytes());
                 mediaPs.setBytes(2, entry.getString("media_id").getBytes());
                 mediaPs.executeUpdate();
             }
-    
+
         } catch (SQLException ex) {
             throw new RuntimeException("Error inserting entry into \"questions\" table", ex);
         }
-    }    
+    }
 
     private void insertAnswer(JSONObject entry) {
         try {
             // Insert Answer
             String query = "INSERT INTO answers (id, question_id, answer_text, is_correct, answer_type) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = con.prepareStatement(query);
-    
+
             ps.setBytes(1, entry.getString("id").getBytes());
             ps.setBytes(2, entry.getString("question_id").getBytes());
             ps.setString(3, entry.getString("answer_text"));
             ps.setInt(4, entry.getInt("is_correct"));
             ps.setString(5, entry.getString("answer_type"));
             ps.executeUpdate();
-    
-            if (entry.getString("media_id") != null) {
+
+            if (!entry.isNull("media_id")) {
                 // Associate answer with respective media
                 String mediaQuery = "INSERT INTO answer_media (answer_id, media_id) VALUES (?, ?)";
                 PreparedStatement mediaPs = con.prepareStatement(mediaQuery);
-    
+
                 mediaPs.setBytes(1, entry.getString("id").getBytes());
                 mediaPs.setBytes(2, entry.getString("media_id").getBytes());
                 mediaPs.executeUpdate();
             }
-    
+
         } catch (SQLException ex) {
             throw new RuntimeException("Error inserting entry into \"answers\" table", ex);
         }
     }
-    
+
     private void insertMedia(JSONObject entry) {
         try {
             // Insert Media
             String query = "INSERT INTO media (id, description, media_type, media_file_path, media_filename) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = con.prepareStatement(query);
-    
+
             ps.setBytes(1, entry.getString("id").getBytes());
             ps.setString(2, entry.getString("description"));
             ps.setString(3, entry.getString("media_type"));
             ps.setString(4, entry.getString("media_file_path"));
             ps.setString(5, entry.getString("media_filename"));
             ps.executeUpdate();
-    
+
         } catch (SQLException ex) {
             throw new RuntimeException("Error inserting entry into \"media\" table", ex);
         }
     }
-    
-    
-    
+
+    private void updateQuiz(JSONObject updatedEntry, String pKey, String[] values) {
+        try {
+            StringBuilder query = new StringBuilder("UPDATE quizzes SET ");
+            for (String col : values) {
+                query.append(col).append("= ?,");
+            }
+            query.deleteCharAt(query.length() - 1);
+            query.append(" WHERE name = ?");
+            PreparedStatement ps = con.prepareStatement(query.toString());
+            for (int i = 1; i < values.length + 1; i++) {
+                ps.setString(i, updatedEntry.getString(values[i - 1]));
+            }
+            ps.setString(values.length + 1, pKey);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error updating entry in the \"category\" table", ex);
+        }
+    }
+
+    private String createConstructorParameters(ResultSet rs) {
+        StringBuilder parameters = new StringBuilder();
+        try {
+            ResultSetMetaData resultMetaData = rs.getMetaData();
+            int columns = resultMetaData.getColumnCount();
+
+            String prefix = "";
+            for (int i = 1; i <= columns; i++) {
+                String colName = resultMetaData.getColumnName(i);
+                parameters.append(prefix).append(colName).append(":");
+                prefix = ",";
+                if (colName.equals("id") || colName.contains("_id")) {
+                    byte[] id = rs.getBytes(colName);
+                    parameters.append(new String (id, StandardCharsets.UTF_8));
+                } else {
+                    String entry = rs.getString(colName);
+                    parameters.append(entry);
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error reading results of a select query from the database", ex);
+        }
+        
+        return parameters.toString();
+    }
 
     @Override
     public void init(String connectString) {
@@ -187,18 +232,91 @@ public class Repository implements IRepository {
     }
 
     @Override
-    public void update(AClass entry) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void update(AClass update, String pKey, String values) {
+        String table = update.getTableType();
+        JSONObject updatedEntry = update.serialize();
+        String[] changeColumns = values.split(",");
+        switch (table) {
+            case "quiz":
+                updateQuiz(updatedEntry, pKey, changeColumns);
+                break;
+            default:
+                throw new RuntimeException("Error updating the database");
+        }
     }
 
     @Override
-    public void delete(String gameType, String criteria) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void delete(String tableType, String criteria) {
+        try {
+            Statement deleteStatement = con.createStatement();
+            String update;
+            switch (tableType) {
+                case "category":
+                    update = "DELETE FROM categories WHERE " + criteria;
+                    break;
+                case "quiz":
+                    update = "DELETE FROM quizzes WHERE " + criteria;
+                    break;
+                case "question":
+                    update = "DELETE FROM questions WHERE " + criteria;
+                    break;
+                case "answer":
+                    update = "DELETE FROM answers WHERE " + criteria;
+                    break;
+                case "media":
+                    update = "DELETE FROM media WHERE " + criteria;
+                    break;
+                default:
+                    throw new RuntimeException("Error deleting from the database. Entered type cannot be deleted");
+            }
+
+            deleteStatement.executeUpdate(update);
+        } catch(SQLException ex) {
+            throw new RuntimeException("Error deleting from the database");
+        }
+
     }
 
     @Override
-    public void select(String gameType, String values, String criteria) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ArrayList<AClass> select(String tableType, String criteria) {
+        // SELECT columns FROM table WHERE criteria
+        AClassFactory factory = new AClassFactory();
+        ArrayList<AClass> selectedEntries = new ArrayList<>();
+
+        try {
+            Statement selectStatement = con.createStatement();
+            String query;
+            String where = (criteria.equals("")) ? criteria : "WHERE " + criteria;
+            switch (tableType) {
+                case "category":
+                    query = "SELECT * FROM categories " + where;
+                    break;
+                case "quiz":
+                    query = "SELECT * FROM quizzes " + where;
+                    break;
+                case "question":
+                    query = "SELECT * FROM questions " + where;
+                    break;
+                case "answer":
+                    query = "SELECT * FROM answers " + where;
+                    break;
+                case "media":
+                    query = "SELECT * FROM media " + where;
+                    break;
+                default:
+                    throw new RuntimeException("Error selecting from the database. Entered type cannot be select");
+            }
+
+            ResultSet rs = selectStatement.executeQuery(query);
+            while (rs.next()) {
+                String parameters = createConstructorParameters(rs);
+                selectedEntries.add(factory.createAClass(tableType, parameters));
+            }
+
+            return selectedEntries;
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error selecting from the database", ex);
+        }
     }
 
 }

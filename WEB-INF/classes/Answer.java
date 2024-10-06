@@ -5,9 +5,9 @@ public class Answer extends AClass {
     private byte[] id;
     private byte[] question_id;
     private String answer_text;
-    private int is_correct;
+    private int is_correct = 0;
     private String answer_type;
-    private byte[] media_id;
+    private byte[] media_id = null;
 
     public Answer() {
         super("answer");
@@ -79,14 +79,14 @@ public class Answer extends AClass {
 
     @Override
     JSONObject serialize() {
-        JSONObject jo = new JSONObject(
-            "{\"id\":\"" + new String(this.id, StandardCharsets.UTF_8) // Converting byte array to string representation
-                + "\", \"question_id\":\"" + new String(this.question_id, StandardCharsets.UTF_8)
-                + "\", \"answer_text\":\"" + this.answer_text
-                + "\", \"is_correct\":\"" + this.is_correct
-                + "\", \"answer_type\":\"" + this.answer_type + "\"}"
-                + "\", \"media_id\":\"" + new String(this.media_id, StandardCharsets.UTF_8) + "\"}"
-        );
+        JSONObject jo = new JSONObject();
+        jo.put("id", new String(this.id, StandardCharsets.UTF_8));
+        jo.put("question_id", new String(this.question_id, StandardCharsets.UTF_8));
+        jo.put("answer_text", this.answer_text);
+        jo.put("is_correct", this.is_correct);
+        jo.put("answer_type", this.answer_type);
+        jo.put("media_id", new String(this.media_id, StandardCharsets.UTF_8));
+
         return jo;
     }
 }

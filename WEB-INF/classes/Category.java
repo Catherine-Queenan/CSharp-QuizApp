@@ -3,7 +3,7 @@ import org.json.JSONObject;
 
 public class Category extends AClass{
     private String name;
-    private byte[] media_id;
+    private byte[] media_id = null;
 
     public Category() {
         super("category");
@@ -39,10 +39,10 @@ public class Category extends AClass{
 
     @Override
     JSONObject serialize() {
-        JSONObject jo = new JSONObject(
-            "{\"name\":\"" + this.name
-            + "\", \"media_id\":\"" + new String(this.media_id, StandardCharsets.UTF_8) + "\"}"
-        );
+        JSONObject jo = new JSONObject();
+        jo.put("name", this.name);
+        jo.put("media_id", new String(this.media_id, StandardCharsets.UTF_8));
+
         return jo;
     }
 }
