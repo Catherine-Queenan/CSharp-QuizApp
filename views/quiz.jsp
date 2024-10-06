@@ -39,7 +39,8 @@
             width: 31%;
             border: 0;
             border-radius: 15px;
-            padding: 10px 0 15px 0;
+            padding: 10px;
+            padding-bottom: 15px;
             font-size: 25px;
             color: #0C1B33;
             display: flex;
@@ -122,6 +123,7 @@
         }
 
         .img {
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
