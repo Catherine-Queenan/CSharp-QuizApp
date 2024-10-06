@@ -14,7 +14,7 @@
             margin-bottom: 20px;
         }
 
-        .errorMsg {
+        .message {
             width: 80%;
             text-align: center;
             font-size: 40px;
@@ -42,13 +42,20 @@
 <body>
     <div class="wrap">
         <i class="fa-solid fa-triangle-exclamation"></i>
-        <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
-            <% if (errorMessage != null) { %>
-                <div class="errorMsg cherry-cream-soda">
-                    <%= errorMessage %>
-                </div>
-            <% } %>
-        <button class="redirectHome" onclick="window.location.href='home'">Go Back to Home</button>
+        <div class="message cherry-cream-soda" id="message"></div>
+        <button type="button" id="redirectHome" class="redirectHome">Go Back to Home</button>
     </div>
 </body>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorMessage = urlParams.get('errorMessage');
+
+    if (errorMessage) {
+        document.querySelector('.message').textContent = decodeURIComponent(errorMessage);
+    }
+
+    document.getElementById('redirectHome').addEventListener('click', () => {
+        window.location.href = 'home';
+    });
+</script>
 </html>
