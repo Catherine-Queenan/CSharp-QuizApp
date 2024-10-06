@@ -13,6 +13,13 @@ public class LogoutServlet extends HttpServlet {
             session.invalidate();
         }
 
+        Cookie tokenCookie = new Cookie("token", null);
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(true);
+        tokenCookie.setMaxAge(0);
+        tokenCookie.setPath("/");
+        res.addCookie(tokenCookie);
+
         // Prepare JSON response
         JSONObject jsonResponse = new JSONObject();
         jsonResponse.put("status", "success");
