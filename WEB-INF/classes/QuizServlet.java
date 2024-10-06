@@ -65,9 +65,10 @@ public class QuizServlet extends HttpServlet {
                         .append("           <input type=\"hidden\" name=\"quizName\" value=\"").append(quizName).append("\" />\n")
                         .append("           <input type=\"submit\" value=\"").append(quizName).append("\" />\n")
                         // .append("    <label for=\"").append(quizName).append("\">").append(quizName).append("</label>")
-                        .append("           <p class=\"quiz-description\">").append(quizDescription).append("</p>\n")
-                        .append("               <div class=\"img\">").append(mediaHtml.toString()).append("</div>\n")
-                        .append("       </form>\n");
+                        .append("<p class=\"quiz-description\">").append(quizDescription).append("</p>\n")
+                        .append("</form>\n")
+                        .append("<button type=\"button\" onclick=\"window.location.href='moderateMode?quizName=")
+                            .append(quizName).append("'\">Moderate Mode</button>\n");;
                 
                 // Show "Add Question" and "Delete Quiz" buttons only for admin users
                 if ("a".equals(role)) {
@@ -77,7 +78,8 @@ public class QuizServlet extends HttpServlet {
                             .append("    <button type=\"button\" onclick=\"window.location.href='deleteQuiz?quizName=")
                             .append(quizName).append("'\">Delete Quiz</button>\n")
                             .append("    <button type=\"button\" onclick=\"window.location.href='edit?quizName=")
-                            .append(quizName).append("'\">Edit Quiz</button>\n</div>");
+                            .append(quizName).append("'\">Edit Quiz</button>\n</div>")
+                            .append("<button type=\"button\" onclick=\"window.location.href='moderateMode?quizName=");
                 }
 
                 quizzesHtml.append("</div>\n");

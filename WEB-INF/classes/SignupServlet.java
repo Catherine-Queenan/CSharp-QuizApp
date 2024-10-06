@@ -69,7 +69,7 @@ public class SignupServlet extends HttpServlet {
                 res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             } else {
                 //Create insert statement for database
-                PreparedStatement preparedStatement = con.prepareStatement("INSERT INTO users (ID, username, password, role) VALUES (?, ?, ?, ?)");
+                PreparedStatement preparedStatement = con.prepareStatement("INSERT INTO users (id, username, password, role) VALUES (?, ?, ?, ?)");
                 UUID userId = UUID.randomUUID();
                 preparedStatement.setBytes(1, asBytes(userId));
                 preparedStatement.setString(2, username);
@@ -163,6 +163,7 @@ public class SignupServlet extends HttpServlet {
         //     //Session creation
         //     HttpSession session = req.getSession(true);
         //     session.setAttribute("USER_ID", username);
+        //     session.setAttribute("ROLE", "g");
         //     res.setStatus(302);
 
         //     res.sendRedirect("home");
