@@ -85,7 +85,7 @@ public class DeleteQuizServlet extends HttpServlet {
             ps.executeUpdate();
 
             // Get the referer (previous page)
-            String referer = req.getHeader("Referer");
+            String referer = req.getHeader("home");
 
             // Redirect to the previous page or a default page if referer is null
             if (referer != null) {
