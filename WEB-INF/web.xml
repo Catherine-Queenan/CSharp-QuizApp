@@ -129,7 +129,7 @@
     </servlet>
     <servlet-mapping>
     <servlet-name>CreateQuizServlet</servlet-name>
-    <url-pattern>/createQuiz</url-pattern>
+    <url-pattern>/createQuiz/create</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -138,6 +138,6 @@
     </servlet>
     <servlet-mapping>
     <servlet-name>DeleteQuizServlet</servlet-name>
-    <url-pattern>/deleteQuiz</url-pattern>
+    <url-pattern>/delete/*</url-pattern>
     </servlet-mapping>
 </web-app>

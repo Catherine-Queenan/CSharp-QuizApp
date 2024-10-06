@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.util.UUID;
 import java.nio.ByteBuffer;
 import jakarta.servlet.annotation.MultipartConfig;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 @MultipartConfig
 public class CreateQuizServlet extends HttpServlet {
@@ -28,7 +30,13 @@ public class CreateQuizServlet extends HttpServlet {
         return new UUID(mostSigBits, leastSigBits);
     }
 
+    @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        
+        // res.setContentType("text/html");
+        // RequestDispatcher viewMain = req.getRequestDispatcher("/views/createQuiz.jsp");
+        // viewMain.forward(req, res);
+
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("USER_ID") == null) {
             res.sendRedirect("login");
@@ -49,7 +57,7 @@ public class CreateQuizServlet extends HttpServlet {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        ArrayList<String> categories = new ArrayList<>();
+        JSONArray categories = new JSONArray();
 
         try {
             // Load MySQL driver
@@ -58,16 +66,37 @@ public class CreateQuizServlet extends HttpServlet {
             // Database connection
             con = DatabaseUtil.getConnection();
 
+            res.setContentType("application/json");
+            res.setCharacterEncoding("UTF-8");
+
             ps = con.prepareStatement("SELECT name FROM categories");
             rs = ps.executeQuery();
 
             while(rs.next()){
-                categories.add(rs.getString("name"));
+                categories.put(rs.getString("name"));
             }
 
-            req.setAttribute("categories", categories);
+            // res.setContentType("application/json");
+            // PrintWriter out = res.getWriter();
+            // out.print("{\status\": \"success\", \"message\": \"Categories fetched successfully.\", \"categories\": " + categories.toString() + "}");
+            // res.setCharacterEncoding("UTF-8");
+
+            // Create JSON response
+            JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("categories", categories);
+
+            // Write JSON response to the client
+            res.getWriter().write(jsonResponse.toString());
+            res.getWriter().flush();
 
         } catch (Exception e) {
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Set status to 500
+            res.setContentType("application/json");
+            JSONObject errorResponse = new JSONObject();
+            errorResponse.put("error", "An error occurred while fetching categories.");
+            res.getWriter().write(errorResponse.toString());
+            res.getWriter().flush();
         } finally {
             try {
                 if (ps != null)
@@ -88,12 +117,24 @@ public class CreateQuizServlet extends HttpServlet {
                 e.printStackTrace();
             }
         }
-        // Forward to the quiz creation form page
-        RequestDispatcher view = req.getRequestDispatcher("/views/createQuiz.jsp");
-        view.forward(req, res);
+        // // Forward to the quiz creation form page
+        // RequestDispatcher view = req.getRequestDispatcher("/views/createQuiz.jsp");
+        // view.forward(req, res);
     }
 
+    @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        // Read the request body as JSON
+        StringBuilder jsonBuffer = new StringBuilder();
+        String line;
+        try(BufferedReader reader = req.getReader()) {
+            while((line = reader.readLine()) != null) {
+                jsonBuffer.append(line);
+            }
+        }
+
+        JSONObject jsonRequest = new JSONObject(jsonBuffer.toString());
+        
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("USER_ID") == null) {
             res.sendRedirect("addQuestion");
@@ -120,20 +161,32 @@ public class CreateQuizServlet extends HttpServlet {
         PreparedStatement psCategories = null;
 
         try {
-            String quizName = req.getParameter("quizName");
 
-            //If category was selected as other use, use the entered other category name 
-            String categoryName = req.getParameter("categoryName");
-            String description = req.getParameter("description");
+            String quizName = jsonRequest.getString("quizName");
+            String categoryName = jsonRequest.getString("categoryName");
+            String description = jsonRequest.getString("description");
+            String newCategory = jsonRequest.optString("newCategory", null);
+
             Part categoryPart = req.getPart("categoryMedia");
             Part quizPart = req.getPart("quizMedia");
-            String categoryFileName = Paths.get(categoryPart.getSubmittedFileName()).getFileName().toString();
-            String quizFileName = Paths.get(quizPart.getSubmittedFileName()).getFileName().toString();
+            
+            
+            // String quizName = req.getParameter("quizName");
+
+            // //If category was selected as other use, use the entered other category name 
+            // String categoryName = req.getParameter("categoryName");
+            // String description = req.getParameter("description");
+            // Part categoryPart = req.getPart("categoryMedia");
+            // Part quizPart = req.getPart("quizMedia");
+            // String categoryFileName = Paths.get(categoryPart.getSubmittedFileName()).getFileName().toString();
+            // String quizFileName = Paths.get(quizPart.getSubmittedFileName()).getFileName().toString();
 
             if (quizName == null || quizName.trim().isEmpty() ||
                     categoryName == null || categoryName.trim().isEmpty()) {
-                req.setAttribute("error", "Quiz name and category name are required.");
-                doGet(req, res);
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Set status to 400
+                res.getWriter().write("Quiz name and category name are required.");
+                // req.setAttribute("error", "Quiz name and category name are required.");
+                // doGet(req, res);
                 return;
             }
 
@@ -144,8 +197,8 @@ public class CreateQuizServlet extends HttpServlet {
             con = DatabaseUtil.getConnection();
 
             //If a new category needs creating
-            if(categoryName.equalsIgnoreCase("ADDANOTHERCATEGORY")){
-                String newCategory = req.getParameter("newCategory");
+            if(categoryName.equalsIgnoreCase("ADDANOTHERCATEGORY") && newCategory != null){
+                //String newCategory = req.getParameter("newCategory");
                 psCategories = con.prepareStatement("INSERT INTO categories (name) VALUES (?)");
                 psCategories.setString(1, newCategory);
                 psCategories.executeUpdate();
@@ -157,13 +210,18 @@ public class CreateQuizServlet extends HttpServlet {
 
                 // Insert media information into the `media` table
                 if(categoryPart != null){
-                    String mediaUrl = null;
-                    System.out.println("Current folder: " + (new File(".")).getCanonicalPath());
-                    File saveFile = new File(getServletContext().getRealPath("/public/media"));
-                    File file = new File(saveFile, categoryFileName);
-                    categoryPart.write(file.getAbsolutePath());
-                    mediaUrl = "public/media/" + categoryFileName;
+                    String categoryFileName = Paths.get(categoryPart.getSubmittedFileName()).getFileName().toString();
+                    File saveFile = new File(getServletContext().getRealPath("/public/media"), categoryFileName);
+                    try {
+                        categoryPart.write(saveFile.getAbsolutePath());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Set status to 500
+                        res.getWriter().write("An error occurred while uploading the category media.");
+                        return;
+                    }
 
+                    String mediaUrl = "public/media/" + categoryFileName;
                     String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path, media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?)";
                     psMediaC = con.prepareStatement(insertMediaSql);
                     psMediaC.setBytes(1, categoryMediaIdBinary);
@@ -183,27 +241,32 @@ public class CreateQuizServlet extends HttpServlet {
                 }
             }
 
-            // Insert new quiz with generated keys
-            String sql = "INSERT INTO quizzes (name, category_name, description) VALUES (?, ?, ?)";
-            ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, quizName);
-            ps.setString(2, categoryName);
-            ps.setString(3, description);
-            int affectedRows = ps.executeUpdate();
+            if (quizPart != null) {
+                String quizFileName = Paths.get(quizPart.getSubmittedFileName()).getFileName().toString();
+                File saveFile = new File(getServletContext().getRealPath("/public/media"), quizFileName);
+                try {
+                    quizPart.write(saveFile.getAbsolutePath());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Set status to 500
+                    res.getWriter().write("An error occurred while uploading the quiz media.");
+                    return;
+                }
 
-            // Generate a UID for the quiz media
-            UUID quizUUID = UUID.randomUUID();
-            byte[] quizMediaIdBinary = uuidToBytes(quizUUID);
+                // Insert new quiz with generated keys
+                String sql = "INSERT INTO quizzes (name, category_name, description) VALUES (?, ?, ?)";
+                ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1, quizName);
+                ps.setString(2, categoryName);
+                ps.setString(3, description);
+                int affectedRows = ps.executeUpdate();
 
-            // Insert media information into the `media` table
-            if(quizPart != null){
-                String mediaUrl = null;
-                System.out.println("Current folder: " + (new File(".")).getCanonicalPath());
-                File saveFile = new File(getServletContext().getRealPath("/public/media"));
-                File file = new File(saveFile, quizFileName);
-                quizPart.write(file.getAbsolutePath());
-                mediaUrl = "public/media/" + quizFileName;
+                // Generate a UID for the quiz media
+                UUID quizUUID = UUID.randomUUID();
+                byte[] quizMediaIdBinary = uuidToBytes(quizUUID);
 
+                // Insert media information into the `media` table
+                String mediaUrl = "public/media/" + quizFileName;
                 String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path, media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?)";
                 psMediaQ = con.prepareStatement(insertMediaSql);
                 psMediaQ.setBytes(1, quizMediaIdBinary);
@@ -220,27 +283,32 @@ public class CreateQuizServlet extends HttpServlet {
                 psQuizMedia.setString(1, quizName);
                 psQuizMedia.setBytes(2, quizMediaIdBinary);
                 psQuizMedia.executeUpdate();
-            }
 
-            if (affectedRows > 0) {
-                // Optionally retrieve the generated quiz ID
-                ResultSet generatedKeys = ps.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    int quizId = generatedKeys.getInt(1);
-                    // Log or use quizId as needed
+                if (affectedRows > 0) {
+                    // Optionally retrieve the generated quiz ID
+                    ResultSet generatedKeys = ps.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        int quizId = generatedKeys.getInt(1);
+                        // Log or use quizId as needed
+                    }
+                    // res.sendRedirect("index");
+                    res.sendRedirect("quizzes?categoryName=" + categoryName);
+
+                } else {
+                    req.setAttribute("error", "Failed to create quiz. Please try again.");
+                    doGet(req, res);
                 }
-                // res.sendRedirect("index");
-                res.sendRedirect("quizzes?categoryName=" + categoryName);
-
-            } else {
-                req.setAttribute("error", "Failed to create quiz. Please try again.");
-                doGet(req, res);
             }
+
+            res.setStatus(HttpServletResponse.SC_CREATED); // Set status to 201
+            res.getWriter().write("Quiz created successfully.");
 
         } catch (Exception e) {
             e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Set status to 500
+            res.getWriter().write("An error occurred while creating the quiz.");
             // req.setAttribute("error", "An error occurred while creating the quiz.");
-            doGet(req, res);
+            //doGet(req, res);
         } finally {
             try {
                 if (ps != null)

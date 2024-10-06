@@ -155,4 +155,42 @@
     </div>
 </body>
 <script src="scripts\logout.js"></script>
+<script>
+    
+    function confirmDelete(button) {
+        console.log("Delete button clicked");
+        const quizName = button.getAttribute('data-quiz-name'); // Get the quiz name from the button's data attribute
+        if (confirm('Are you sure you want to delete this quiz?')) {
+
+            const currentPath = window.location.pathname; // Get the current path
+            const pathSegments = currentPath.split('/'); // Split the path into segments
+
+            // Construct the URI for the DELETE request
+            const deleteUrl = `${pathSegments.slice(0, -1).join('/')}/delete/${encodeURIComponent(quizName)}`;
+            console.log(deleteUrl)
+
+            fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Parse JSON if response is okay
+                }
+                throw new Error('Network response failed.');
+            })
+            .then(data => {
+                alert(data.message); // Show success message
+                location.reload(); // Reload the page to reflect changes
+            })
+            .catch(error => {
+                alert('Error: ' + error.message); // Show error message if something went wrong
+            });
+        }
+    }
+
+    </script>
+    
 </html>

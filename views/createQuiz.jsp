@@ -92,7 +92,7 @@
         <% if (request.getAttribute("error") != null) { %>
             <p><%= request.getAttribute("error") %></p>
         <% } %>
-        <form class="newQuizForm" method="post" action="createQuiz" enctype="multipart/form-data">
+        <div class="newQuizForm">
             <label for="quizName">Quiz Name:</label>
             <input type="text" id="quizName" name="quizName" required />
 
@@ -123,9 +123,9 @@
                     <label for="quizMediaFile">File:</label>
                     <input type="file" id="quizMediaFile" name="quizMedia" accept="image/*" />
                 </div>
-            <button class="createQuizBtn" type="submit">Create Quiz</button>
+            <button class="createQuizBtn" type="button" id="createQuizButton">Create Quiz</button>
 
-        </form>
+        </div>
          <!-- Check if the quiz was successfully created -->
          <% if (request.getAttribute("quizName") != null) { %>
             <h2>Quiz "<%= request.getAttribute("quizName") %>" created successfully!</h2>
@@ -133,7 +133,7 @@
             <!-- Button to add questions to the newly created quiz -->
             <form method="post" action="addQuestion">
                 <input type="hidden" name="quizName" value="<%= request.getAttribute("quizName") %>" />
-                // ADD IMAGES
+                
                 <button type="submit">Add Questions to "<%= request.getAttribute("quizName") %>"</button>
             </form>
         <% } %>
@@ -141,6 +141,79 @@
 </body>
 <script src="scripts\logout.js"></script>
 <script>
+
+    function populateCategories(categories) {
+        const categorySelect = document.getElementById("category");
+        categorySelect.innerHTML = ""; // Clear existing options
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category; // Adjust this based on how your categories are structured
+            option.textContent = category; // Adjust this if needed
+            categorySelect.appendChild(option);
+        });
+    }
+
+    document.getElementById('createQuizButton').addEventListener('click', function(event) {
+
+        event.preventDefault();
+
+        const quizName = document.getElementById("quizName").value;
+        const categoryName = document.getElementById("category").value;
+        const newCategory = document.getElementById("newCategory").value;
+        const description = document.getElementById("description").value;
+        let categoryMedia = null;
+        let quizMedia = null;
+
+        //Handle file uploads
+        if(document.getElementById("categoryImage").checked){
+            const categoryFileInput = document.getElementById("categoryMediaFile");
+            categoryMedia = categoryFileInput.files.length ? categoryFileInput.files[0] : null;
+        }
+
+        if(document.getElementById("quizImage").checked){
+            const quizFileInput = document.getElementById("quizMediaFile");
+            quizMedia = quizFileInput.files.length ? quizFileInput.files[0] : null;
+        }
+
+        const formData = new FormData();
+        // const quizData = {
+        //     quizName,
+        //     categoryName,
+        //     newCategory,
+        //     description,
+        //     categoryMedia,
+        //     quizMedia
+        // };
+
+        formData.append("quizname", quizName);
+        formData.append("categoryname", categoryName);
+        formData.append("newcategory", newCategory);
+        formData.append("description", description);
+        if (categoryMedia) formData.append("categorymedia", categoryMedia);
+        if (quizMedia) formData.append("quizmedia", quizMedia);
+
+        // Perform the AJAX request
+        fetch('createQuiz/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to create quiz');
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error("Error creating quiz: ", error);
+        });
+    });
+
     function addAnswer() {
         const answerDiv = document.createElement('div');
         answerDiv.classList.add('answer');

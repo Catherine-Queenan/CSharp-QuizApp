@@ -22,7 +22,7 @@ public class MainServlet extends HttpServlet {
         StringBuilder adminHtml = new StringBuilder();
         if ("a".equals(role)) {
             adminHtml.append("<div class=\"title cherry-cream-soda\">Admin Dashboard</div>\n<div class=\"admin\">\n")
-                     .append("    <button class=\"newQuiz\" onclick=\"window.location.href='createQuiz'\">Create a new Quiz</button>\n")
+                     .append("    <button class=\"newQuiz\" onclick=\"window.location.href='createQuiz/create'\">Create a new Quiz</button>\n")
                      .append("   </div>\n");
         }
 

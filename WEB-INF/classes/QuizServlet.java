@@ -75,8 +75,8 @@ public class QuizServlet extends HttpServlet {
                     quizzesHtml.append("<div class=\"adminBtnWrap\">")
                             // .append("    <button type=\"button\" onclick=\"window.location.href='addQuestion?quizName=")
                             // .append(quizName).append("'\">Add Question</button>\n")
-                            .append("    <button type=\"button\" onclick=\"window.location.href='deleteQuiz?quizName=")
-                            .append(quizName).append("'\">Delete Quiz</button>\n")
+                            .append("    <button type=\"button\" class=\"deleteBtn\" data-quiz-name=\"")
+                            .append(quizName).append("\" onClick=\"confirmDelete(this)\">Delete Quiz</button>\n")
                             .append("    <button type=\"button\" onclick=\"window.location.href='edit?quizName=")
                             .append(quizName).append("'\">Edit Quiz</button>\n</div>");
                 }
