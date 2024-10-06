@@ -246,6 +246,10 @@
     };
 
     let correctAnswer = document.getElementById('questionForm');
+    // Declare the player variable
+    var playerQuestion = null;
+    var playerAnswer = null;
+
     //---------------WRONG BUTTON MECHANICS---------------\\
     let wrongButtons = document.getElementsByClassName("wrongPlayAnswer");
     // let container = document.getElementsByClassName("wrap")[0];
@@ -260,15 +264,40 @@
         });
     }
 
+    function submitCorrectAnswer() {
+        setTimeout(() => {
+                    correctAnswer.submit();
+                    
+            }, 500);
+    }
+
+    function nextQuestion() {
+        if(answerMedia != null) {
+            answerMedia.style.display = "flex";
+            let audioAnswer = document.getElementById("audio-answer");
+            let audioQuestion = document.getElementById("audio-question");
+            if(audioAnswer != null){
+                audioAnswer.play();
+            } else {
+                playerAnswer.playVideo();
+            }
+
+            if(audioQuestion != null){
+                audioQuestion.pause();
+            } else if(playerQuestion) {
+                playerQuestion.stopVideo();
+            }
+        } else {
+            submitCorrectAnswer()
+        }
+    }
+
     let correctAnswerButton = document.getElementById("rightPlayAnswer");
+    let answerMedia = document.getElementById("mediaAnswer");
     correctAnswerButton.addEventListener('click', () => {
         correctAnswerButton.style.boxShadow = "0px 0px 50px rgb(0, 244, 0)";
-        setTimeout(() => {
-            correctAnswer.submit();
-        }, 500);
+        nextQuestion();
     });
-
-
 
     //---------------AUTOPLAY---------------\\
     let autoplayEnabled = document.getElementById("autoplay").value === "true";
@@ -328,9 +357,7 @@
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
                 correctAnswerButton.style.boxShadow = "0px 0px 50px rgb(0, 244, 0)";
-                setTimeout(() => {
-                    correctAnswer.submit();
-                }, 500);
+                nextQuestion();
                 // if (correctButton) {
                 //     correctButton.click();
                 // }
@@ -339,9 +366,7 @@
 
         autoplayTimer = setTimeout(() => {
             correctAnswerButton.style.boxShadow = "0px 0px 50px rgb(0, 244, 0)";
-            setTimeout(() => {
-                correctAnswer.submit();
-            }, 500);
+            nextQuestion();
             // if (correctButton) {
             //     correctButton.click();
             // }
@@ -362,54 +387,100 @@
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // Declare the player variable
-    var player;
+    
 
     // Setting player attributes
-    var Id = document.getElementById("videoId").value;
-    var startTime = parseInt(document.getElementById("videoStart").value);
-    var endTime = parseInt(document.getElementById("videoEnd").value);
+    var IdQ = document.getElementById("videoId-question");
+    var startTimeQ = parseInt(document.getElementById("videoStart-question") != null ? document.getElementById("videoStart-question").value : "0");
+    var endTimeQ = parseInt(document.getElementById("videoEnd-question") != null ? document.getElementById("videoEnd-question").value : "0");
+
+    var IdA = document.getElementById("videoId-answer");
+    var startTimeA = parseInt(document.getElementById("videoStart-answer") != null ? document.getElementById("videoStart-answer").value : "0");
+    var endTimeA = parseInt(document.getElementById("videoEnd-answer") != null ? document.getElementById("videoEnd-answer").value : "0");
+
+    console.log(startTimeA)
+    console.log(endTimeA)
 
     // Create the YouTube player after the API downloads
     function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-            videoId: Id,
-            playerVars: {
-                'playsinline': 1,
-                'start': startTime,
-                'end': endTime
-            },
-            events: {
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange
-            }
-        });
+        if(IdQ != null){
+            playerQuestion = new YT.Player('player-question', {
+                videoId: IdQ.value,
+                playerVars: {
+                    'playsinline': 1,
+                    'start': startTimeQ,
+                    'end': endTimeQ
+                },
+                events: {
+                    'onReady': onPlayerQuestionReady,
+                    'onStateChange': onPlayerQuestionStateChange
+                }
+            });
+        }
+        console.log(IdA);
+        if(IdA != null) {
+            playerAnswer = new YT.Player('player-answer', {
+                videoId: IdA.value,
+                playerVars: {
+                    'playsinline': 1,
+                    'start': startTimeA,
+                    'end': endTimeA
+                },
+                events: {
+                    'onStateChange': onPlayerAnswerStateChange
+                }
+            });
+        }
+        
     }
 
     // Play the video once it's ready and start at the 5-second mark
-    function onPlayerReady(event) {
-        event.target.seekTo(startTime);
+    function onPlayerQuestionReady(event) {
+        event.target.seekTo(startTimeQ);
         event.target.playVideo();
     }
 
     // Monitor the video state and loop it between 5 and 6 seconds
-    function onPlayerStateChange(event) {
+    function onPlayerQuestionStateChange(event) {
         if (event.data == YT.PlayerState.PLAYING) {
             var checkTime = setInterval(function () {
-                var currentTime = player.getCurrentTime();
-                if (currentTime >= endTime) {
-                    player.seekTo(startTime);
+                var currentTime = playerQuestion.getCurrentTime();
+                if (currentTime >= endTimeQ) {
+                    playerQuestion.seekTo(startTimeQ);
                 }
             }, 100);
         }
     }
-    //---------------AUDIO PLAYING---------------\\
-    //makes audio loop
-    function audio() {
-        if (document.querySelector("audio").currentTime >= parseInt(document.getElementById("videoEnd").value)) {
-            document.querySelector("audio").currentTime = parseInt(document.getElementById("videoStart").value);
+
+    function onPlayerAnswerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+            var checkTime = setInterval(function () {
+                var currentTime = playerAnswer.getCurrentTime();
+                if (currentTime >= endTimeA) {
+                    submitCorrectAnswer();
+                }
+            }, 100);
         }
     }
+
+    //---------------AUDIO PLAYING---------------\\
+    //makes audio loop
+    function questionAudio() {
+        if (document.getElementById("audio-question").currentTime >= endTimeQ) {
+            document.getElementById("audio-question").currentTime = startTimeQ;
+        }
+    }
+
+    function answerAudio() {
+        console.log( parseInt(document.getElementById("videoEnd-answer").value))
+        console.log(document.getElementById("audio-answer").currentTime)
+        if (document.getElementById("audio-answer").currentTime >=  parseInt(document.getElementById("videoEnd-answer").value)) {
+            submitCorrectAnswer();
+        }
+    }
+
+ 
+
 
 </script>
 <script src="scripts\logout.js"></script>
