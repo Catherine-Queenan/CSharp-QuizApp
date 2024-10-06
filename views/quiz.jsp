@@ -13,6 +13,7 @@
         }
 
         .quizzesBtnWrap {
+            margin-top: 20px;
             width: 85%;
             display: flex;
             justify-content: center;
@@ -21,7 +22,6 @@
 
         #quizzesWrap {
             width: 90%;
-            /* padding: 0 100px; */
             margin: 0 auto;
             position: relative;
             overflow: hidden; /* Hides overflow categories */
@@ -51,6 +51,7 @@
         }
 
         .quiz:hover {
+            transform: scale(0.99);
             box-shadow: inset 5px 5px 10px rgba(14, 1, 47, 0.7);
         }
 
@@ -78,7 +79,7 @@
 
         .quiz:nth-child(5),
         .quiz:nth-child(5n+5) {
-            background-color: #45425A;
+            background-color: #6e6ba6;
         }
 
         .quiz form {

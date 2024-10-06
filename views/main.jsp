@@ -54,11 +54,13 @@
         .category:nth-child(1),
         .category:nth-child(5n+1) {
             background-color: #FF4B32;
+            color: #0C1B33; 
         }
 
         .category:nth-child(2),
         .category:nth-child(5n+2) {
             background-color: #FFB20F;
+            color: #0C1B33; 
         }
 
         .category:nth-child(3),
@@ -75,7 +77,8 @@
 
         .category:nth-child(5),
         .category:nth-child(5n+5) {
-            background-color: #45425A;
+            background-color: #6e6ba6;
+            color: #0C1B33; 
         }
 
         .category form {
