@@ -134,7 +134,7 @@
             document.getElementById("next-button").style.display = "none";
             document.getElementById("answerCounts").style.display = "none";
             document.getElementById("question").style.display = "none";
-            document.getElementById("media-container").style.display = "none";
+            // document.getElementById("media-container").style.display = "hidden";
         }
         let webSocket = new WebSocket('ws://localhost:8081/project1/questionsws');
         let questions = [];
@@ -218,59 +218,59 @@
             }
         };
         // Display question, answers, and media (images, videos)
-function displayQuestion(question, answers, images, videos) {
-    document.getElementById("question").textContent = question;
-    const optionsDiv = document.getElementById("options");
-    optionsDiv.innerHTML = '';  // Clear previous answers
+        function displayQuestion(question, answers, images, videos) {
+            document.getElementById("question").textContent = question;
+            const optionsDiv = document.getElementById("options");
+            optionsDiv.innerHTML = '';  // Clear previous answers
 
-    // Display answers as buttons
-    answers.forEach(answer => {
-        const answerElement = document.createElement("button");
-        answerElement.textContent = answer;
-        answerElement.classList.add("answer");
-        optionsDiv.appendChild(answerElement);
+            // Display answers as buttons
+            answers.forEach(answer => {
+                const answerElement = document.createElement("button");
+                answerElement.textContent = answer;
+                answerElement.classList.add("answer");
+                optionsDiv.appendChild(answerElement);
 
-        answerElement.addEventListener("click", function () {
-            console.log("Sending answer:", answer);  // Log the selected answer
-            webSocket.send(JSON.stringify({ type: "answer", answer: answer }));
-        });
-    });
+                answerElement.addEventListener("click", function () {
+                    console.log("Sending answer:", answer);  // Log the selected answer
+                    webSocket.send(JSON.stringify({ type: "answer", answer: answer }));
+                });
+            });
 
-    // Display images (if any)
-    const questionContainer = document.getElementById("question-container");
-    const mediaDiv = document.createElement("div");
-    mediaDiv.id = "media-container";
-    questionContainer.appendChild(mediaDiv);
+            // Display images (if any)
+            const questionContainer = document.getElementById("question-container");
+            const mediaDiv = document.createElement("div");
+            mediaDiv.id = "media-container";
+            questionContainer.appendChild(mediaDiv);
 
-    mediaDiv.innerHTML = ''; // Clear previous media
-    if (images && images.length > 0) {
-        images.forEach(imageSrc => {
-            const imgElement = document.createElement("img");
-            imgElement.src = imageSrc;
-            imgElement.alt = "Question Image";
-            imgElement.style.width = "100%"; // Adjust image size
-            mediaDiv.appendChild(imgElement);
-        });
-    }
+            mediaDiv.innerHTML = ''; // Clear previous media
+            if (images && images.length > 0) {
+                images.forEach(imageSrc => {
+                    const imgElement = document.createElement("img");
+                    imgElement.src = imageSrc;
+                    imgElement.alt = "Question Image";
+                    imgElement.style.width = "100%"; // Adjust image size
+                    mediaDiv.appendChild(imgElement);
+                });
+            }
 
-    // Display YouTube videos (if any)
-    if (videos && videos.length > 0) {
-        videos.forEach(videoUrl => {
-            const videoElement = document.createElement("iframe");
-            videoElement.src = videoUrl.replace("watch?v=", "embed/");
-            videoElement.width = "100%";
-            videoElement.height = "315";
-            videoElement.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-            videoElement.allowFullscreen = true;
-            mediaDiv.appendChild(videoElement);
-        });
-    }
+            // Display YouTube videos (if any)
+            if (videos && videos.length > 0) {
+                videos.forEach(videoUrl => {
+                    const videoElement = document.createElement("iframe");
+                    videoElement.src = videoUrl.replace("watch?v=", "embed/");
+                    videoElement.width = "100%";
+                    videoElement.height = "315";
+                    videoElement.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+                    videoElement.allowFullscreen = true;
+                    mediaDiv.appendChild(videoElement);
+                });
+            }
 
-    if (role === "a") {
-        document.getElementById("next-button").style.display = "block";  // Show next button for admin
-        document.getElementById("options").style.display = "none";
-    }
-}
+            if (role === "a") {
+                document.getElementById("next-button").style.display = "block";  // Show next button for admin
+                document.getElementById("options").style.display = "none";
+            }
+        }
 
 
         // Handle "Next Question" button click
