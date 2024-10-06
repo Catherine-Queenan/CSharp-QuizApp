@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.UUID;
 import java.nio.*;
 import org.json.JSONObject;
+import java.util.UUID;
 
 public class SignupServlet extends HttpServlet {
     //Creating unique user Ids
@@ -37,6 +38,7 @@ public class SignupServlet extends HttpServlet {
         String line;
 
         BufferedReader reader = req.getReader();
+
         while ((line = reader.readLine()) != null) {
             sb.append(line);
         }
@@ -76,10 +78,21 @@ public class SignupServlet extends HttpServlet {
 
                 int row = preparedStatement.executeUpdate();
                 preparedStatement.close();
-
+                
                 // Session created
                 HttpSession session = req.getSession(true);
                 session.setAttribute("USER_ID", username);
+
+
+                //Generating a token
+                String token = UUID.randomUUID().toString();
+
+                // Cookie to store token
+                Cookie tokenCookie = new Cookie("token", token);
+                tokenCookie.setHttpOnly(true);
+                tokenCookie.setSecure(true);
+                tokenCookie.setMaxAge(60 * 60 * 24); // 1 day
+                res.addCookie(tokenCookie);
 
                 // User created successfully
                 jsonResponse.put("status", "success");
