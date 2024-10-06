@@ -86,13 +86,21 @@
 
 
 <servlet>
-  <servlet-name>QuizServlet</servlet-name>
+  <servlet-name>QuizServletJson</servlet-name>
   <servlet-class>QuizServlet</servlet-class>
 </servlet>
 <servlet-mapping>
-  <servlet-name>QuizServlet</servlet-name>
-  <url-pattern>/quizzes</url-pattern>
+  <servlet-name>QuizServletJson</servlet-name>
+  <url-pattern>/quizzes-json/*</url-pattern>
 </servlet-mapping>
+<servlet>
+  <servlet-name>QuizServlet</servlet-name>
+  <servlet-class>QuizServlet</servlet-class>
+</servlet>
+<servlet>
+  <servlet-name>QuizServlet</servlet-name>
+  <jsp-file>/views/quizzes.jsp</jsp-file>
+</servlet>
 
 <servlet>
   <servlet-name>QuestionsServlet</servlet-name>

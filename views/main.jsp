@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Handle category button click to fetch quizzes
             categoryDiv.querySelector('.categoryButton').addEventListener('click', () => {
                 // Fetch quizzes for the selected category
-                fetch(`/quizzes?categoryName=${encodeURIComponent(category.categoryName)}`, {
+                fetch(`/quizzes-json?categoryName=${encodeURIComponent(category.categoryName)}`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json'
