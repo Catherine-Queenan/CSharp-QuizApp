@@ -204,8 +204,7 @@
             </div>
             <button class="btn next"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
-
-        <div class="adminWrap">
+        <div class="adminWrap" id="adminDashboard">
             <%= request.getAttribute("adminHtml") %> 
         </div>
     </div>
@@ -271,4 +270,112 @@
     </script>
 </body>
 <script src="scripts\logout.js"></script>
+<script>
+
+const currentPath = window.location.pathname;
+const pathSegments = currentPath.split('/');
+
+// Fetch categories and render them dynamically
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Fetching categories...');
+    pathSegments.pop();
+    let newPath = pathSegments.join('/') + '/home-json';
+    // Fetch categories and other user data
+    fetch(newPath, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch categories');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Fetched categories:', data);
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const adminDashboard = document.getElementById('adminDashboard');
+
+        categoriesContainer.innerHTML = '';
+        adminDashboard.innerHTML = '';
+
+        // If user is an admin, show admin dashboard
+        if (data.role === 'admin') {
+            const adminDashboard = document.getElementById('adminDashboard');
+            adminDashboard.innerHTML = `
+                <div class="title cherry-cream-soda">Admin Dashboard</div>
+                <div class="admin">
+                    <button class="newQuiz" onclick="window.location.href='createQuiz'">Create a new Quiz</button>
+                </div>
+            `;
+        }
+
+        // Render categories dynamically
+        if (data.categories.length === 0) {
+            categoriesContainer.innerHTML = '<p>No categories available</p>';
+            return;
+        }
+        data.categories.forEach(category => {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category';
+
+        let mediaHtml = '';
+        if (category.media && category.media.mediaFilePath) {
+            mediaHtml = `<img src="${category.media.mediaFilePath}" alt="${category.categoryName}" class="categoryImg">`;
+        } else {
+            mediaHtml = '<div class="categoryImg"></div>';
+        }
+
+        // Add a button for each category that will fetch quizzes RESTfully
+        categoryDiv.innerHTML = `
+            <div class="categoryContent">
+                <div class="categoryName">${category.categoryName}</div>
+                <div class="img">${mediaHtml}</div>
+                <button class="categoryButton">View Quizzes</button>
+            </div>
+        `;
+
+            // Handle category button click to fetch quizzes
+            categoryDiv.querySelector('.categoryButton').addEventListener('click', () => {
+                // Fetch quizzes for the selected category
+                fetch(`/quizzes-json?categoryName=${encodeURIComponent(category.categoryName)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(quizzes => {
+                    // Display the quizzes (this part can be customized based on your requirements)
+                    console.log('Fetched quizzes for category:', category.categoryName);
+                    console.log(quizzes);
+
+                    // For example, display the quiz titles dynamically:
+                    let quizzesHtml = '<div class="quizList">';
+                    quizzes.forEach(quiz => {
+                        quizzesHtml += `<div class="quizItem">${quiz.title}</div>`;
+                    });
+                    quizzesHtml += '</div>';
+                    categoryDiv.querySelector('.categoryContent').innerHTML += quizzesHtml;
+                })
+                .catch(error => {
+                    console.error('Error fetching quizzes:', error);
+                    categoryDiv.querySelector('.categoryContent').innerHTML += '<p>Error loading quizzes. Please try again later.</p>';
+                });
+            });
+
+            categoriesContainer.appendChild(categoryDiv);
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching categories:', error);
+        categoriesContainer.innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
+    });
+});
+
+</script>
+
+</body>
 </html>
