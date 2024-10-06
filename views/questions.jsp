@@ -502,4 +502,5 @@
     }
 
 </script>
+<script src="scripts\logout.js"></script>
 </html>

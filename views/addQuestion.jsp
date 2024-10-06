@@ -129,7 +129,7 @@
             <button class="homeBtn" type="Submit">Home</button>
         </form>
         <form action="logout">
-            <button class="logoutBtn" type="Submit">Log Out</button>
+            <button id="logoutButton" class="logoutBtn" type="Submit">Log Out</button>
         </form>
     </header>
 
@@ -243,7 +243,7 @@
             <button class="addQuestionBtn" type="submit">Add Question</button>
         </form>
     </div>
-
+    <script src="scripts\logout.js"></script>
     <script>
         console.log(document.getElementById("quizName").value);
         let questionMedia = document.getElementById('questionType');

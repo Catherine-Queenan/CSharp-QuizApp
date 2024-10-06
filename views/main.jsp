@@ -161,7 +161,7 @@
 <body>
     <header>
         <form action="logout">
-            <button class="logoutBtn" type="Submit">Log Out</button>
+            <button id="logoutButton" class="logoutBtn" type="Submit">Log Out</button>
         </form>
     </header>
 
@@ -242,4 +242,5 @@
 
     </script>
 </body>
+<script src="scripts\logout.js"></script>
 </html>

@@ -83,7 +83,7 @@
             <button class="homeBtn" type="Submit">Home</button>
         </form>
         <form action="logout">
-            <button class="logoutBtn" type="Submit">Log Out</button>
+            <button id="logoutButton" class="logoutBtn" type="Submit">Log Out</button>
         </form>
     </header>
 
@@ -145,6 +145,7 @@
         <% } %>
     </div>
 </body>
+<script src="scripts\logout.js"></script>
 <script>
     function addAnswer() {
         const answerDiv = document.createElement('div');
