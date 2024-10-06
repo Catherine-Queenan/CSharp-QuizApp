@@ -25,7 +25,9 @@ public class ModerateModeServlet extends HttpServlet {
 
         Connection con = null;
         PreparedStatement stmntQuestion = null;
+        PreparedStatement stmntMedia = null;
         ResultSet rsQuestion = null;
+        ResultSet rsMedia = null;
         StringBuilder questionsHtml = new StringBuilder();
 
         String username = (String) session.getAttribute("USER_ID");
@@ -53,6 +55,8 @@ public class ModerateModeServlet extends HttpServlet {
             // Generate HTML for each question and answer
             String previousQuestionId = "";
             int questionNumber = 0;
+            InputStream answerMediaId = null;
+            InputStream questionMediaId = null;
             while (rsQuestion.next()) {
                 String questionId = rsQuestion.getString("question_id");
                 String questionText = rsQuestion.getString("question_text");
@@ -60,8 +64,8 @@ public class ModerateModeServlet extends HttpServlet {
                 boolean isCorrect = rsQuestion.getBoolean("is_correct");
 
                 // Media IDs for the current question and answer
-                InputStream questionMediaId = rsQuestion.getBinaryStream("question_media_id");
-                InputStream answerMediaId = rsQuestion.getBinaryStream("answer_media_id");
+                questionMediaId = rsQuestion.getBinaryStream("question_media_id");
+                answerMediaId = rsQuestion.getBinaryStream("answer_media_id");
 
                 // Check if it's a new question
                 if (!questionId.equals(previousQuestionId)) {
@@ -72,14 +76,48 @@ public class ModerateModeServlet extends HttpServlet {
 
                     // Start a new question
                     questionsHtml.append("<div class='question'>")
-                            .append("<p class='questionTitle'>").append(questionText).append("</p>")
-                            .append("<div class='answers'>");
+                            .append("<p class='questionTitle'>").append(questionText).append("</p>");
+                            
 
-                    // Append question media (if available)
-                    String questionMediaHtml = insertMedia(con, "question", questionMediaId, "IMG");
-                    if (questionMediaHtml != null) {
-                        questionsHtml.append(questionMediaHtml);
-                    }
+                            String mediaHtml = "";
+    
+                            try {
+                                stmntMedia = con.prepareStatement("SELECT media_file_path,media_type FROM media WHERE id = ?");
+                                stmntMedia.setBinaryStream(1, questionMediaId);
+                                rsMedia = stmntMedia.executeQuery();
+            
+                                while (rsMedia.next()) {
+            
+                                    String mediaFilePath = rsMedia.getString("media_file_path");
+                                    String mediaType = rsMedia.getString("media_type");
+            
+                                    if (mediaType.equals("IMG")) {
+                                        mediaHtml = "<img data-media="+ (questionNumber+1)+" src='" + mediaFilePath + "' alt='Question Media' />";
+                                    } else if (mediaType.equals("VID")) {
+                                        mediaHtml = "<video controls><source data-media="+ (questionNumber+1)+" src='" + mediaFilePath + "' type='video/mp4'></video>";
+                                    } else if (mediaType.equals("AUD")) {
+                                        mediaHtml = "<audio data-media="+ questionNumber+" controls><source src='" + mediaFilePath + "' type='audio/mp3'></audio>";
+                                    }
+                                }
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            } finally {
+                                try {
+                                    if (rsMedia != null)
+                                        rsMedia.close();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    if (stmntMedia != null)
+                                        stmntMedia.close();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+            
+                            questionsHtml.append(mediaHtml)
+                            .append("<div class='answers'>");
 
                     // Update the previous question ID to the current one
                     previousQuestionId = questionId;
@@ -93,11 +131,6 @@ public class ModerateModeServlet extends HttpServlet {
                 questionsHtml.append("<p data-question=").append(questionNumber).append(" class='").append(answerClass)
                         .append("'>").append(answerText).append("</p>");
 
-                // Append answer media (if available)
-                String answerMediaHtml = insertMedia(con, "answer", answerMediaId, "IMG");
-                if (answerMediaHtml != null) {
-                    questionsHtml.append(answerMediaHtml);
-                }
             }
 
             // Close the last question's answer section
@@ -105,10 +138,7 @@ public class ModerateModeServlet extends HttpServlet {
                 questionsHtml.append("</div>");
             }
 
-            // Close the last question's answer section
-            if (!previousQuestionId.isEmpty()) {
-                questionsHtml.append("</div>");
-            }
+            // select filepath from media table where id = questionMediaId
 
             req.setAttribute("questionsHtml", questionsHtml.toString());
 
@@ -143,54 +173,38 @@ public class ModerateModeServlet extends HttpServlet {
     }
 
     // Media handler for both question and answer media
-    public String insertMedia(Connection con, String table, InputStream id, String type) {
+    public String insertMedia(Connection con, String id, String table) {
         PreparedStatement pstmntMedia = null;
-        PreparedStatement pstmntMediaId = null;
         ResultSet rsMedia = null;
-        ResultSet rsMediaId = null;
         StringBuilder mediaHtml = new StringBuilder();
 
         try {
             if (table.equalsIgnoreCase("answer")) {
-                pstmntMediaId = con.prepareStatement("SELECT media_id FROM answer_media WHERE answer_id = ?");
+                pstmntMedia = con.prepareStatement(
+                        "SELECT m.media_file_path, m.media_start, m.media_end, m.description " +
+                                "FROM answer_media am JOIN media m ON am.media_id = m.id WHERE am.answer_id = ?");
             } else if (table.equalsIgnoreCase("question")) {
-                pstmntMediaId = con.prepareStatement("SELECT media_id FROM question_media WHERE question_id = ?");
+                pstmntMedia = con.prepareStatement(
+                        "SELECT m.media_file_path, m.media_start, m.media_end, m.description " +
+                                "FROM question_media qm JOIN media m ON qm.media_id = m.id WHERE qm.question_id = ?");
             } else {
                 return null;
             }
 
-            pstmntMediaId.setBinaryStream(1, id);
-            rsMediaId = pstmntMediaId.executeQuery();
-            InputStream mediaId = null;
-            if (rsMediaId.next()) {
-                mediaId = rsMediaId.getBinaryStream("media_id");
-            }
-
-            pstmntMedia = con.prepareStatement(
-                    "SELECT media_file_path, media_start, media_end, description FROM media WHERE id = ?");
-            pstmntMedia.setBinaryStream(1, mediaId);
+            pstmntMedia.setString(1, id);
             rsMedia = pstmntMedia.executeQuery();
 
-            // Handle different media types
-            if (rsMedia.next()) {
+            System.out.println(table + " media for " + id + ":" + rsMedia);
+            while (rsMedia.next()) {
                 String filePath = rsMedia.getString("media_file_path");
                 String mediaStart = rsMedia.getString("media_start");
                 String mediaEnd = rsMedia.getString("media_end");
                 String description = rsMedia.getString("description");
 
-                switch (type) {
-                    case "VID":
-                        mediaHtml.append("<video controls src='").append(filePath).append("#t=").append(mediaStart)
-                                .append(",").append(mediaEnd).append("'></video>");
-                        break;
-                    case "IMG":
-                        mediaHtml.append("<img src='").append(filePath).append("' alt='").append(description)
-                                .append("' />");
-                        break;
-                    case "AUD":
-                        mediaHtml.append("<audio controls src='").append(filePath).append("#t=").append(mediaStart)
-                                .append(",").append(mediaEnd).append("'></audio>");
-                        break;
+                // Handle different media types
+                if (rsMedia.getString("media_file_path") != null) {
+                    mediaHtml.append("<img src='").append(filePath).append("' alt='").append(description)
+                            .append("' />");
                 }
             }
 
@@ -209,18 +223,6 @@ public class ModerateModeServlet extends HttpServlet {
             try {
                 if (rsMedia != null)
                     rsMedia.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (pstmntMediaId != null)
-                    pstmntMediaId.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (rsMediaId != null)
-                    rsMediaId.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

@@ -17,15 +17,19 @@ public class QuestionWebSocket {
     static class WebSocketQuestion {
         String questionText;
         List<String> answers;
+        List<String> images;
+        List<String> videos;
 
-        WebSocketQuestion(String questionText, List<String> answers) {
+        WebSocketQuestion(String questionText, List<String> answers, List<String> images, List<String> videos) {
             this.questionText = questionText;
             this.answers = answers;
+            this.images = images;
+            this.videos = videos;
         }
     }
 
     static class UserSessionData {
-        String username; 
+        String username;
         List<WebSocketQuestion> questions = new ArrayList<>();
         int currentQuestionIndex = 0;
         Map<String, Integer> answerCounts = new ConcurrentHashMap<>();
@@ -64,41 +68,56 @@ public class QuestionWebSocket {
 
         try {
             if (message.startsWith("[")) {
-                userData.currentQuestionIndex = 0; 
+                userData.currentQuestionIndex = 0;
                 JSONArray jsonArray = new JSONArray(message);
-                userData.questions.clear(); 
-                userData.answerCounts.clear(); 
-                userData.currentQuestionIndex = 0; 
+                userData.questions.clear();
+                userData.answerCounts.clear();
+                userData.currentQuestionIndex = 0;
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject questionObj = jsonArray.getJSONObject(i);
                     String questionText = questionObj.getString("question");
-                    JSONArray jsonAnswers = questionObj.getJSONArray("answers");
 
+                    // Parse answers
+                    JSONArray jsonAnswers = questionObj.getJSONArray("answers");
                     List<String> answerList = new ArrayList<>();
                     for (int j = 0; j < jsonAnswers.length(); j++) {
                         answerList.add(jsonAnswers.getString(j));
                     }
 
-                    userData.questions.add(new WebSocketQuestion(questionText, answerList));
+                    // Parse images
+                    JSONArray jsonImages = questionObj.getJSONArray("images");
+                    List<String> imageList = new ArrayList<>();
+                    for (int j = 0; j < jsonImages.length(); j++) {
+                        imageList.add(jsonImages.getString(j));
+                    }
+
+                    // Parse videos
+                    JSONArray jsonVideos = questionObj.getJSONArray("videos");
+                    List<String> videoList = new ArrayList<>();
+                    for (int j = 0; j < jsonVideos.length(); j++) {
+                        videoList.add(jsonVideos.getString(j));
+                    }
+
+                    // Add question with answers, images, and videos to the user's session data
+                    userData.questions.add(new WebSocketQuestion(questionText, answerList, imageList, videoList));
                 }
 
-                sendCurrentQuestion(session); 
+                sendCurrentQuestion(session);
             } else {
+                // Existing logic for handling answer or next messages
                 JSONObject jsonMessage = new JSONObject(message);
-
+    
                 if (jsonMessage.has("type") && jsonMessage.getString("type").equals("answer")) {
                     String answer = jsonMessage.getString("answer");
                     userData.answerCounts.put(answer, userData.answerCounts.getOrDefault(answer, 0) + 1);
                     broadcastAnswerCounts();
                 } else if (jsonMessage.has("type") && jsonMessage.getString("type").equals("next")) {
-                    // Check if the user has answered all questions
                     if (userData.currentQuestionIndex < userData.questions.size() - 1) {
                         incrementQuestionForAllUsers();
                         broadcastCurrentQuestionToAll();
                     } else {
-                        // End quiz and clear sessions if all questions are answered
-                        clearAllSessions();
+                        clearAllSessions();  // End quiz if all questions are answered
                     }
                 }
             }
@@ -118,25 +137,28 @@ public class QuestionWebSocket {
         UserSessionData userData = userSessions.get(session);
         if (userData.currentQuestionIndex < userData.questions.size()) {
             WebSocketQuestion currentQuestion = userData.questions.get(userData.currentQuestionIndex);
+            
             JSONObject json = new JSONObject();
             json.put("question", currentQuestion.questionText);
             json.put("answers", currentQuestion.answers);
+            json.put("images", currentQuestion.images);  // Send images to the client
+            json.put("videos", currentQuestion.videos);  // Send videos to the client
             json.put("questionIndex", userData.currentQuestionIndex);
+            
             session.getBasicRemote().sendText(json.toString());
         } else {
-            // Only send the quiz end if the user has answered all questions
             JSONObject json = new JSONObject();
             json.put("type", "quizEnd");
             session.getBasicRemote().sendText(json.toString());
-            // No need to clear sessions here; handle it in onMessage when all questions are answered
         }
     }
+    
 
     private void clearAllSessions() {
         synchronized (sessions) {
             for (Session session : sessions) {
                 try {
-                    session.close();  // Close the session
+                    session.close(); // Close the session
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -151,7 +173,7 @@ public class QuestionWebSocket {
         JSONObject json = new JSONObject();
         json.put("type", "answerCounts");
         json.put("counts", getCombinedAnswerCounts());
-        broadcast(json.toString()); 
+        broadcast(json.toString());
     }
 
     private void broadcast(String message) {
