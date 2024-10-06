@@ -262,7 +262,7 @@
             <button class="addQuestionBtn" type="submit">Add Question</button>
         </form>
     </div>
-
+    <script src="scripts\logout.js"></script>
     <script>
         console.log(document.getElementById("quizName").value);
         let questionMedia = document.getElementById('questionType');
