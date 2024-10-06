@@ -95,9 +95,9 @@
             all: unset;
             width: 100%;
             /* height: 100%; */
+            text-align: center;
             padding: 20px 40px;
             box-sizing: border-box;
-            text-align: center;
             cursor: pointer;
         }
 
@@ -260,6 +260,9 @@
                 quizzes.style.display = "flex";
                 quizzes.style.justifyContent = "center"
                 quizzes.style.width = `${100}%`;
+                document.querySelectorAll(".quiz").forEach(function(quiz) {
+                    quiz.style.width = `${40}%`;
+                });
             }
         };
 

@@ -288,9 +288,8 @@
 
     function submitCorrectAnswer() {
         setTimeout(() => {
-                    correctAnswer.submit();
-                    
-            }, 500);
+            correctAnswer.submit();
+        }, 500);
     }
 
     function nextQuestion() {
@@ -298,16 +297,17 @@
             answerMedia.style.display = "flex";
             let audioAnswer = document.getElementById("audio-answer");
             let audioQuestion = document.getElementById("audio-question");
-            if(audioAnswer != null){
-                audioAnswer.play();
-            } else {
-                playerAnswer.playVideo();
-            }
-
+            
             if(audioQuestion != null){
                 audioQuestion.pause();
             } else if(playerQuestion) {
                 playerQuestion.stopVideo();
+            }
+            
+            if(audioAnswer != null){
+                audioAnswer.play();
+            } else {
+                playerAnswer.playVideo();
             }
         } else {
             submitCorrectAnswer()

@@ -187,7 +187,7 @@
     
     <script>
 
-        // ------ Making categories display able to slide ------
+        // ------ Making categories display able to slide ------ \\
         
         const categories = document.getElementById('categories');
         const prevBtn = document.querySelector('.prev');
@@ -237,6 +237,9 @@
                 categories.style.display = "flex";
                 categories.style.justifyContent = "center"
                 categories.style.width = `${100}%`;
+                document.querySelectorAll(".category").forEach(function(category) {
+                    category.style.width = `${40}%`;
+                });
             }
         };
 
