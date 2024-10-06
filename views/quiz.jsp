@@ -202,7 +202,25 @@
             <button class="btn prev"><i class="fa-solid fa-chevron-left"></i></button>
             <div id="quizzesWrap">
                 <div class="quizzes" id="quizzes">
-                    <%= request.getAttribute("quizzesHtml")%>
+
+                    <!-- <%= request.getAttribute("quizzesHtml")%> -->
+                    <div class="quiz">
+                        <form method="post">
+                            <input type="hidden" name="quizName" value="quizName">
+                            <input type="submit" value="quizName">
+                            <p class="quiz-description"><!-- Quiz description --></p>
+                            <div class="img">
+                                <!-- If no image, the img tag doesn't exist -->
+                                <img src="pathToPic" alt="quizName" class="categoryImg">
+                            </div>
+                        </form>
+                        <!-- adminBtnWrap doesn't display if user isn't admin -->
+                        <div class="adminBtnWrap">    
+                            <button type="button" onclick="window.location.href='deleteQuiz?quizName=testanswer'">Delete Quiz</button>
+                            <button type="button" onclick="window.location.href='edit?quizName=testanswer'">Edit Quiz</button>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
             <button class="btn next"><i class="fa-solid fa-chevron-right"></i></button>

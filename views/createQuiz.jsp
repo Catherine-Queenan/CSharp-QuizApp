@@ -91,9 +91,11 @@
         <div class="title cherry-cream-soda">
             Create a New Quiz
         </div>
-        <% if (request.getAttribute("error") != null) { %>
+        <!-- <% if (request.getAttribute("error") != null) { %>
             <p><%= request.getAttribute("error") %></p>
-        <% } %>
+        <% } %> -->
+        <!-- ↑ Error message I if threre is one -->
+
         <form class="newQuizForm" method="post" action="createQuiz" enctype="multipart/form-data">
             <label for="quizName">Quiz Name:</label>
             <input type="text" id="quizName" name="quizName" required />
@@ -108,10 +110,12 @@
 
             <label for="categoryName">Category Name:</label>
             <select name="categoryName" id="category">
-                <% ArrayList<String> categories = (ArrayList<String>)request.getAttribute("categories"); %>
+                <!-- <% ArrayList<String> categories = (ArrayList<String>)request.getAttribute("categories"); %>
                 <% for(int i = 0; i < categories.size(); i++){ %>
                     <option value="<%= categories.get(i)%>"><%= categories.get(i)%></option>
-                <%} %>
+                <%} %> -->
+                <option value="categoryName1">CategoryName1</option>
+                <option value="categoryName2">CategoryName2</option>
                 <option value="ADDANOTHERCATEGORY">Other</option>
             </select>
             <div id="newCatDiv" style="display:none;">
@@ -132,17 +136,22 @@
             <button class="createQuizBtn" type="submit">Create Quiz</button>
 
         </form>
-         <!-- Check if the quiz was successfully created -->
-         <% if (request.getAttribute("quizName") != null) { %>
-            <h2>Quiz "<%= request.getAttribute("quizName") %>" created successfully!</h2>
+
+        <!-- Check if the quiz was successfully created -->
+        <!-- <% if (request.getAttribute("quizName") != null) { %> -->
+            <!-- <h2>Quiz "<%= request.getAttribute("quizName") %>" created successfully!</h2> -->
+
+            <h2>Quiz quizName created successfully!</h2>
 
             <!-- Button to add questions to the newly created quiz -->
             <form method="post" action="addQuestion">
-                <input type="hidden" name="quizName" value="<%= request.getAttribute("quizName") %>" />
-                // ADD IMAGES
-                <button type="submit">Add Questions to "<%= request.getAttribute("quizName") %>"</button>
+                <!-- <input type="hidden" name="quizName" value="<%= request.getAttribute("quizName") %>" /> -->
+                <!-- // ADD IMAGES -->
+                <!-- <button type="submit">Add Questions to "<%= request.getAttribute("quizName") %>"</button> -->
+                <input type="hidden" name="quizName" value="quizName">
+                <button type="submit">Add Questions to quizName</button>
             </form>
-        <% } %>
+        <!-- <% } %> -->
     </div>
 </body>
 <script src="scripts\logout.js"></script>

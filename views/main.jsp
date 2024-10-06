@@ -177,7 +177,29 @@
             <button class="btn prev"><i class="fa-solid fa-chevron-left"></i></button>
             <div id="categoryWrap">
                 <div class="categories" id="categories">
-                    <%= request.getAttribute("categoriesHtml") %> 
+
+                    <!-- <%= request.getAttribute("categoriesHtml") %>  -->
+
+                    <!-- Without picture -->
+                    <div class="category">
+                        <form action="quizzes" method="get">
+                            <input type="hidden" name="categoryName" value="categoryName"> <!-- value = catogoryName attribute-->
+                            <input type="submit" value="categoryName"> <!-- value = catogoryName attribute-->
+                            <div class="img"></div>
+                        </form>
+                    </div>
+
+                    <!-- With picture -->
+                    <div class="category">
+                        <form action="quizzes" method="get">
+                            <input type="hidden" name="categoryName" value="categoryName"> <!-- value = catogoryName attribute-->
+                            <input type="submit" value="categoryName"> <!-- value = catogoryName attribute-->
+                            <div class="img">
+                                <img src="pathToPic" alt="testimgg" class="categoryImg">
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
             <button class="btn next"><i class="fa-solid fa-chevron-right"></i></button>
