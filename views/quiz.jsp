@@ -159,6 +159,7 @@
             border-radius: 10px;
             padding: 10px 20px;
             transition-duration: 0.3s;
+            cursor: pointer;
         }
 
         .adminBtnWrap button:hover {

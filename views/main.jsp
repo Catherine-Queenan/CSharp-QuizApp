@@ -46,6 +46,7 @@
         }
 
         .category:hover {
+            transform: scale(0.99);
             box-shadow: inset 5px 5px 10px rgba(14, 1, 47, 0.7);
         }
 
