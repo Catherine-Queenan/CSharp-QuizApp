@@ -4,6 +4,7 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 
 import java.io.IOException;
+import java.security.Principal; // Import Principal
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,23 +24,34 @@ public class QuestionWebSocket {
         }
     }
 
-    // User session data class as a static inner class
     static class UserSessionData {
+        String username; 
         List<WebSocketQuestion> questions = new ArrayList<>();
         int currentQuestionIndex = 0;
-        Map<String, Integer> answerCounts = new ConcurrentHashMap<>(); // Track answer counts for this user
+        Map<String, Integer> answerCounts = new ConcurrentHashMap<>();
+
+        public UserSessionData(String username) {
+            this.username = username;
+        }
     }
 
     private static Map<Session, UserSessionData> userSessions = new ConcurrentHashMap<>();
 
     @OnOpen
     public void onOpen(Session session) {
+        Principal userPrincipal = session.getUserPrincipal();
+        String userName = (userPrincipal != null) ? userPrincipal.getName() : "Guest";
+
+        System.out.println("Connection opened: " + session.getId() + " with user: " + userName);
+
+        UserSessionData userData = new UserSessionData(userName);
+        userSessions.put(session, userData);
         sessions.add(session);
-        userSessions.put(session, new UserSessionData());
-        System.out.println("New connection: " + session.getId());
+
+        userData.questions.clear();
 
         try {
-            sendCurrentQuestion(session);
+            sendCurrentQuestion(session); // This will send the first question if any
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -52,8 +64,12 @@ public class QuestionWebSocket {
 
         try {
             if (message.startsWith("[")) {
+                userData.currentQuestionIndex = 0; 
                 JSONArray jsonArray = new JSONArray(message);
-                userData.questions.clear();
+                userData.questions.clear(); 
+                userData.answerCounts.clear(); 
+                userData.currentQuestionIndex = 0; 
+
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject questionObj = jsonArray.getJSONObject(i);
                     String questionText = questionObj.getString("question");
@@ -67,23 +83,23 @@ public class QuestionWebSocket {
                     userData.questions.add(new WebSocketQuestion(questionText, answerList));
                 }
 
-                sendCurrentQuestion(session);
+                sendCurrentQuestion(session); 
             } else {
                 JSONObject jsonMessage = new JSONObject(message);
 
-                // Handle answer selection
                 if (jsonMessage.has("type") && jsonMessage.getString("type").equals("answer")) {
                     String answer = jsonMessage.getString("answer");
-                    // Update this user's answer count
                     userData.answerCounts.put(answer, userData.answerCounts.getOrDefault(answer, 0) + 1);
-
-                    // Optionally, broadcast this user's answer counts
-                    broadcastAnswerCounts(session);
-                }
-                // Handle next question request
-                else if (jsonMessage.has("type") && jsonMessage.getString("type").equals("next")) {
-                    userData.currentQuestionIndex++;
-                    sendCurrentQuestion(session);
+                    broadcastAnswerCounts();
+                } else if (jsonMessage.has("type") && jsonMessage.getString("type").equals("next")) {
+                    // Check if the user has answered all questions
+                    if (userData.currentQuestionIndex < userData.questions.size() - 1) {
+                        incrementQuestionForAllUsers();
+                        broadcastCurrentQuestionToAll();
+                    } else {
+                        // End quiz and clear sessions if all questions are answered
+                        clearAllSessions();
+                    }
                 }
             }
         } catch (Exception e) {
@@ -105,17 +121,37 @@ public class QuestionWebSocket {
             JSONObject json = new JSONObject();
             json.put("question", currentQuestion.questionText);
             json.put("answers", currentQuestion.answers);
+            json.put("questionIndex", userData.currentQuestionIndex);
             session.getBasicRemote().sendText(json.toString());
+        } else {
+            // Only send the quiz end if the user has answered all questions
+            JSONObject json = new JSONObject();
+            json.put("type", "quizEnd");
+            session.getBasicRemote().sendText(json.toString());
+            // No need to clear sessions here; handle it in onMessage when all questions are answered
         }
     }
 
-    private void broadcastAnswerCounts(Session session) throws IOException {
-        UserSessionData userData = userSessions.get(session);
+    private void clearAllSessions() {
+        synchronized (sessions) {
+            for (Session session : sessions) {
+                try {
+                    session.close();  // Close the session
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        userSessions.clear();
+        sessions.clear();
+        System.out.println("All sessions cleared.");
+    }
+
+    private void broadcastAnswerCounts() throws IOException {
         JSONObject json = new JSONObject();
         json.put("type", "answerCounts");
-        json.put("counts", userData.answerCounts);
-
-        session.getBasicRemote().sendText(json.toString()); // Send only to the specific user
+        json.put("counts", getCombinedAnswerCounts());
+        broadcast(json.toString()); 
     }
 
     private void broadcast(String message) {
@@ -127,6 +163,28 @@ public class QuestionWebSocket {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    private Map<String, Integer> getCombinedAnswerCounts() {
+        Map<String, Integer> combinedCounts = new HashMap<>();
+        for (UserSessionData userData : userSessions.values()) {
+            userData.answerCounts.forEach((key, value) -> {
+                combinedCounts.put(key, combinedCounts.getOrDefault(key, 0) + value);
+            });
+        }
+        return combinedCounts;
+    }
+
+    private void incrementQuestionForAllUsers() {
+        for (UserSessionData userData : userSessions.values()) {
+            userData.currentQuestionIndex++;
+        }
+    }
+
+    private void broadcastCurrentQuestionToAll() throws IOException {
+        for (Session session : sessions) {
+            sendCurrentQuestion(session);
         }
     }
 }

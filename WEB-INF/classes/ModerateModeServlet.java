@@ -33,6 +33,7 @@ public class ModerateModeServlet extends HttpServlet {
         String username = (String) session.getAttribute("USER_ID");
         String role = getUserRoleFromDatabase(username);
         req.setAttribute("role", role);
+        req.setAttribute("userName", username);
         
        
 

@@ -96,18 +96,16 @@
         <form action="home">
             <button class="homeBtn" type="Submit">Home</button>
         </form>
-        <form method="post">
-            <input type="hidden" value="true" name="restart">
-            <button class="restartBtn" type="Submit">Restart</button>
-        </form>
-        <!-- <p id="role" style="display: none;"><%=request.getAttribute("role")%></p> -->
+        
     </header>
     <div id="question-container">
         <p id="question"></p>
         <div id="options"></div>
     </div>
 
+    <div id="answerCounts"></div>
     <p id="role" style="display: none;"><%=request.getAttribute("role")%></p>
+    <p id="role" style="display: none;"><%=request.getAttribute("userName")%></p>
     <button id="next-button">Next Question</button>
     <div class="wrap">
 
@@ -124,7 +122,6 @@
         <div id="options"></div>
     </div>
 
-    <div id="answerCounts"></div>
 
 
 <script type="text/javascript">
@@ -132,6 +129,8 @@
     console.log("Role: ", role);
     if (role !== "a") {
         document.getElementById("next-button").style.display = "none";
+        document.getElementById("answerCounts").style.display = "none";
+        document.getElementById("question").style.display = "none";
     }
     let webSocket = new WebSocket('ws://localhost:8081/project1/questionsws');
     let questions = [];
@@ -142,6 +141,8 @@
         questions.push(question.textContent);
     });
 
+    let numOfQuestions = questions.length;
+    
     document.querySelectorAll(".answer").forEach((answer) => {
         answers.push(answer.textContent);
     });
@@ -166,17 +167,23 @@
         webSocket.send(JSON.stringify(questionData));  // Send initial data (questions and answers)
     };
 
+    let questionIndex;
     webSocket.onmessage = function (message) {
         console.log("Received message from server:", message.data);  // Log the incoming message
         let response = JSON.parse(message.data);
-
-        if (response.question && response.answers) {
+        questionIndex = response.questionIndex;
+        
+       
+       
+       if (response.question && response.answers) {
             displayQuestion(response.question, response.answers);
         } else if (response.type === "answerCounts") {
             displayAnswerCounts(response.counts);
-        } else {
-            console.log("Unhandled message:", message.data);
+        }else{
+            console.log("Invalid message received:", response);
         }
+
+        
     };
 
     // Display question and answers
@@ -196,13 +203,20 @@
                 webSocket.send(JSON.stringify({ type: "answer", answer: answer }));
             });
         });
-
-        document.getElementById("next-button").style.display = "block"; // Show next button
+        if (role === "a") {
+            document.getElementById("next-button").style.display = "block";  // Show answer counts
+            document.getElementById("options").style.display = "none";
+        }
     }
 
     // Handle "Next Question" button click
     document.getElementById("next-button").addEventListener("click", function () {
         console.log("Sending next question request");
+        console.log("Question index: ", questionIndex);
+        console.log("Number of questions: ", numOfQuestions);
+        if(questionIndex == numOfQuestions-1){
+            window.location.href = "end";
+        }
         webSocket.send(JSON.stringify({ type: "next" }));
     });
 
