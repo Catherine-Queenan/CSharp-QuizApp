@@ -113,14 +113,13 @@
             <%=request.getAttribute("questionsHtml")%>
         </div>
 
+        
         <div id="timer" style="display:none;">Time left: 60 seconds</div>
 
         <form id="questionForm" method="post" style="display: hidden;"></form>
     </div>
-    <div id="question-container">
-        <p id="question"></p>
-        <div id="options"></div>
-    </div>
+    
+    
 
 
 
@@ -141,11 +140,20 @@
         questions.push(question.textContent);
     });
 
+    document.querySelectorAll(".media img").forEach((image) => {
+    let imgElement = document.createElement("img");
+    imgElement.src = image.getAttribute("data-src");
+    document.getElementById("options").appendChild(imgElement);
+});
+console.log("Questions: ", questions);
+console.log("Images: ", document.querySelectorAll(".media img"));
+
     let numOfQuestions = questions.length;
     
     document.querySelectorAll(".answer").forEach((answer) => {
         answers.push(answer.textContent);
     });
+    console.log("Questions: ", answers);
 
     let questionData = [];
     for (let i = 0; i < questions.length; i++) {
@@ -229,6 +237,65 @@
             const answerCountElement = document.createElement("div");
             answerCountElement.textContent = `${answer}: ${counts[answer]}`;
             totalElement.appendChild(answerCountElement);
+        }
+    }
+
+
+
+    //---------------VIDEO PLAYING---------------\\
+
+    // Load the IFrame Player API code asynchronously
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // Declare the player variable
+    var player;
+
+    // Setting player attributes
+    var Id = document.getElementById("videoId").value;
+    var startTime = parseInt(document.getElementById("videoStart").value);
+    var endTime = parseInt(document.getElementById("videoEnd").value);
+
+    // Create the YouTube player after the API downloads
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            videoId: Id,
+            playerVars: {
+                'playsinline': 1,
+                'start': startTime,
+                'end': endTime
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    // Play the video once it's ready and start at the 5-second mark
+    function onPlayerReady(event) {
+        event.target.seekTo(startTime);
+        event.target.playVideo();
+    }
+
+    // Monitor the video state and loop it between 5 and 6 seconds
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+            var checkTime = setInterval(function () {
+                var currentTime = player.getCurrentTime();
+                if (currentTime >= endTime) {
+                    player.seekTo(startTime);
+                }
+            }, 100);
+        }
+    }
+    //---------------AUDIO PLAYING---------------\\
+    //makes audio loop
+    function audio() {
+        if (document.querySelector("audio").currentTime >= parseInt(document.getElementById("videoEnd").value)) {
+            document.querySelector("audio").currentTime = parseInt(document.getElementById("videoStart").value);
         }
     }
 </script>
