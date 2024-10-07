@@ -93,10 +93,10 @@
     </header>
 
     <div class="wrap">
-        <!-- <%-- Render the form generated in the servlet --%> -->
-        <!-- <%= request.getAttribute("editFormHtml") %>     -->
+        <%-- Render the form generated in the servlet --%>
+        <%= request.getAttribute("editFormHtml") %>    
         
-        <div class="title cherry-cream-soda">
+        <!-- <div class="title cherry-cream-soda">
             Edit Quiz: quizName
         </div>
         <form class="eidtQuizForm" method="post" action="edit">
@@ -112,7 +112,7 @@
                 <a href="editQuestions?quizName=quizName" class="button-link">Go to List of Questions</a>
                 <button class="saveBtn" type="submit">Save Changes</button>
             </div>
-        </form>
+        </form> -->
 
     </div>
 

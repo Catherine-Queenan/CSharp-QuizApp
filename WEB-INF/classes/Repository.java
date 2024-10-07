@@ -10,10 +10,10 @@ import org.json.JSONObject;
 
 public class Repository implements IRepository {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/QuizGame";
+    public static final String URL = "jdbc:mysql://localhost:3306/QuizGame";
     public static final String USER = "root";
     public static final String PASSWORD = "";
-    private Connection con = null;
+    private Connection con = null;   
 
     private void insertCategory(JSONObject entry) {
         try {
@@ -286,8 +286,10 @@ public class Repository implements IRepository {
     @Override
     public void delete(String tableType, String criteria) {
         try {
-            Statement deleteStatement = con.createStatement();
+            PreparedStatement deleteStatement = null;
+            
             String update;
+            byte[] id = null;
             switch (tableType) {
                 case "category":
                     update = "DELETE FROM categories WHERE " + criteria;
@@ -296,7 +298,9 @@ public class Repository implements IRepository {
                     update = "DELETE FROM quizzes WHERE " + criteria;
                     break;
                 case "question":
-                    update = "DELETE FROM questions WHERE " + criteria;
+                System.out.println("HERE HERE  " + criteria);
+                    id = criteria.getBytes();
+                    update = "DELETE FROM questions WHERE id = ? ";
                     break;
                 case "answer":
                     update = "DELETE FROM answers WHERE " + criteria;
@@ -307,9 +311,16 @@ public class Repository implements IRepository {
                 default:
                     throw new RuntimeException("Error deleting from the database. Entered type cannot be deleted");
             }
+            
+            deleteStatement = con.prepareStatement(update);
 
-            deleteStatement.executeUpdate(update);
+            if(id != null){
+                deleteStatement.setBytes(1, id);
+            }
+
+            deleteStatement.executeUpdate();
         } catch (SQLException ex) {
+            ex.printStackTrace();
             throw new RuntimeException("Error deleting from the database");
         }
 

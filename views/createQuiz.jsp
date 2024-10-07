@@ -177,9 +177,14 @@
             }).then(data => {
                 console.log('Fetched categories:', data);
 
-                if (data.categories.length === 0) {
+                if (data.categories == null) {
                     categories.innerHTML = '<p>No categories available</p>';
                     return;
+                }
+                if (data.categories.length === 0) {
+                        let newCatDiv = document.getElementById("newCatDiv");
+                        newCatDiv.style.display = "block";
+                        newCatInput.required = true;
                 }
 
                 data.categories.forEach(category => {
