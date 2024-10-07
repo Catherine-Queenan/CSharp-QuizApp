@@ -8,7 +8,7 @@
     <style>
 
         .title {
-            padding: 10px;
+            padding: 10px 100px;
             text-align: center;
             font-size: 30px;
             margin-bottom: 0;
