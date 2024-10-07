@@ -51,4 +51,36 @@
         <button class="redirectHome" onclick="window.location.href='home'">Go Back to Home</button>
     </div>
 </body>
+<script>
+
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorMessage = urlParams.get('errorMessage');
+
+document.addEventListener('DOMContentLoaded', () => { 
+
+    let rediretPath;
+
+    if (errorMessage) {
+        document.querySelector('.message').textContent = decodeURIComponent(errorMessage);
+    }
+
+    if(errorMessage.includes('Invalid')) {
+        redirectPath = 'login';
+    } else {
+        redirectPath = 'home';
+    }
+
+    document.getElementById('redirectHome').addEventListener('click', () => {
+        console.log('Redirecting to: index.html');
+    if (redirectPath) {
+        console.log('Redirecting to:', redirectPath); // Debugging to check if the click is firing
+        window.location.href = redirectPath;
+    } else {
+        console.error('Redirect path is not set.');
+    }
+});
+});
+
+</script>
 </html>

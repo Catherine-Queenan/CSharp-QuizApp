@@ -94,4 +94,72 @@
         </form>
     </div>
 </body>
+<script>
+    const currentPath = window.location.pathname;
+    const pathSegments = currentPath.split('/');
+
+    let redirectPath = '';
+
+    function handleSignup() {
+        // Prevent the form from submitting
+        event.preventDefault();
+
+        // Get the form details
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Make AJAX call to login
+        fetch('signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'username': username,
+                'password': password
+            })
+        })
+        .then(response => {
+            console.log(response);
+            return response.json().then(data => {
+                console.log(data);
+                if (response.ok) {
+                    pathSegments.pop();
+                    let newPath = pathSegments.join('/') + '/home';
+                    window.location.href = newPath;
+                } else if (response.status === 401) {
+                    pathSegments.pop();
+                    let newPath = pathSegments.join('/') + '/error?errorMessage=' + encodeURIComponent(data.message);
+                    window.location.href = newPath;
+
+                    redirectPath = 'login';
+                } else {
+                    throw new Error(data.message || 'An error occurred');
+                }
+            })
+        })
+        .catch(error => {
+            const messageDiv = document.getElementById('message');
+            if(messageDiv) {
+                messageDiv.textContent = error.message;
+            }
+
+            redirectPath = 'login';
+        });
+    }
+
+    document.getElementById('signupButton').addEventListener('click', handleSignup);
+
+    document.getElementById('signup').addEventListener("keypress", function(event) {
+        if (event.key === 'Enter') {
+            handleSignup();
+        }
+    });
+
+    document.getElementById('login').addEventListener('click', function() {
+        pathSegments.pop();
+        let newPath = pathSegments.join('/') + '/login';
+        window.location.href = newPath;
+    });
+</script>
 </html>
