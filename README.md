@@ -1,6 +1,7 @@
 # CS-QuizGame
 
 Group:
+
     1. Catherine Queenan
     2. Eugenie Kim
     3. Soomin Jeong
