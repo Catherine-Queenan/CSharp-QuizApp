@@ -14,6 +14,7 @@ public class QuestionsServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         //Check if user is logged in, if not send them to login
         HttpSession session = req.getSession(false);
+        
         if (session == null) {
             res.setStatus(302);
             res.sendRedirect("login");

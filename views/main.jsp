@@ -43,6 +43,7 @@
             border-radius: 15px;
             transition-duration: 0.3s;
             font-size: 20px;
+            cursor: pointer;
         }
 
         .category:hover {
@@ -223,6 +224,7 @@
             categoriesContainer.innerHTML = '';
             adminDashboard.innerHTML = '';
 
+            console.log(data.role)
             // If user is an admin, show admin dashboard
             if (data.role === 'admin') {
                 adminDashboard.innerHTML = `
@@ -245,12 +247,12 @@
 
                 let mediaHtml = '';
                 if (category.media && category.media.mediaFilePath) {
-                    mediaHtml = `<img src="${category.media.mediaFilePath}" alt="${category.categoryName}" class="categoryImg">`;
+                    mediaHtml = `<img src="${category.media.mediaFilePath}" alt="${category.name}" class="categoryImg">`;
                 }
 
                 categoryDiv.innerHTML = `
-                    <a class="categoryLink" href="quizzes/${encodeURIComponent(category.categoryName)}">
-                        <div class="categoryName">${category.categoryName}</div>
+                    <a class="categoryLink" href="quizzes/${encodeURIComponent(category.name)}">
+                        <div class="categoryName">${category.name}</div>
                         <div class="img">${mediaHtml}</div>
                     </a>
                 `;

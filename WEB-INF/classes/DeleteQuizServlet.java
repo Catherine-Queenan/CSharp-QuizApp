@@ -8,9 +8,60 @@ public class DeleteQuizServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         String quizName = req.getParameter("quizName");
-
+        HttpSession session = req.getSession(false);
         JSONObject jsonResponse = new JSONObject();
         
+        if (session == null || session.getAttribute("USER_ID") == null) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "You are not authorized to access this page.");
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
+            writeResponse(res, jsonResponse);
+            return;
+        }
+
+        String username = (String) session.getAttribute("USER_ID");
+        String role = (String) session.getAttribute("USER_ROLE");
+
+        if (!"a".equals(role)) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "401 You are not authorized to access this page");
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
+            writeResponse(res, jsonResponse);
+            return;
+        }
+
+        if(quizName == null || quizName.isEmpty()) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "Quiz name is required.");
+            res.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Set status to 400
+            writeResponse(res, jsonResponse);
+            return;
+        }
+
+        try {
+            IRepository repository = new Repository();
+            repository.init("com.mysql.cj.jdbc.Driver");
+            String condition = "name = \"" + quizName + "\"";
+            repository.delete("quiz", condition);
+            jsonResponse.put("status", "success");
+            jsonResponse.put("message", "Quiz deleted successfully.");
+            res.setStatus(HttpServletResponse.SC_OK); // Set status to 200
+        } catch (Exception e) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "Quiz not found.");
+            res.setStatus(HttpServletResponse.SC_NOT_FOUND); // Set status to 404
+        }
+
+        writeResponse(res, jsonResponse);
+
+        // res.setContentType("application/json");
+        // res.setCharacterEncoding("UTF-8");
+        // PrintWriter out = res.getWriter();
+        // out.print(jsonResponse.toString());
+        // out.flush();
+    }
+
+    private void writeResponse(HttpServletResponse res, JSONObject jsonResponse) throws IOException {
         res.setContentType("application/json");
         res.setCharacterEncoding("UTF-8");
         PrintWriter out = res.getWriter();
@@ -18,62 +69,62 @@ public class DeleteQuizServlet extends HttpServlet {
         out.flush();
     }
 
-    private JSONObject deleteQuiz(String quizName, String username) {
-        JSONObject jsonResponse = new JSONObject();
+    // private JSONObject deleteQuiz(String quizName, String username) {
+    //     JSONObject jsonResponse = new JSONObject();
 
-        if (username == null || username.isEmpty()) {
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "You are not authorized to access this page.");
-            return jsonResponse;
-        }
+    //     if (username == null || username.isEmpty()) {
+    //         jsonResponse.put("status", "error");
+    //         jsonResponse.put("message", "You are not authorized to access this page.");
+    //         return jsonResponse;
+    //     }
 
-        // String username = (String) session.getAttribute("USER_ID");
-        // String role = getUserRoleFromDatabase(username);
-        String role = (String)session.getAttribute("USER_ROLE");
+    //     // String username = (String) session.getAttribute("USER_ID");
+    //     // String role = getUserRoleFromDatabase(username);
+    //     String role = (String)session.getAttribute("USER_ROLE");
 
-        if (!"a".equals(role)) {
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "401 You are not authorized to access this page");
-            return jsonResponse;
-        }
+    //     if (!"a".equals(role)) {
+    //         jsonResponse.put("status", "error");
+    //         jsonResponse.put("message", "401 You are not authorized to access this page");
+    //         return jsonResponse;
+    //     }
 
-        if (quizName == null || quizName.isEmpty()) {
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "Quiz name is required.");
-            return jsonResponse;
-        }
+    //     if (quizName == null || quizName.isEmpty()) {
+    //         jsonResponse.put("status", "error");
+    //         jsonResponse.put("message", "Quiz name is required.");
+    //         return jsonResponse;
+    //     }
 
-        // Connection con = null;
-        // PreparedStatement ps = null;
+    //     // Connection con = null;
+    //     // PreparedStatement ps = null;
 
-        IRepository repository = new Repository();
-        repository.init("com.mysql.cj.jdbc.Driver");
-        String condition = "name = \"" + quizName + "\"";
-        try {
-            repository.delete("quiz", condition);
-            jsonResponse.put("status", "success");
-            jsonResponse.put("message", "Quiz deleted successfully.");
-        } catch(Exception e) {
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "Quiz not found.");
-        }
+    //     IRepository repository = new Repository();
+    //     repository.init("com.mysql.cj.jdbc.Driver");
+    //     String condition = "name = \"" + quizName + "\"";
+    //     try {
+    //         repository.delete("quiz", condition);
+    //         jsonResponse.put("status", "success");
+    //         jsonResponse.put("message", "Quiz deleted successfully.");
+    //     } catch(Exception e) {
+    //         jsonResponse.put("status", "error");
+    //         jsonResponse.put("message", "Quiz not found.");
+    //     }
 
-        // try {
-        //     Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+    //     // try {
+    //     //     Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
 
-        //     con = DatabaseUtil.getConnection();
-        //     // Delete the quiz
-        //     String deleteQuizSql = "DELETE FROM quizzes WHERE name = ?";
-        //     ps = con.prepareStatement(deleteQuizSql);
-        //     ps.setString(1, quizName);
-        //     ps.executeUpdate();
+    //     //     con = DatabaseUtil.getConnection();
+    //     //     // Delete the quiz
+    //     //     String deleteQuizSql = "DELETE FROM quizzes WHERE name = ?";
+    //     //     ps = con.prepareStatement(deleteQuizSql);
+    //     //     ps.setString(1, quizName);
+    //     //     ps.executeUpdate();
 
-        // finally {
-        //     try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-        //     try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
-        // }
-        return jsonResponse;
-    }
+    //     // finally {
+    //     //     try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //     //     try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //     // }
+    //     return jsonResponse;
+    // }
 
     //public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // COOKIE AUTHENICATION LOGIC START

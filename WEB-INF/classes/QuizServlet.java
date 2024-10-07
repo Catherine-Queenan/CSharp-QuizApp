@@ -13,7 +13,19 @@ public class QuizServlet extends HttpServlet {
     private final IRepository repository = new Repository();
 
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        HttpSession session = req.getSession(false);   
+        HttpSession session = req.getSession(false);
+        
+        if (session == null || session.getAttribute("USER_ID") == null) {
+            res.sendRedirect("login");
+            return;
+        }
+
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        PrintWriter out = res.getWriter();
+
+        // Initialize JSON object to store the response
+        JSONObject jsonResponse = new JSONObject();  
         // if (session == null) {
         //     res.setStatus(302);
         //     res.sendRedirect("login");
@@ -24,6 +36,11 @@ public class QuizServlet extends HttpServlet {
         // String role = getUserRoleFromDatabase(username); // Fetch the role from DB
         String role = (String) session.getAttribute("USER_ROLE"); // Fetch the role from DB
         String category = req.getParameter("categoryName");
+        System.out.println("category: "+category);
+        
+        if ("a".equals(role)) {
+            jsonResponse.put("role", "admin");
+        }
 
         // Connection con = null;
         // PreparedStatement psQuiz = null;
@@ -34,6 +51,8 @@ public class QuizServlet extends HttpServlet {
         StringBuilder mediaHtml = new StringBuilder();
         // ResultSet rsMedia = null;
         // ResultSet rsQuizMedia = null;
+
+        JSONArray quizzesArray = new JSONArray();
 
         try {
             repository.init("com.mysql.cj.jdbc.Driver");
@@ -51,17 +70,20 @@ public class QuizServlet extends HttpServlet {
 
             for(AClass quiz : quizzes){
                 JSONObject quizJSON = quiz.serialize();
-                String quizName = quizJSON.getString("name");
-                String quizDescription = quizJSON.getString("description");
+                // String quizName = quizJSON.getString("name");
+                // String quizDescription = quizJSON.getString("description");
                 
                 if(!quizJSON.isNull("media_id")){
                     String media_id = quizJSON.getString("media_id");
                     ArrayList<AClass> quizMedia = repository.select("media", media_id);
                     JSONObject quizMediaJSON = quizMedia.get(0).serialize();
                     
-                    String mediaFilePath = quizMediaJSON.getString("media_file_path");
-                    mediaHtml.append("<img src=\"").append(mediaFilePath).append("\" alt=\"").append(quizName).append("\" class=\"categoryImg\">");
+                    //String mediaFilePath = quizMediaJSON.getString("media_file_path");
+                    //mediaHtml.append("<img src=\"").append(mediaFilePath).append("\" alt=\"").append(quizName).append("\" class=\"categoryImg\">");
+                    quizJSON.put("media", quizMediaJSON);
                 }
+
+                quizzesArray.put(quizJSON);
 
         //         quizzesHtml.append("<div class=\"quiz\">\n")
         //                 .append("       <form method=\"post\">\n")
@@ -83,7 +105,7 @@ public class QuizServlet extends HttpServlet {
         //                     .append(quizName).append("'\">Edit Quiz</button>\n</div>");
         //         }
 
-                quizzesHtml.append("</div>\n");
+                //quizzesHtml.append("</div>\n");
                 
             }
             
@@ -132,6 +154,7 @@ public class QuizServlet extends HttpServlet {
             //     quizzesHtml.append("</div>\n");
             // }
 
+            jsonResponse.put("quizzes", quizzesArray);
         } catch (Exception e) {
             e.printStackTrace();
         } 
@@ -149,6 +172,10 @@ public class QuizServlet extends HttpServlet {
         // // Forward the request to the quiz.jsp
         // RequestDispatcher view = req.getRequestDispatcher("/views/quiz.jsp");
         // view.forward(req, res);
+
+        res.getWriter().write(jsonResponse.toString());
+        out.flush();
+        out.close();
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
