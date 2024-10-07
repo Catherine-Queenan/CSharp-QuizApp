@@ -250,6 +250,7 @@
 
             // Construct the new path dynamically
             const newPath = pathSegments.join('/') + `/quizzes-json/?categoryName=${categoryName}`;
+            const homePath = pathSegments.join('/') + `/home`;
 
             // console.log(newPath)
             fetch(newPath, {
@@ -271,8 +272,8 @@
                 quizzesContainer.innerHTML = '';
 
                 // Render quizzes dynamically
-                if (data.quizzes == null) {
-                    quizzesContainer.innerHTML = '<p class="errorCode">No quizzes available</p>';
+                if (data.quizzes == null || data.quizzes.length === 0) {
+                    window.location.href = homePath;
                 } else {
                     data.quizzes.forEach(quiz => {
                         const quizDiv = document.createElement('div');
