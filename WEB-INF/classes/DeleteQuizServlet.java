@@ -28,8 +28,8 @@ public class DeleteQuizServlet extends HttpServlet {
         }
 
         // String username = (String) session.getAttribute("USER_ID");
-        // String role = getUserRoleFromDatabase(username);
-        String role = (String)session.getAttribute("USER_ROLE");
+        String role = getUserRoleFromDatabase(username);
+        // String role = (String)session.getAttribute("USER_ROLE");
 
         if (!"a".equals(role)) {
             jsonResponse.put("status", "error");
@@ -73,6 +73,37 @@ public class DeleteQuizServlet extends HttpServlet {
         //     try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
         // }
         return jsonResponse;
+    }
+
+    private String getUserRoleFromDatabase(String username) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String role = null;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+
+            con = DatabaseUtil.getConnection();
+
+            // Query to get the user's role
+            String sql = "SELECT role FROM users WHERE username = ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, username);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                role = rs.getString("role");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+        }
+
+        return role;
     }
 
     //public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {

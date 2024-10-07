@@ -78,6 +78,8 @@ public class MainServlet extends HttpServlet {
 
                 mediaHtml.setLength(0);
 
+                System.out.println(categoryJSON);
+
                 // psMedia.setString(1, categoryName);
                 // rsMedia = psMedia.executeQuery();
                 if(!categoryJSON.isNull("media_id")){
