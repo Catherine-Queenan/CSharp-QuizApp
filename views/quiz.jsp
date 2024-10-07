@@ -285,13 +285,18 @@
                         }
     
                         quizDiv.innerHTML = `
+                        <a href="${pathSegments.join('/')}/moderateMode?quizName=${quiz.name}">
+                        <button type=\"button\" onclick=\"">Moderated Mode</button></a>
                             <form method="post" action="${pathSegments.join('/')}/quizzes-json" class="quizLink">
+                                
                                 <input type="hidden" name="quizName" value="${quiz.name}">
                                 <input type="submit" value="${quiz.name}">
                                 <p class="quiz-description">${quiz.description}</p>
                                 <div class="img">${mediaHtml}</div>
                             </form>
                         `;
+
+
                             // <a class="quizLink" href="${quiz.name}">
                             //     <div class="quizName">${quiz.name}</div>
                             //     <p class="quiz-description">${quiz.description}</p>

@@ -141,6 +141,25 @@ public class Repository implements IRepository {
         }
     }
 
+    private void insertWebSocketQuestion(JSONObject entry){
+        try {
+            // Insert WebsocketQuestion
+            String query = "INSERT INTO QuestionsWithAnswers (questionId, questionText, answers, indexOfCorrect,quizName) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setString(1, entry.getString("questionId"));
+            ps.setString(2, entry.getString("questionText"));
+            ps.setString(3, entry.getJSONArray("answers").toString());
+            ps.setInt(4, entry.getInt("indexOfCorrect"));
+            ps.setString(5, entry.getString("quizName"));
+
+            ps.executeUpdate();
+
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error inserting entry into \"media\" table", ex);
+        }
+    }
+
     private void updateQuiz(JSONObject updatedEntry, String pKey, String[] values) {
         try {
             StringBuilder query = new StringBuilder("UPDATE quizzes SET ");
@@ -265,6 +284,9 @@ public class Repository implements IRepository {
                 break;
             case "media":
                 insertMedia(newEntry);
+                break;
+            case "websocket":
+                insertWebSocketQuestion(newEntry);
                 break;
         }
     }

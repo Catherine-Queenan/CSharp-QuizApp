@@ -1,7 +1,7 @@
 import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
-import java.sql.*;
+
 import org.json.JSONObject;
 
 public class DeleteQuizServlet extends HttpServlet {

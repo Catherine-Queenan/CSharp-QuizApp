@@ -129,6 +129,23 @@
   <url-pattern>/updateAutoplay</url-pattern>
 </servlet-mapping>
 
+<servlet>
+  <servlet-name>WebSocketServlet</servlet-name>
+  <servlet-class>WebSocketEndpoint</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>WebSocketServlet</servlet-name>
+  <url-pattern>/websocket</url-pattern>
+</servlet-mapping>
+<servlet>
+  <servlet-name>ModerateModeServlet</servlet-name>
+  <servlet-class>ModerateModeServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>ModerateModeServlet</servlet-name>
+  <url-pattern>/moderateMode</url-pattern>
+</servlet-mapping>
+
   <servlet>
     <servlet-name>CreateQuizServlet</servlet-name>
     <servlet-class>CreateQuizServlet</servlet-class>
@@ -155,4 +172,5 @@
     <servlet-name>DeleteQuizServlet</servlet-name>
     <url-pattern>/quizzes/deleteQuiz-json/*</url-pattern>
     </servlet-mapping>
+
 </web-app>

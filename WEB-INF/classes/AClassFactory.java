@@ -10,6 +10,8 @@ public class AClassFactory {
             return new Answer(constructorParameters);
         } else if(tableType.equalsIgnoreCase("media")){
             return new Media(constructorParameters);
+        } else  if(tableType.equalsIgnoreCase("websocket")){
+            return new WebSocketQuestion(constructorParameters);
         }
         return null;
     }
