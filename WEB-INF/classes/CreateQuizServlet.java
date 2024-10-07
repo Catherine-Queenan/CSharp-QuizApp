@@ -131,10 +131,8 @@ public class CreateQuizServlet extends HttpServlet {
         String role = (String) session.getAttribute("USER_ROLE");
 
         if (!"a".equals(role)) {
-            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
-            req.setAttribute("errorMessage", "You are not authorized to access this page.");
-            RequestDispatcher view = req.getRequestDispatcher("/views/401.jsp");
-            view.forward(req, res);
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
+        res.getWriter().write("{\"error\": \"You are not authorized to access this page.\"}");
             return;
         }
 
@@ -159,8 +157,8 @@ public class CreateQuizServlet extends HttpServlet {
 
             if (quizName == null || quizName.trim().isEmpty() ||
                     categoryName == null || categoryName.trim().isEmpty()) {
-                req.setAttribute("error", "Quiz name and category name are required.");
-                doGet(req, res);
+                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
+                        res.getWriter().write("{\"error\": \"Quiz name and category name are required.\"}");
                 return;
             }
 
@@ -299,12 +297,14 @@ public class CreateQuizServlet extends HttpServlet {
             //     doGet(req, res);
             // }
 
-            res.sendRedirect("quizzes?categoryName=" + categoryName);
+            // Return success response
+        res.setStatus(HttpServletResponse.SC_CREATED); // 201 Created
+        res.getWriter().write("{\"message\": \"Quiz created successfully!\", \"categoryName\": \"" + categoryName + "\"}");
 
         } catch (Exception e) {
             e.printStackTrace();
-            // req.setAttribute("error", "An error occurred while creating the quiz.");
-            doGet(req, res);
+        res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 Internal Server Error
+        res.getWriter().write("{\"error\": \"An error occurred while creating the quiz.\"}");
         } 
         // finally {
         //     try {
