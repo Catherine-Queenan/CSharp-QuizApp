@@ -77,7 +77,7 @@ public class CreateQuizServlet extends HttpServlet {
             ArrayList<AClass> categories = repository.select("category", "");
             // ps = con.prepareStatement("SELECT name FROM categories");
             // rs = ps.executeQuery();
-            System.out.println(categories.get(0).serialize());
+            
             for(int i = 0 ; i < categories.size(); i++){
 
                 JSONObject categoryJSON = categories.get(i).serialize();

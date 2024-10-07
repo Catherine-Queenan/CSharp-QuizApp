@@ -29,6 +29,12 @@ public class DeleteQuestionServlet extends HttpServlet {
         int idIndex = Integer.parseInt(req.getParameter("id"));
         String quizName = req.getParameter("quizName");
         ArrayList<AClass> questions = (ArrayList<AClass>)session.getAttribute("questions");
+        
+        System.out.println(quizName);
+        for(AClass q: questions){
+            System.out.println(q.serialize());
+        }
+
         session.removeAttribute("questions");
         // Connection con = null;
         // PreparedStatement ps = null;
@@ -38,11 +44,13 @@ public class DeleteQuestionServlet extends HttpServlet {
             // Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
             // Class.forName("oracle.jdbc.OracleDriver"); // Oracle Driver
 
+            
             IRepository repository = new Repository();
             repository.init("com.mysql.cj.jdbc.Driver");
             JSONObject deleteQuestion = questions.get(idIndex).serialize();
-            repository.delete("question", "id=" + deleteQuestion.getString("id"));
-
+            System.out.println("HEREEEE  " + deleteQuestion);
+            repository.delete("question", deleteQuestion.getString("id"));
+            
             // DATABASE CONNECTION LINE
             // con = DatabaseUtil.getConnection();
             // Delete the question
