@@ -1,6 +1,7 @@
 # CS-QuizGame
 
 Group:
+
     1. Catherine Queenan
     2. Eugenie Kim
     3. Soomin Jeong
@@ -8,6 +9,7 @@ Group:
     5. Liam Janicke
 
 Completed Tasks for 1(a):
+
     1. Catherine Queenan: Acted as project manager
         a. Created EERD for the database
         b. Built database creation SQL
@@ -41,6 +43,7 @@ Completed Tasks for 1(a):
         b. *Built hardcoded sql for inputting Literature quiz (for testing)
 
 Completed Tasks for 1(b):
+
     1. Catherine Queenan:
         a. Coded errorMessage and ErrorServlet 
         b. Coded ability to add images to categories and quizzes themselves
