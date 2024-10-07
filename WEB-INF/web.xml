@@ -129,14 +129,23 @@
   <url-pattern>/updateAutoplay</url-pattern>
 </servlet-mapping>
 
-<servlet>
+  <servlet>
     <servlet-name>CreateQuizServlet</servlet-name>
     <servlet-class>CreateQuizServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
+  </servlet>
+  <servlet-mapping>
     <servlet-name>CreateQuizServlet</servlet-name>
+    <url-pattern>/createQuiz-json</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>CreateQuiz</servlet-name>
+    <jsp-file>/views/createQuiz.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CreateQuiz</servlet-name>
     <url-pattern>/createQuiz</url-pattern>
-    </servlet-mapping>
+  </servlet-mapping>
 
     <servlet>
     <servlet-name>DeleteQuizServlet</servlet-name>
