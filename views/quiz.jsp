@@ -95,14 +95,14 @@
             cursor: pointer;
         }
 
-        .quizName {
-            /* all: unset; */
+        .quiz input {
+            all: unset;
             width: 100%;
             /* height: 100%; */
             text-align: center;
-            /* padding: 20px 40px; */
-            /* box-sizing: border-box; */
-            /* cursor: pointer; */
+            padding: 20px 40px;
+            box-sizing: border-box;
+            cursor: pointer;
         }
 
         .quiz-description {
@@ -222,10 +222,6 @@
             </div>
             <button class="btn next"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
-
-        <!-- <div class="quizWrap" id="quizContainer">
-            Loading quizzes...
-        </div> -->
     </div>
 
     <script>
@@ -283,13 +279,19 @@
                         }
     
                         quizDiv.innerHTML = `
-                            <a class="quizLink" href="#">
-                                <div class="quizName">${quiz.name}</div>
+                            <form method="post" action="${pathSegments.join('/')}/quizzes-json" class="quizLink">
+                                <input type="hidden" name="quizName" value="${quiz.name}">
+                                <input type="submit" value="${quiz.name}">
                                 <p class="quiz-description">${quiz.description}</p>
                                 <div class="img">${mediaHtml}</div>
-                            </a>
+                            </form>
                         `;
-    
+                            // <a class="quizLink" href="${quiz.name}">
+                            //     <div class="quizName">${quiz.name}</div>
+                            //     <p class="quiz-description">${quiz.description}</p>
+                            //     <div class="img">${mediaHtml}</div>
+                            // </a>
+                            
                         if (data.role === "admin") {
                             quizDiv.innerHTML += `
                                 <div class="adminBtnWrap">    
