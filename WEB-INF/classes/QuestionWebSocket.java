@@ -146,28 +146,37 @@ public class QuestionWebSocket {
             json.put("questionIndex", userData.currentQuestionIndex);
             
             session.getBasicRemote().sendText(json.toString());
-        } else {
+        } else if(userData.currentQuestionIndex == userData.questions.size()-1) {
             JSONObject json = new JSONObject();
-            json.put("type", "quizEnd");
+            json.put("type", "end");
             session.getBasicRemote().sendText(json.toString());
         }
     }
     
 
+
     private void clearAllSessions() {
+        List<Session> sessionsToClose;
+        
         synchronized (sessions) {
-            for (Session session : sessions) {
-                try {
-                    session.close(); // Close the session
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            // Create a new list from the sessions to avoid ConcurrentModificationException
+            sessionsToClose = new ArrayList<>(sessions);
+        }
+        
+        for (Session session : sessionsToClose) {
+            try {
+                session.close(); // Close the session
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+        
+        // Clear the user sessions and the sessions set after closing
         userSessions.clear();
         sessions.clear();
         System.out.println("All sessions cleared.");
     }
+    
 
     private void broadcastAnswerCounts() throws IOException {
         JSONObject json = new JSONObject();
