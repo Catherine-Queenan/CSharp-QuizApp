@@ -109,13 +109,12 @@
             </div>
 
             <label for="categoryName">Category Name:</label>
-            <select name="categoryName" id="category">
+            <select name="categoryName" id="categories">
                 <!-- <% ArrayList<String> categories = (ArrayList<String>)request.getAttribute("categories"); %>
                 <% for(int i = 0; i < categories.size(); i++){ %>
                     <option value="<%= categories.get(i)%>"><%= categories.get(i)%></option>
                 <%} %> -->
-                <option value="categoryName1">CategoryName1</option>
-                <option value="categoryName2">CategoryName2</option>
+                
                 <option value="ADDANOTHERCATEGORY">Other</option>
             </select>
             <div id="newCatDiv" style="display:none;">
@@ -156,6 +155,48 @@
 </body>
 <script src="scripts\logout.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categories = document.getElementById('categories');
+
+        const currentPath = window.location.pathname;
+        const pathSegments = currentPath.split('/');
+        pathSegments.pop();
+        let newPath = pathSegments.join('/') + '/createQuiz-json';
+
+        fetch(newPath, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch categories');
+            }
+            return response.json();
+        }).then(data => {
+            console.log('Fetched categories:', data);
+
+            categories.innerHTML = '';
+            if (data.categories.length === 0) {
+                categoriesContainer.innerHTML = '<p>No categories available</p>';
+                return;
+            }
+
+            data.categories.forEach(category => {
+                const categoryOption = document.createElement('option');
+                categoryOption.value = category.name;
+                categoryOption.innerHTML = category.name;
+
+                // Append category div to the container
+                categoriesContainer.appendChild(categoryOption);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching categories:', error);
+            document.getElementById('categories').innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
+        });
+    });
     function addAnswer() {
         const answerDiv = document.createElement('div');
         answerDiv.classList.add('answer');
