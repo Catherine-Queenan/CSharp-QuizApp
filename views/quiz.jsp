@@ -361,7 +361,7 @@
                 document.querySelectorAll('.deleteButton').forEach(button => {
                     button.addEventListener('click', function() {
                         // Get the quiz name
-                        const quizName = button.parentElement.parentElement.querySelector(".quizName").innerHTML;
+                        const quizName = button.parentElement.parentElement.querySelector('input[name="quizName"]').value;
                         console.log('Deleting quiz:', quizName);
     
                         // Show a confirmation dialog before proceeding
