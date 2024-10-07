@@ -5,7 +5,73 @@ import java.sql.*;
 import org.json.JSONObject;
 
 public class DeleteQuizServlet extends HttpServlet {
-    public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String quizName = req.getParameter("quizName");
+
+        JSONObject jsonResponse = new JSONObject();
+        
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        PrintWriter out = res.getWriter();
+        out.print(jsonResponse.toString());
+        out.flush();
+    }
+
+    private JSONObject deleteQuiz(String quizName, String username) {
+        JSONObject jsonResponse = new JSONObject();
+
+        if (username == null || username.isEmpty()) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "You are not authorized to access this page.");
+            return jsonResponse;
+        }
+
+        String role = getUserRoleFromDatabase(username);
+
+        if (!"a".equals(role)) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "401 You are not authorized to access this page");
+            return jsonResponse;
+        }
+
+        if (quizName == null || quizName.isEmpty()) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "Quiz name is required.");
+            return jsonResponse;
+        }
+
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+            con = DatabaseUtil.getConnection();
+
+            String deleteQuizSql = "DELETE FROM quizzes WHERE name = ?";
+            ps = con.prepareStatement(deleteQuizSql);
+            ps.setString(1, quizName);
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected > 0) {
+                jsonResponse.put("status", "success");
+                jsonResponse.put("message", "Quiz deleted successfully.");
+            } else {
+                jsonResponse.put("status", "error");
+                jsonResponse.put("message", "Quiz not found.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "An error occurred while deleting the quiz.");
+        } finally {
+            try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+        }
+        return jsonResponse;
+    }
+
+    //public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // COOKIE AUTHENICATION LOGIC START
         // Cookie[] cookies = req.getCookies();
         // String authToken = null;
@@ -51,56 +117,56 @@ public class DeleteQuizServlet extends HttpServlet {
         //     return;
         // }
 
-        HttpSession session = req.getSession(false);
+    //     HttpSession session = req.getSession(false);
 
-        if (session == null || session.getAttribute("USER_ID") == null) {
-            res.sendRedirect("login");
-            return;
-        }
+    //     if (session == null || session.getAttribute("USER_ID") == null) {
+    //         res.sendRedirect("login");
+    //         return;
+    //     }
 
-        String username = (String) session.getAttribute("USER_ID");
-        String role = getUserRoleFromDatabase(username);
+    //     String username = (String) session.getAttribute("USER_ID");
+    //     String role = getUserRoleFromDatabase(username);
 
-        if (!"a".equals(role)) {
-            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
-            req.setAttribute("errorMessage", "You are not authorized to access this page.");
-            RequestDispatcher view = req.getRequestDispatcher("/views/401.jsp");
-            view.forward(req, res);
-            return;
-        }
+    //     if (!"a".equals(role)) {
+    //         res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
+    //         req.setAttribute("errorMessage", "You are not authorized to access this page.");
+    //         RequestDispatcher view = req.getRequestDispatcher("/views/401.jsp");
+    //         view.forward(req, res);
+    //         return;
+    //     }
 
-        String quizName = req.getParameter("quizName");
+    //     String quizName = req.getParameter("quizName");
 
-        Connection con = null;
-        PreparedStatement ps = null;
+    //     Connection con = null;
+    //     PreparedStatement ps = null;
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+    //     try {
+    //         Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
 
-            con = DatabaseUtil.getConnection();
-            // Delete the quiz
-            String deleteQuizSql = "DELETE FROM quizzes WHERE name = ?";
-            ps = con.prepareStatement(deleteQuizSql);
-            ps.setString(1, quizName);
-            ps.executeUpdate();
+    //         con = DatabaseUtil.getConnection();
+    //         // Delete the quiz
+    //         String deleteQuizSql = "DELETE FROM quizzes WHERE name = ?";
+    //         ps = con.prepareStatement(deleteQuizSql);
+    //         ps.setString(1, quizName);
+    //         ps.executeUpdate();
 
-            // Get the referer (previous page)
-            String referer = req.getHeader("home");
+    //         // Get the referer (previous page)
+    //         String referer = req.getHeader("home");
 
-            // Redirect to the previous page or a default page if referer is null
-            if (referer != null) {
-                res.sendRedirect(referer);
-            } else {
-                res.sendRedirect("home"); // Fallback to a default page if no referer is found
-            }
+    //         // Redirect to the previous page or a default page if referer is null
+    //         if (referer != null) {
+    //             res.sendRedirect(referer);
+    //         } else {
+    //             res.sendRedirect("home"); // Fallback to a default page if no referer is found
+    //         }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
-        }
-    }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     } finally {
+    //         try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //         try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //     }
+    // }
 
     private String getUserRoleFromDatabase(String username) {
         Connection con = null;

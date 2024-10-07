@@ -225,56 +225,103 @@
             </div>
             <button class="btn next"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
+
+        <div class="quizWrap" id="quizContainer">
+            Loading quizzes...
+        </div>
     </div>
 
     <script>
 
-        // ------ Making quizzes display able to slide ------
-        
-        const quizzes = document.getElementById('quizzes');
-        const prevBtn = document.querySelector('.prev');
-        const nextBtn = document.querySelector('.next');
-        const totalQuizzes = quizzes.children.length;
-        const visibleQuizzes = 3; // Display 3 at a time
-        let index = 0;
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const pathSegments = currentPath.split('/');
+            
+            // Extract the category name from URL parameters
+            const categoryName = pathSegments[2];
 
-        // Adjust width dynamically based on the number of quizzes
-        quizzes.style.width = `${(totalQuizzes / visibleQuizzes) * 100}%`;
+            // Extract the base path dynamically (remove last segment if it's quiz-related)
+            pathSegments.pop(); 
+            pathSegments.pop();            
 
-        // Function to slide quizzes
-        function updatequizzes() {
-            const offset = -index * (document.getElementById("quizzesWrap").clientWidth / visibleQuizzes); // Calculate the offset
-            quizzes.style.transform = `translateX(${offset}px)`;
-        }
+            // Construct the new path dynamically
+            const newPath = pathSegments.join('/') + `/quizzes-json/${categoryName}`;
 
-        // Event listener for next button
-        nextBtn.addEventListener('click', () => {
-            if (index < totalQuizzes - visibleQuizzes) {
-                index++;
-            } else {
-                index = 0; // Loop back to the first page
+            console.log(newPath)
+            fetch(newPath, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                console.error('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch quizzes');
+                }
+                return response.json(); // Change this temporarily to text() instead of json()
+            })
+            .then(data => {
+                console.log("Raw response data: ", data);
+                // Try parsing it as JSON after confirming it's in JSON format
+                try {
+                    const parsedData = JSON.parse(data);
+                    console.log("Parsed quizzes data: ", parsedData);
+                } catch (err) {
+                    console.error("Error parsing JSON: ", err);
+                }
+                // Render the quizzes...
+            })
+            .catch(error => {
+                console.error('Error fetching quizzes:', error);
+                document.getElementById('quizContainer').innerHTML = '<p>There was an error loading the quizzes. Please try again later.</p>';
+            });
+
+
+            // ------ Making quizzes display able to slide ------
+            
+            const quizzes = document.getElementById('quizzes');
+            const prevBtn = document.querySelector('.prev');
+            const nextBtn = document.querySelector('.next');
+            const totalQuizzes = quizzes.children.length;
+            const visibleQuizzes = 3; // Display 3 at a time
+            let index = 0;
+    
+            // Adjust width dynamically based on the number of quizzes
+            quizzes.style.width = `${(totalQuizzes / visibleQuizzes) * 100}%`;
+    
+            // Function to slide quizzes
+            function updatequizzes() {
+                const offset = -index * (document.getElementById("quizzesWrap").clientWidth / visibleQuizzes); // Calculate the offset
+                quizzes.style.transform = `translateX(${offset}px)`;
             }
-            updatequizzes();
-        });
-
-        // Event listener for previous button
-        prevBtn.addEventListener('click', () => {
-            if (index > 0) {
-                index--;
-            } else {
-                index = totalQuizzes - visibleQuizzes; // Loop back to the last page
+    
+            // Event listener for next button
+            nextBtn.addEventListener('click', () => {
+                if (index < totalQuizzes - visibleQuizzes) {
+                    index++;
+                } else {
+                    index = 0; // Loop back to the first page
+                }
+                updatequizzes();
+            });
+    
+            // Event listener for previous button
+            prevBtn.addEventListener('click', () => {
+                if (index > 0) {
+                    index--;
+                } else {
+                    index = totalQuizzes - visibleQuizzes; // Loop back to the last page
+                }
+                updatequizzes();
+            });
+    
+            // Disable buttons if there are not enough quizzes
+            if (totalQuizzes <= visibleQuizzes) {
+                nextBtn.style.display = 'none';
+                prevBtn.style.display = 'none';
             }
-            updatequizzes();
-        });
 
-        // Disable buttons if there are not enough quizzes
-        if (totalQuizzes <= visibleQuizzes) {
-            nextBtn.style.display = 'none';
-            prevBtn.style.display = 'none';
-        }
-
-        // If there are less than three quizzes
-        window.onload = function() {
             if (totalQuizzes < 3) {
                 quizzes.style.display = "flex";
                 quizzes.style.justifyContent = "center"
@@ -283,7 +330,119 @@
                     quiz.style.width = `${40}%`;
                 });
             }
-        };
+        });
+
+        // document.addEventListener('DOMContentLoaded', function() {
+
+        //     const currentPath = window.location.pathname;
+        //     const pathSegments = currentPath.split('/');
+        //     pathSegments.pop();
+            
+        //     const urlParams = new URLSearchParams(window.location.search);
+        //     console.log(currentPath);
+        //     const categoryName = urlParams.get('categoryName');
+            
+        //     // let newPath = pathSegments.join('/') + `/?categoryName=${categoryName}`;
+        //         // let newPath =  `/quizzes/categoryName=${categoryName}`;
+        //     let newPath = `/${categoryName}`;
+
+        //     console.log(newPath)
+
+        //     fetch(newPath, {
+        //         method: 'GET',
+        //         headers: {
+        //             'Accept': 'application/json'
+        //         }
+        //     })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             console.error('Response status:', response.status); // Log the error code
+        //             throw new Error('Failed to fetch quizzes');
+        //         }
+        //         return response.json();
+        //     })
+        //     .then(data => {
+        //         console.log("Fetched quizzes: ", data);
+        //         // Further code to render the quizzes...
+        //         const quizContainer = document.getElementById('quizzes');
+        //         quizContainer.innerHTML = ''; // Clear previous content
+
+        //         // Check if there are quizzes
+        //         if (data.quizzes && data.quizzes.length > 0) {
+        //             data.quizzes.forEach(quiz => {
+        //                 const quizDiv = document.createElement('div');
+        //                 quizDiv.className = 'quiz';
+
+        //                 quizDiv.innerHTML = `
+        //                     <h3>${quiz.title}</h3>
+        //                     <p>${quiz.description}</p>
+        //                     <a href="/quiz/${quiz.id}">Take this quiz</a>
+        //                 `;
+
+        //                 quizContainer.appendChild(quizDiv);
+        //             });
+        //         } else {
+        //             quizContainer.innerHTML = '<p>No quizzes available for this category.</p>';
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Error fetching quizzes:', error);
+        //         document.getElementById('quizContainer').innerHTML = '<p>There was an error loading the quizzes. Please try again later.</p>';
+        //     });
+
+        //     // ------ Making quizzes display able to slide ------
+            
+        //     const quizzes = document.getElementById('quizzes');
+        //     const prevBtn = document.querySelector('.prev');
+        //     const nextBtn = document.querySelector('.next');
+        //     const totalQuizzes = quizzes.children.length;
+        //     const visibleQuizzes = 3; // Display 3 at a time
+        //     let index = 0;
+    
+        //     // Adjust width dynamically based on the number of quizzes
+        //     quizzes.style.width = `${(totalQuizzes / visibleQuizzes) * 100}%`;
+    
+        //     // Function to slide quizzes
+        //     function updatequizzes() {
+        //         const offset = -index * (document.getElementById("quizzesWrap").clientWidth / visibleQuizzes); // Calculate the offset
+        //         quizzes.style.transform = `translateX(${offset}px)`;
+        //     }
+    
+        //     // Event listener for next button
+        //     nextBtn.addEventListener('click', () => {
+        //         if (index < totalQuizzes - visibleQuizzes) {
+        //             index++;
+        //         } else {
+        //             index = 0; // Loop back to the first page
+        //         }
+        //         updatequizzes();
+        //     });
+    
+        //     // Event listener for previous button
+        //     prevBtn.addEventListener('click', () => {
+        //         if (index > 0) {
+        //             index--;
+        //         } else {
+        //             index = totalQuizzes - visibleQuizzes; // Loop back to the last page
+        //         }
+        //         updatequizzes();
+        //     });
+    
+        //     // Disable buttons if there are not enough quizzes
+        //     if (totalQuizzes <= visibleQuizzes) {
+        //         nextBtn.style.display = 'none';
+        //         prevBtn.style.display = 'none';
+        //     }
+
+        //     if (totalQuizzes < 3) {
+        //         quizzes.style.display = "flex";
+        //         quizzes.style.justifyContent = "center"
+        //         quizzes.style.width = `${100}%`;
+        //         document.querySelectorAll(".quiz").forEach(function(quiz) {
+        //             quiz.style.width = `${40}%`;
+        //         });
+        //     }
+        // });
 
     </script>
 </body>

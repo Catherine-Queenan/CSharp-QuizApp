@@ -146,5 +146,3 @@ public class MainServlet extends HttpServlet {
         return role;
     }
 }
-
-

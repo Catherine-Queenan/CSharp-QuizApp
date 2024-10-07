@@ -200,6 +200,7 @@
         const pathSegments = currentPath.split('/');
         pathSegments.pop();
         let newPath = pathSegments.join('/') + '/home-json';
+        console.log(newPath)
 
         // Fetch categories and render them dynamically
         fetch(newPath, {
@@ -248,7 +249,7 @@
                 }
 
                 categoryDiv.innerHTML = `
-                    <a class="categoryLink" href="/quizzes-json?categoryName=${encodeURIComponent(category.categoryName)}">
+                    <a class="categoryLink" href="quizzes/${encodeURIComponent(category.categoryName)}">
                         <div class="categoryName">${category.categoryName}</div>
                         <div class="img">${mediaHtml}</div>
                     </a>
@@ -307,7 +308,7 @@
         })
         .catch(error => {
             console.error('Error fetching categories:', error);
-            categoriesContainer.innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
+            document.getElementById('categories').innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
         });
     });
 

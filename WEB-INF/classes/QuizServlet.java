@@ -4,101 +4,103 @@ import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class QuizServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        HttpSession session = req.getSession(false);
-        if (session == null) {
-            res.setStatus(302);
-            res.sendRedirect("login");
-            return;
-        }
+        HttpSession session = req.getSession(false);   
+        // if (session == null) {
+        //     res.setStatus(302);
+        //     res.sendRedirect("login");
+        //     return;
+        // }
 
-        String username = (String) session.getAttribute("USER_ID");
-        String role = getUserRoleFromDatabase(username); // Fetch the role from DB
-        String category = req.getParameter("categoryName");
+        // String username = (String) session.getAttribute("USER_ID");
+        // String role = getUserRoleFromDatabase(username); // Fetch the role from DB
+        // String category = req.getParameter("categoryName");
 
-        Connection con = null;
-        PreparedStatement psQuiz = null;
-        ResultSet rsQuiz = null;
-        PreparedStatement psMedia = null;
-        PreparedStatement psQuizMedia = null;
-        StringBuilder quizzesHtml = new StringBuilder();
-        StringBuilder mediaHtml = new StringBuilder();
-        ResultSet rsMedia = null;
-        ResultSet rsQuizMedia = null;
+        // Connection con = null;
+        // PreparedStatement psQuiz = null;
+        // ResultSet rsQuiz = null;
+        // PreparedStatement psMedia = null;
+        // PreparedStatement psQuizMedia = null;
+        // StringBuilder quizzesHtml = new StringBuilder();
+        // StringBuilder mediaHtml = new StringBuilder();
+        // ResultSet rsMedia = null;
+        // ResultSet rsQuizMedia = null;
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+        // try {
+        //     Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
 
-            con = DatabaseUtil.getConnection();
+        //     con = DatabaseUtil.getConnection();
 
-            psQuiz = con.prepareStatement("SELECT name, description FROM quizzes WHERE category_name = \"" + category + "\";");
-            rsQuiz = psQuiz.executeQuery();
+        //     psQuiz = con.prepareStatement("SELECT name, description FROM quizzes WHERE category_name = \"" + category + "\";");
+        //     rsQuiz = psQuiz.executeQuery();
 
-            psMedia = con.prepareStatement("SELECT media_id FROM quiz_media WHERE quiz_name = ?");
-            psQuizMedia = con.prepareStatement("SELECT media_file_path FROM media WHERE id = ?");
+        //     psMedia = con.prepareStatement("SELECT media_id FROM quiz_media WHERE quiz_name = ?");
+        //     psQuizMedia = con.prepareStatement("SELECT media_file_path FROM media WHERE id = ?");
 
-            while (rsQuiz.next()) {
-                String quizName = rsQuiz.getString("name");
-                String quizDescription = rsQuiz.getString("description");
+        //     while (rsQuiz.next()) {
+        //         String quizName = rsQuiz.getString("name");
+        //         String quizDescription = rsQuiz.getString("description");
 
-                psMedia.setString(1, quizName);
-                rsMedia = psMedia.executeQuery();
+        //         psMedia.setString(1, quizName);
+        //         rsMedia = psMedia.executeQuery();
 
-                while(rsMedia.next()) {
+        //         while(rsMedia.next()) {
 
-                    InputStream mediaId = rsMedia.getBinaryStream("media_id");
+        //             InputStream mediaId = rsMedia.getBinaryStream("media_id");
 
-                    if(mediaId != null) {
-                        psQuizMedia.setBinaryStream(1, mediaId);
-                        rsQuizMedia = psQuizMedia.executeQuery();
-                        if(rsQuizMedia.next()) {
-                            String mediaFilePath = rsQuizMedia.getString("media_file_path");
-                            mediaHtml.append("<img src=\"").append(mediaFilePath).append("\" alt=\"").append(quizName).append("\" class=\"categoryImg\">");
-                        }
-                    }
-                }
+        //             if(mediaId != null) {
+        //                 psQuizMedia.setBinaryStream(1, mediaId);
+        //                 rsQuizMedia = psQuizMedia.executeQuery();
+        //                 if(rsQuizMedia.next()) {
+        //                     String mediaFilePath = rsQuizMedia.getString("media_file_path");
+        //                     mediaHtml.append("<img src=\"").append(mediaFilePath).append("\" alt=\"").append(quizName).append("\" class=\"categoryImg\">");
+        //                 }
+        //             }
+        //         }
 
-                quizzesHtml.append("<div class=\"quiz\">\n")
-                        .append("       <form method=\"post\">\n")
-                        .append("           <input type=\"hidden\" name=\"quizName\" value=\"").append(quizName).append("\" />\n")
-                        .append("           <input type=\"submit\" value=\"").append(quizName).append("\" />\n")
-                        // .append("    <label for=\"").append(quizName).append("\">").append(quizName).append("</label>")
-                        .append("           <p class=\"quiz-description\">").append(quizDescription).append("</p>\n")
-                        .append("               <div class=\"img\">").append(mediaHtml.toString()).append("</div>\n")
-                        .append("       </form>\n");
+        //         quizzesHtml.append("<div class=\"quiz\">\n")
+        //                 .append("       <form method=\"post\">\n")
+        //                 .append("           <input type=\"hidden\" name=\"quizName\" value=\"").append(quizName).append("\" />\n")
+        //                 .append("           <input type=\"submit\" value=\"").append(quizName).append("\" />\n")
+        //                 // .append("    <label for=\"").append(quizName).append("\">").append(quizName).append("</label>")
+        //                 .append("           <p class=\"quiz-description\">").append(quizDescription).append("</p>\n")
+        //                 .append("               <div class=\"img\">").append(mediaHtml.toString()).append("</div>\n")
+        //                 .append("       </form>\n");
                 
-                // Show "Add Question" and "Delete Quiz" buttons only for admin users
-                if ("a".equals(role)) {
-                    quizzesHtml.append("<div class=\"adminBtnWrap\">")
-                            // .append("    <button type=\"button\" onclick=\"window.location.href='addQuestion?quizName=")
-                            // .append(quizName).append("'\">Add Question</button>\n")
-                            .append("    <button type=\"button\" onclick=\"window.location.href='deleteQuiz?quizName=")
-                            .append(quizName).append("'\">Delete Quiz</button>\n")
-                            .append("    <button type=\"button\" onclick=\"window.location.href='edit?quizName=")
-                            .append(quizName).append("'\">Edit Quiz</button>\n</div>");
-                }
+        //         // Show "Add Question" and "Delete Quiz" buttons only for admin users
+        //         if ("a".equals(role)) {
+        //             quizzesHtml.append("<div class=\"adminBtnWrap\">")
+        //                     // .append("    <button type=\"button\" onclick=\"window.location.href='addQuestion?quizName=")
+        //                     // .append(quizName).append("'\">Add Question</button>\n")
+        //                     .append("    <button type=\"button\" onclick=\"window.location.href='deleteQuiz?quizName=")
+        //                     .append(quizName).append("'\">Delete Quiz</button>\n")
+        //                     .append("    <button type=\"button\" onclick=\"window.location.href='edit?quizName=")
+        //                     .append(quizName).append("'\">Edit Quiz</button>\n</div>");
+        //         }
 
-                quizzesHtml.append("</div>\n");
-            }
+        //         quizzesHtml.append("</div>\n");
+        //     }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try { if (rsQuiz != null) rsQuiz.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (rsMedia != null) rsMedia.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (rsQuizMedia != null) rsQuizMedia.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (psQuiz != null) psQuiz.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (psMedia != null) psMedia.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (psQuizMedia != null) psQuizMedia.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (con != null) con.close(); } catch (Exception e) { e.printStackTrace(); }
-        }
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // } finally {
+        //     try { if (rsQuiz != null) rsQuiz.close(); } catch (Exception e) { e.printStackTrace(); }
+        //     try { if (rsMedia != null) rsMedia.close(); } catch (Exception e) { e.printStackTrace(); }
+        //     try { if (rsQuizMedia != null) rsQuizMedia.close(); } catch (Exception e) { e.printStackTrace(); }
+        //     try { if (psQuiz != null) psQuiz.close(); } catch (Exception e) { e.printStackTrace(); }
+        //     try { if (psMedia != null) psMedia.close(); } catch (Exception e) { e.printStackTrace(); }
+        //     try { if (psQuizMedia != null) psQuizMedia.close(); } catch (Exception e) { e.printStackTrace(); }
+        //     try { if (con != null) con.close(); } catch (Exception e) { e.printStackTrace(); }
+        // }
 
-        req.setAttribute("quizzesHtml", quizzesHtml.toString());
-        // Forward the request to the quiz.jsp
-        RequestDispatcher view = req.getRequestDispatcher("/views/quiz.jsp");
-        view.forward(req, res);
+        // req.setAttribute("quizzesHtml", quizzesHtml.toString());
+        // // Forward the request to the quiz.jsp
+        // RequestDispatcher view = req.getRequestDispatcher("/views/quiz.jsp");
+        // view.forward(req, res);
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
