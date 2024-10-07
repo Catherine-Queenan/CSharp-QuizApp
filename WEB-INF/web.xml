@@ -144,6 +144,6 @@
     </servlet>
     <servlet-mapping>
     <servlet-name>DeleteQuizServlet</servlet-name>
-    <url-pattern>/delete-json/*</url-pattern>
+    <url-pattern>/quizzes/deleteQuiz-json/*</url-pattern>
     </servlet-mapping>
 </web-app>

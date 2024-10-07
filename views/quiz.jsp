@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quizzes</title>
-    <link rel="stylesheet" href="public/css/reset.css">
+    <link rel="stylesheet" href="../public/css/reset.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+
+        .homeBtn a {
+            text-decoration: none;
+            color: #0C1B33;
+        }
 
         .wrap {
             padding: 50px;
@@ -36,7 +41,7 @@
         }
 
         .quiz {
-            width: 31%;
+            width: 30%;
             border: 0;
             border-radius: 15px;
             padding: 10px;
@@ -48,6 +53,7 @@
             justify-content: center;
             align-items: center;
             transition-duration: 0.3s;
+            cursor: pointer;
         }
 
         .quiz:hover {
@@ -82,7 +88,8 @@
             background-color: #6e6ba6;
         }
 
-        .quiz form {
+        .quizLink {
+            all: unset;
             width: 100%;
             height: 100%;
             padding: 20px;
@@ -90,6 +97,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
         }
 
         .quiz input {
@@ -102,8 +110,10 @@
             cursor: pointer;
         }
 
-        .quiz p {
-            padding: 0 20px 10px 20px;
+        .quiz-description {
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px 20px;
             font-size: 20px;
             display: flex;
             justify-content: center;
@@ -139,9 +149,17 @@
             cursor: pointer;
             transition-duration: 0.2s;
         }
-
+        
         .btn:hover {
             color: #45425A;
+        }
+        
+        .prev {
+            display: none;
+        }
+
+        .next {
+            display: none;
         }
 
         /* Admin section */
@@ -159,35 +177,39 @@
             border: 1px solid rgba(1, 1, 1, 0.1);
             border-radius: 10px;
             padding: 10px 20px;
+            background-color: #DCEED1;
             transition-duration: 0.3s;
             cursor: pointer;
         }
 
         .adminBtnWrap button:hover {
             transform: scale(1.03);
+            box-shadow: inset 5px 5px 5px #5a6a3e8c;
+        }
+        
+        .deleteButton {
+            background-color: #D00000 !important;
+            color: rgb(244, 244, 244);
+        }
+        
+        .deleteButton:hover {
+            transform: scale(1.03);
             box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.3);
         }
 
-        .adminBtnWrap button:nth-child(1) {
-            background-color: #D00000;
-            color: rgb(244, 244, 244);
-        }
-
-        .adminBtnWrap button:nth-child(2) {
-            background-color: #DCEED1;
-        }
-
-        .adminBtnWrap button:nth-child(2):hover {
-            box-shadow: inset 5px 5px 5px #5a6a3e8c;
+        .errorCode {
+            font-size: 25px;
         }
 
     </style>
 </head>
 <body>
     <header>
-        <form action="home">
-            <button class="homeBtn" type="Submit">Home</button>
-        </form>
+        <button class="homeBtn">
+            <a href="../home">
+                Home
+            </a>
+        </button>
         <form action="logout">
             <button id="logoutButton" class="logoutBtn" type="Submit">Log Out</button>
         </form>
@@ -201,53 +223,35 @@
         <div class="quizzesBtnWrap">
             <button class="btn prev"><i class="fa-solid fa-chevron-left"></i></button>
             <div id="quizzesWrap">
-                <div class="quizzes" id="quizzes">
-
-                    <!-- <%= request.getAttribute("quizzesHtml")%> -->
-                    <div class="quiz">
-                        <form method="post">
-                            <input type="hidden" name="quizName" value="quizName">
-                            <input type="submit" value="quizName">
-                            <p class="quiz-description"><!-- Quiz description --></p>
-                            <div class="img">
-                                <!-- If no image, the img tag doesn't exist -->
-                                <img src="pathToPic" alt="quizName" class="categoryImg">
-                            </div>
-                        </form>
-                        <!-- adminBtnWrap doesn't display if user isn't admin -->
-                        <div class="adminBtnWrap">    
-                            <button type="button" onclick="window.location.href='deleteQuiz?quizName=testanswer'">Delete Quiz</button>
-                            <button type="button" onclick="window.location.href='edit?quizName=testanswer'">Edit Quiz</button>
-                        </div>
-                    </div>
-                    
-                </div>
+                <div class="quizzes" id="quizzes"></div>
             </div>
             <button class="btn next"><i class="fa-solid fa-chevron-right"></i></button>
-        </div>
-
-        <div class="quizWrap" id="quizContainer">
-            Loading quizzes...
         </div>
     </div>
 
     <script>
 
         document.addEventListener('DOMContentLoaded', function() {
+            const quizzes = document.getElementById('quizzes');
+            const prevBtn = document.querySelector('.prev');
+            const nextBtn = document.querySelector('.next');
+            const visibleQuizzes = 3; // Display 3 at a time
+            let index = 0;
+
             const currentPath = window.location.pathname;
             const pathSegments = currentPath.split('/');
-            
+
             // Extract the category name from URL parameters
-            const categoryName = pathSegments[2];
+            const categoryName = pathSegments[3];
 
             // Extract the base path dynamically (remove last segment if it's quiz-related)
             pathSegments.pop(); 
             pathSegments.pop();            
 
             // Construct the new path dynamically
-            const newPath = pathSegments.join('/') + `/quizzes-json/${categoryName}`;
+            const newPath = pathSegments.join('/') + `/quizzes-json/?categoryName=${categoryName}`;
 
-            console.log(newPath)
+            // console.log(newPath)
             fetch(newPath, {
                 method: 'GET',
                 headers: {
@@ -255,194 +259,146 @@
                 }
             })
             .then(response => {
-                console.error('Response status:', response.status);
                 if (!response.ok) {
+                    console.error('Response status:', response.status);
                     throw new Error('Failed to fetch quizzes');
                 }
                 return response.json(); // Change this temporarily to text() instead of json()
             })
             .then(data => {
-                console.log("Raw response data: ", data);
-                // Try parsing it as JSON after confirming it's in JSON format
-                try {
-                    const parsedData = JSON.parse(data);
-                    console.log("Parsed quizzes data: ", parsedData);
-                } catch (err) {
-                    console.error("Error parsing JSON: ", err);
+                console.log(data)
+                const quizzesContainer = document.getElementById("quizzes");
+                quizzesContainer.innerHTML = '';
+
+                // Render quizzes dynamically
+                if (data.quizzes == null) {
+                    quizzesContainer.innerHTML = '<p class="errorCode">No quizzes available</p>';
+                } else {
+                    data.quizzes.forEach(quiz => {
+                        const quizDiv = document.createElement('div');
+                        quizDiv.className = 'quiz';
+    
+                        let mediaHtml = '';
+                        if (quiz.media && quiz.media.media_file_path) {
+                            mediaHtml = `<img src="${quiz.media.media_file_path}" alt="${quiz.name}" class="categoryImg">`;
+                        }
+    
+                        quizDiv.innerHTML = `
+                            <form method="post" action="${pathSegments.join('/')}/quizzes-json" class="quizLink">
+                                <input type="hidden" name="quizName" value="${quiz.name}">
+                                <input type="submit" value="${quiz.name}">
+                                <p class="quiz-description">${quiz.description}</p>
+                                <div class="img">${mediaHtml}</div>
+                            </form>
+                        `;
+                            // <a class="quizLink" href="${quiz.name}">
+                            //     <div class="quizName">${quiz.name}</div>
+                            //     <p class="quiz-description">${quiz.description}</p>
+                            //     <div class="img">${mediaHtml}</div>
+                            // </a>
+                            
+                        if (data.role === "admin") {
+                            quizDiv.innerHTML += `
+                                <div class="adminBtnWrap">    
+                                    <button type="button" onclick="window.location.href='edit?quizName=testanswer'">Edit Quiz</button>
+                                    <button type="button" class="deleteButton">Delete Quiz</button>
+                                </div>
+                            `;
+                        }
+    
+                        // Append category div to the container
+                        quizzesContainer.appendChild(quizDiv);
+                    });
                 }
-                // Render the quizzes...
+                
+                // ----- Set up the sliding mechanism ----- \\
+
+                // Adjust width dynamically based on the number of quizzes
+                const totalQuizzes = quizzes.children.length;
+                quizzes.style.width = `${(totalQuizzes / visibleQuizzes) * 100}%`;
+        
+                // Function to slide quizzes
+                function updatequizzes() {
+                    const offset = -index * (document.getElementById("quizzesWrap").clientWidth / visibleQuizzes); // Calculate the offset
+                    quizzes.style.transform = `translateX(${offset}px)`;
+                }
+        
+                // Event listener for next button
+                nextBtn.addEventListener('click', () => {
+                    if (index < totalQuizzes - visibleQuizzes) {
+                        index++;
+                    } else {
+                        index = 0; // Loop back to the first page
+                    }
+                    updatequizzes();
+                });
+        
+                // Event listener for previous button
+                prevBtn.addEventListener('click', () => {
+                    if (index > 0) {
+                        index--;
+                    } else {
+                        index = totalQuizzes - visibleQuizzes; // Loop back to the last page
+                    }
+                    updatequizzes();
+                });
+        
+                // Disable buttons if there are not enough quizzes
+                if (totalQuizzes > visibleQuizzes) {
+                    nextBtn.style.display = 'block';
+                    prevBtn.style.display = 'block';
+                }
+
+                if (totalQuizzes < 3) {
+                    quizzes.style.display = "flex";
+                    quizzes.style.justifyContent = "center"
+                    quizzes.style.width = `100%`;
+                    document.querySelectorAll(".quiz").forEach(function(quiz) {
+                        quiz.style.width = `40%`;
+                    });
+                }
+
+                document.querySelectorAll('.deleteButton').forEach(button => {
+                    button.addEventListener('click', function() {
+                        // Get the quiz name
+                        const quizName = button.parentElement.parentElement.querySelector(".quizName").innerHTML;
+                        console.log('Deleting quiz:', quizName);
+    
+                        // Show a confirmation dialog before proceeding
+                        const isConfirmed = confirm(`Are you sure you want to delete the quiz: "${quizName}"?`);
+                        if (isConfirmed) {
+                            const deleteURL = pathSegments.join('/') + `/quizzes/deleteQuiz-json/?quizName=${encodeURIComponent(quizName)}`;
+        
+                            console.log("delete: " + deleteURL)
+                            // Send a DELETE request to the server
+                            fetch(deleteURL, {
+                                method: 'DELETE'
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    console.error('Response status:', response.status);
+                                    throw new Error('Failed to delete quiz');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Quiz deleted:', data);
+                                // Reload the page to reflect the changes
+                                window.location.reload();
+                            })
+                            .catch(error => {
+                                console.error('Error deleting quiz:', error);
+                            });
+                        }
+                    });
+                }) 
             })
             .catch(error => {
                 console.error('Error fetching quizzes:', error);
-                document.getElementById('quizContainer').innerHTML = '<p>There was an error loading the quizzes. Please try again later.</p>';
-            });
-
-
-            // ------ Making quizzes display able to slide ------
+                document.querySelector('.quizzes').innerHTML = '<p>There was an error loading the quizzes. Please try again later.</p>';
+            });            
             
-            const quizzes = document.getElementById('quizzes');
-            const prevBtn = document.querySelector('.prev');
-            const nextBtn = document.querySelector('.next');
-            const totalQuizzes = quizzes.children.length;
-            const visibleQuizzes = 3; // Display 3 at a time
-            let index = 0;
-    
-            // Adjust width dynamically based on the number of quizzes
-            quizzes.style.width = `${(totalQuizzes / visibleQuizzes) * 100}%`;
-    
-            // Function to slide quizzes
-            function updatequizzes() {
-                const offset = -index * (document.getElementById("quizzesWrap").clientWidth / visibleQuizzes); // Calculate the offset
-                quizzes.style.transform = `translateX(${offset}px)`;
-            }
-    
-            // Event listener for next button
-            nextBtn.addEventListener('click', () => {
-                if (index < totalQuizzes - visibleQuizzes) {
-                    index++;
-                } else {
-                    index = 0; // Loop back to the first page
-                }
-                updatequizzes();
-            });
-    
-            // Event listener for previous button
-            prevBtn.addEventListener('click', () => {
-                if (index > 0) {
-                    index--;
-                } else {
-                    index = totalQuizzes - visibleQuizzes; // Loop back to the last page
-                }
-                updatequizzes();
-            });
-    
-            // Disable buttons if there are not enough quizzes
-            if (totalQuizzes <= visibleQuizzes) {
-                nextBtn.style.display = 'none';
-                prevBtn.style.display = 'none';
-            }
-
-            if (totalQuizzes < 3) {
-                quizzes.style.display = "flex";
-                quizzes.style.justifyContent = "center"
-                quizzes.style.width = `${100}%`;
-                document.querySelectorAll(".quiz").forEach(function(quiz) {
-                    quiz.style.width = `${40}%`;
-                });
-            }
         });
-
-        // document.addEventListener('DOMContentLoaded', function() {
-
-        //     const currentPath = window.location.pathname;
-        //     const pathSegments = currentPath.split('/');
-        //     pathSegments.pop();
-            
-        //     const urlParams = new URLSearchParams(window.location.search);
-        //     console.log(currentPath);
-        //     const categoryName = urlParams.get('categoryName');
-            
-        //     // let newPath = pathSegments.join('/') + `/?categoryName=${categoryName}`;
-        //         // let newPath =  `/quizzes/categoryName=${categoryName}`;
-        //     let newPath = `/${categoryName}`;
-
-        //     console.log(newPath)
-
-        //     fetch(newPath, {
-        //         method: 'GET',
-        //         headers: {
-        //             'Accept': 'application/json'
-        //         }
-        //     })
-        //     .then(response => {
-        //         if (!response.ok) {
-        //             console.error('Response status:', response.status); // Log the error code
-        //             throw new Error('Failed to fetch quizzes');
-        //         }
-        //         return response.json();
-        //     })
-        //     .then(data => {
-        //         console.log("Fetched quizzes: ", data);
-        //         // Further code to render the quizzes...
-        //         const quizContainer = document.getElementById('quizzes');
-        //         quizContainer.innerHTML = ''; // Clear previous content
-
-        //         // Check if there are quizzes
-        //         if (data.quizzes && data.quizzes.length > 0) {
-        //             data.quizzes.forEach(quiz => {
-        //                 const quizDiv = document.createElement('div');
-        //                 quizDiv.className = 'quiz';
-
-        //                 quizDiv.innerHTML = `
-        //                     <h3>${quiz.title}</h3>
-        //                     <p>${quiz.description}</p>
-        //                     <a href="/quiz/${quiz.id}">Take this quiz</a>
-        //                 `;
-
-        //                 quizContainer.appendChild(quizDiv);
-        //             });
-        //         } else {
-        //             quizContainer.innerHTML = '<p>No quizzes available for this category.</p>';
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.error('Error fetching quizzes:', error);
-        //         document.getElementById('quizContainer').innerHTML = '<p>There was an error loading the quizzes. Please try again later.</p>';
-        //     });
-
-        //     // ------ Making quizzes display able to slide ------
-            
-        //     const quizzes = document.getElementById('quizzes');
-        //     const prevBtn = document.querySelector('.prev');
-        //     const nextBtn = document.querySelector('.next');
-        //     const totalQuizzes = quizzes.children.length;
-        //     const visibleQuizzes = 3; // Display 3 at a time
-        //     let index = 0;
-    
-        //     // Adjust width dynamically based on the number of quizzes
-        //     quizzes.style.width = `${(totalQuizzes / visibleQuizzes) * 100}%`;
-    
-        //     // Function to slide quizzes
-        //     function updatequizzes() {
-        //         const offset = -index * (document.getElementById("quizzesWrap").clientWidth / visibleQuizzes); // Calculate the offset
-        //         quizzes.style.transform = `translateX(${offset}px)`;
-        //     }
-    
-        //     // Event listener for next button
-        //     nextBtn.addEventListener('click', () => {
-        //         if (index < totalQuizzes - visibleQuizzes) {
-        //             index++;
-        //         } else {
-        //             index = 0; // Loop back to the first page
-        //         }
-        //         updatequizzes();
-        //     });
-    
-        //     // Event listener for previous button
-        //     prevBtn.addEventListener('click', () => {
-        //         if (index > 0) {
-        //             index--;
-        //         } else {
-        //             index = totalQuizzes - visibleQuizzes; // Loop back to the last page
-        //         }
-        //         updatequizzes();
-        //     });
-    
-        //     // Disable buttons if there are not enough quizzes
-        //     if (totalQuizzes <= visibleQuizzes) {
-        //         nextBtn.style.display = 'none';
-        //         prevBtn.style.display = 'none';
-        //     }
-
-        //     if (totalQuizzes < 3) {
-        //         quizzes.style.display = "flex";
-        //         quizzes.style.justifyContent = "center"
-        //         quizzes.style.width = `${100}%`;
-        //         document.querySelectorAll(".quiz").forEach(function(quiz) {
-        //             quiz.style.width = `${40}%`;
-        //         });
-        //     }
-        // });
 
     </script>
 </body>

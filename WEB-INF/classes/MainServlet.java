@@ -15,6 +15,11 @@ public class MainServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         
+        if (session == null || session.getAttribute("USER_ID") == null) {
+            res.sendRedirect("login");
+            return;
+        }
+        
         res.setContentType("application/json");
         res.setCharacterEncoding("UTF-8");
         PrintWriter out = res.getWriter();
@@ -31,7 +36,7 @@ public class MainServlet extends HttpServlet {
         }
 
         String username = (String) session.getAttribute("USER_ID");
-        String role = (String) session.getAttribute("USER_ID");
+        String role = (String) session.getAttribute("USER_ROLE");
         // getUserRoleFromDatabase(username);
         StringBuilder adminHtml = new StringBuilder();
         if ("a".equals(role)) {

@@ -184,7 +184,7 @@ public class CreateQuizServlet extends HttpServlet {
                     File saveFile = new File(getServletContext().getRealPath("/public/media"));
                     File file = new File(saveFile, categoryFileName);
                     categoryPart.write(file.getAbsolutePath());
-                    mediaUrl = "public/media/" + categoryFileName;
+                    mediaUrl = "../public/media/" + categoryFileName;
 
                     String insertMedia = "id:==" + categoryMediaIdString 
                                         + ",media_type:==IMG" 
@@ -241,7 +241,7 @@ public class CreateQuizServlet extends HttpServlet {
                 File saveFile = new File(getServletContext().getRealPath("/public/media"));
                 File file = new File(saveFile, quizFileName);
                 quizPart.write(file.getAbsolutePath());
-                mediaUrl = "public/media/" + quizFileName;
+                mediaUrl = "../public/media/" + quizFileName;
 
                 String insertMedia = "id:==" + quizMediaIdString 
                                         + ",media_type:==IMG" 
