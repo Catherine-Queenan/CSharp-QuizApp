@@ -211,7 +211,7 @@
         const pathSegments = currentPath.split('/');
         pathSegments.pop();
         let newPath = pathSegments.join('/') + '/createQuiz-json';
-        let successPath = pathSegments.join('/') + '/quizzes?categoryName=' + category;
+        let successPath = pathSegments.join('/') + '/quizzes/' + category;
 
             fetch(newPath, { // Replace with your servlet URL
                 method: "POST",
