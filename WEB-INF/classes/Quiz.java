@@ -13,7 +13,7 @@ public class Quiz extends AClass {
 
     public Quiz(String constructorParams) {
         super("quiz");
-        String[] keyvaluePairs = constructorParams.split(",");
+        String[] keyvaluePairs = constructorParams.split(",,,");
         for (String pair : keyvaluePairs) {
             String[] keyvaluePair = pair.split(":==");
             if(keyvaluePair.length > 1){

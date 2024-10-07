@@ -16,7 +16,7 @@ public class Media extends AClass {
 
     public Media(String constructorParams) {
         super("media");
-        String[] keyvaluePairs = constructorParams.split(",");
+        String[] keyvaluePairs = constructorParams.split(",,,");
         for (String pair : keyvaluePairs) {
             String[] keyvaluePair = pair.split(":==");
             if(keyvaluePair.length > 1){

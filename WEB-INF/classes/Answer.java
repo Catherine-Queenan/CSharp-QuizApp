@@ -15,7 +15,7 @@ public class Answer extends AClass {
 
     public Answer(String constructorParams) {
         super("answer");
-        String[] keyvaluePairs = constructorParams.split(",");
+        String[] keyvaluePairs = constructorParams.split(",,,");
         for (String pair : keyvaluePairs) {
             String[] keyvaluePair = pair.split(":==");
             if(keyvaluePair.length > 1){

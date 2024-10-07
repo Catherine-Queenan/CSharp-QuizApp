@@ -144,7 +144,7 @@ public class AddQuestionServlet extends HttpServlet {
                     System.out.println(saveFile + " " + fileName);
                     File file = new File(saveFile, fileName);
                     filePart.write(file.getAbsolutePath());
-                    mediaUrls[filesProcessed] = "../public/media/" + fileName;
+                    mediaUrls[filesProcessed] = "public/media/" + fileName;
                     filesProcessed++;
                 }
             }
@@ -167,9 +167,9 @@ public class AddQuestionServlet extends HttpServlet {
                 String mediaType = (!questionType.equals("TEXT") && i == 0) ? questionType : answerType;
                 StringBuilder criteria = new StringBuilder();
                 criteria.append("id:==").append(new String(mediaIdBinary, StandardCharsets.UTF_8))
-                        .append(",media_type:==").append(mediaType)
-                        .append(",media_file_path:==").append(mediaUrls[i])
-                        .append(",media_filename:==").append(mediaFileNames[i]);
+                        .append(",,,media_type:==").append(mediaType)
+                        .append(",,,media_file_path:==").append(mediaUrls[i])
+                        .append(",,,media_filename:==").append(mediaFileNames[i]);
 
                 // String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path,
                 // media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?)";
@@ -181,22 +181,22 @@ public class AddQuestionServlet extends HttpServlet {
                 if (i == 0 && questionType.equals("VID")) {
                     // psMedia.setInt(5, videoStarts[i]);
                     // psMedia.setInt(6, videoEnds[i]);
-                    criteria.append(",media_start:==").append(videoStarts[i])
-                            .append(",media_end:==").append(videoEnds[i]);
+                    criteria.append(",,,media_start:==").append(videoStarts[i])
+                            .append(",,,media_end:==").append(videoEnds[i]);
 
                 } else if (i == 0 && questionType.equals("AUD")) {
                     // psMedia.setInt(5, audioStarts[i]);
                     // psMedia.setInt(6, audioEnds[i]);
-                    criteria.append(",media_start:==").append(audioStarts[i])
-                            .append(",media_end:==").append(audioEnds[i]);
+                    criteria.append(",,,media_start:==").append(audioStarts[i])
+                            .append(",,,media_end:==").append(audioEnds[i]);
                 } else if (answerType.equals("VID")) {
                     // psMedia.setInt(5, videoStarts[i]);
                     // psMedia.setInt(6, videoEnds[i]);
-                    criteria.append(",media_start:==").append(videoStarts[i])
-                            .append(",media_end:==").append(videoEnds[i]);
+                    criteria.append(",,,media_start:==").append(videoStarts[i])
+                            .append(",,,media_end:==").append(videoEnds[i]);
                 } else {
-                    criteria.append(",media_start:==").append(audioStarts[i])
-                            .append(",media_end:==").append(audioEnds[i]);
+                    criteria.append(",,,media_start:==").append(audioStarts[i])
+                            .append(",,,media_end:==").append(audioEnds[i]);
                 }
                 repository.insert(factory.createAClass("media", criteria.toString()));
                 // psMedia.executeUpdate();
@@ -256,9 +256,9 @@ public class AddQuestionServlet extends HttpServlet {
 
             StringBuilder newQuestion = new StringBuilder();
             newQuestion.append("id:==").append(new String(questionIdBinary, StandardCharsets.UTF_8))
-                    .append(",quiz_name:==").append(quizName)
-                    .append(",question_text:==").append(questionText)
-                    .append(",question_type:==").append(questionType);
+                    .append(",,,quiz_name:==").append(quizName)
+                    .append(",,,question_text:==").append(questionText)
+                    .append(",,,question_type:==").append(questionType);
 
             // // Insert into `question_media` table to link the question and the media
             if (!questionType.equals("TEXT")) {
@@ -285,10 +285,10 @@ public class AddQuestionServlet extends HttpServlet {
 
                 StringBuilder newAnswer = new StringBuilder();
                 newAnswer.append("id:==").append(new String(answerIdBinary, StandardCharsets.UTF_8))
-                        .append(",question_id:==").append(new String(questionIdBinary, StandardCharsets.UTF_8))
-                        .append(",answer_text:==").append(answerTexts[i])
-                        .append(",is_correct:==").append((isCorrect ? 1 : 0))
-                        .append(",answer_type:==").append(answerType);
+                        .append(",,,question_id:==").append(new String(questionIdBinary, StandardCharsets.UTF_8))
+                        .append(",,,answer_text:==").append(answerTexts[i])
+                        .append(",,,is_correct:==").append((isCorrect ? 1 : 0))
+                        .append(",,,answer_type:==").append(answerType);
 
                 // String insertAnswerSql = "INSERT INTO answers (id, question_id, answer_text,
                 // is_correct, answer_type) VALUES (?, ?, ?, ?, ?)";
@@ -310,7 +310,7 @@ public class AddQuestionServlet extends HttpServlet {
                     // psAnswerMedia.setBytes(2, mediaId);
                     // psAnswerMedia.executeUpdate();
 
-                    newAnswer.append(",media_id:==").append(new String (mediaId, StandardCharsets.UTF_8));
+                    newAnswer.append(",,,media_id:==").append(new String (mediaId, StandardCharsets.UTF_8));
                 } else if (!answerType.equals("TEXT") && isCorrect) {
                     // System.out.println(mediaIds[i]);
                     // psAnswerMedia = con.prepareStatement(insertAnswerMediaSql);
@@ -320,7 +320,7 @@ public class AddQuestionServlet extends HttpServlet {
                     // psAnswerMedia.setBytes(2, mediaId);
                     // psAnswerMedia.executeUpdate();
 
-                    newAnswer.append(",media_id:==").append(new String (mediaId, StandardCharsets.UTF_8));
+                    newAnswer.append(",,,media_id:==").append(new String (mediaId, StandardCharsets.UTF_8));
                 }
 
                 repository.insert(factory.createAClass("answer", newAnswer.toString()));

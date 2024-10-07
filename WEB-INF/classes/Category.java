@@ -11,7 +11,7 @@ public class Category extends AClass{
 
     public Category(String constructorParams){
         super("category");
-        String[] keyvaluePairs = constructorParams.split(",");
+        String[] keyvaluePairs = constructorParams.split(",,,");
         for (String pair : keyvaluePairs) {
             String[] keyvaluePair = pair.split(":==");
             if(keyvaluePair.length > 1){

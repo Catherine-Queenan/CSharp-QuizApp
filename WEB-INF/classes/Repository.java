@@ -170,7 +170,7 @@ public class Repository implements IRepository {
             for (int i = 1; i <= columns; i++) {
                 String colName = resultMetaData.getColumnName(i);
                 parameters.append(prefix).append(colName).append(":==");
-                prefix = ",";
+                prefix = ",,,";
                 if (colName.equals("id") || colName.contains("_id")) {
                     byte[] id = rs.getBytes(colName);
                     parameters.append(new String(id, StandardCharsets.UTF_8));
