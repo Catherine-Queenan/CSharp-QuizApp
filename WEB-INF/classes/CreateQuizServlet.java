@@ -191,7 +191,7 @@ public class CreateQuizServlet extends HttpServlet {
 
                 // Insert media information into the `media` table
                 if(categoryFileName != null && !categoryFileName.equals("")){
-                    insertCategory = "name:==" + categoryName + ",media_id:==" + categoryMediaIdString;
+                    insertCategory = "name:==" + categoryName + ",,,media_id:==" + categoryMediaIdString;
                     String mediaUrl;
                     System.out.println("Current folder= " + (new File(".")).getCanonicalPath());
                     File saveFile = new File(getServletContext().getRealPath("/public/media"));
@@ -200,9 +200,9 @@ public class CreateQuizServlet extends HttpServlet {
                     mediaUrl = "../public/media/" + categoryFileName;
 
                     String insertMedia = "id:==" + categoryMediaIdString 
-                                        + ",media_type:==IMG" 
-                                        + ",media_file_path:==" + mediaUrl
-                                        + ",media_filename:==" + categoryFileName;
+                                        + ",,,media_type:==IMG" 
+                                        + ",,,media_file_path:==" + mediaUrl
+                                        + ",,,media_filename:==" + categoryFileName;
                     repository.insert(factory.createAClass("media", insertMedia));
 
                     // String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path, media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?)";
@@ -227,8 +227,8 @@ public class CreateQuizServlet extends HttpServlet {
             }
 
             String insertQuiz = "name:==" + quizName 
-                    + ",category_name:==" + categoryName 
-                    + ",description:==" + description;
+                    + ",,,category_name:==" + categoryName 
+                    + ",,,description:==" + description;
             // Insert new quiz with generated keys
             // String sql = "INSERT INTO quizzes (name, category_name, description) VALUES (?, ?, ?)";
             // ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -245,9 +245,9 @@ public class CreateQuizServlet extends HttpServlet {
             // Insert media information into the `media` table
             if(quizFileName != null && !quizFileName.equals("")){
                 insertQuiz = "name:==" + quizName 
-                    + ",category_name:==" + categoryName 
-                    + ",description:==" + description
-                    + ",media_id:==" + quizMediaIdString;
+                    + ",,,category_name:==" + categoryName 
+                    + ",,,description:==" + description
+                    + ",,,media_id:==" + quizMediaIdString;
 
                 String mediaUrl = null;
                 System.out.println("Current folder: " + (new File(".")).getCanonicalPath());
@@ -257,9 +257,9 @@ public class CreateQuizServlet extends HttpServlet {
                 mediaUrl = "../public/media/" + quizFileName;
 
                 String insertMedia = "id:==" + quizMediaIdString 
-                                        + ",media_type:==IMG" 
-                                        + ",media_file_path:==" + mediaUrl
-                                        + ",media_filename:==" + quizFileName;
+                                        + ",,,media_type:==IMG" 
+                                        + ",,,media_file_path:==" + mediaUrl
+                                        + ",,,media_filename:==" + quizFileName;
                 repository.insert(factory.createAClass("media", insertMedia));
 
                 // String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path, media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?)";
