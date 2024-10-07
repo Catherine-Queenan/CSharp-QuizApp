@@ -81,22 +81,25 @@
             border-radius: 10px;
         }
 
-        #answerCounts div:nth-child(2) {
+        #answerCounts div:nth-child(2),
+        #answerCounts div:nth-child(4n + 2) {
             background-color: #d00000 !important;
         }
 
-        #answerCounts div:nth-child(3) {
+        #answerCounts div:nth-child(3),
+        #answerCounts div:nth-child(4n + 3) {
             background-color: #FF4B3E !important;
         }
 
-        #answerCounts div:nth-child(4) {
+        #answerCounts div:nth-child(4),
+        #answerCounts div:nth-child(4n + 4) {
             background-color: #FFB20F !important;
         }
 
-        #answerCounts div:nth-child(5) {
+        #answerCounts div:nth-child(5),
+        #answerCounts div:nth-child(4n + 5) {
             background-color: #99c252 !important;
         }
-
         
     </style>
 </head>

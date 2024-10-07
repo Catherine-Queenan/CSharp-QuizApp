@@ -151,7 +151,7 @@
     <div class="wrap">
         <div class="title cherry-cream-soda">
             <!-- Add Question to <%= request.getAttribute("quizName") %> -->
-            Add Question to Quiz name
+            Add Question to <%= request.getAttribute("quizName") %>
         </div>
 
         <form class="newQuestionForm" method="post" enctype="multipart/form-data">

@@ -352,13 +352,13 @@ public class AddQuestionServlet extends HttpServlet {
             // psQuestionWithAnswers.setString(4, quizName);
             // psQuestionWithAnswers.executeUpdate();
 
-            StringBuilder newQuestionWithAnswers = new StringBuilder();
-String answerTextsFinal = answerTexts2.replace(",", ",,,");  // Converts the array to a JSON string
-newQuestionWithAnswers.append("questionText:==").append(questionText)
-                      .append(",answers:==").append(answerTextsFinal)
-                      .append(",indexOfCorrect:==").append(indexOfCorrect)
-                      .append(",quizName:==").append(quizName);
-            repository.insert(factory.createAClass("websocket", newQuestionWithAnswers.toString()));
+//             StringBuilder newQuestionWithAnswers = new StringBuilder();
+// String answerTextsFinal = answerTexts2.replace(",", ",,,");  // Converts the array to a JSON string
+// newQuestionWithAnswers.append("questionText:==").append(questionText)
+//                       .append(",answers:==").append(answerTextsFinal)
+//                       .append(",indexOfCorrect:==").append(indexOfCorrect)
+//                       .append(",quizName:==").append(quizName);
+//             repository.insert(factory.createAClass("websocket", newQuestionWithAnswers.toString()));
 
 
 

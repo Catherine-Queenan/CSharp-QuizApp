@@ -246,8 +246,11 @@
                 categoryDiv.className = 'category';
 
                 let mediaHtml = '';
-                if (category.media && category.media.mediaFilePath) {
-                    mediaHtml = `<img src="${category.media.mediaFilePath}" alt="${category.name}" class="categoryImg">`;
+                console.log(category.media.media_file_path)
+                if (category.media && category.media.media_file_path) {
+                    console.log(category.media.media_file_path)
+                    mediaHtml = `<img src="${category.media.media_file_path}" alt="${category.name}" class="categoryImg">`;
+                    
                 }
 
                 categoryDiv.innerHTML = `
