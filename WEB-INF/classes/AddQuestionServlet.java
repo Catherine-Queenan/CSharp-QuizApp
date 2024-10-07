@@ -344,13 +344,21 @@ public class AddQuestionServlet extends HttpServlet {
 
             JSONArray jsonArray = new JSONArray(answerTexts);
             String answerTexts2 = jsonArray.toString();  // Converts the array to a JSON string
-            String insertQuestionWithAnswersSql = "INSERT INTO QuestionsWithAnswers (questionText, answers, indexOfCorrect,quizName) VALUES (?, ?, ?,?)";
-            psQuestionWithAnswers = con.prepareStatement(insertQuestionWithAnswersSql);
-            psQuestionWithAnswers.setString(1, questionText);
-            psQuestionWithAnswers.setString(2, answerTexts2);
-            psQuestionWithAnswers.setInt(3, indexOfCorrect);
-            psQuestionWithAnswers.setString(4, quizName);
-            psQuestionWithAnswers.executeUpdate();
+            // String insertQuestionWithAnswersSql = "INSERT INTO QuestionsWithAnswers (questionText, answers, indexOfCorrect,quizName) VALUES (?, ?, ?,?)";
+            // psQuestionWithAnswers = con.prepareStatement(insertQuestionWithAnswersSql);
+            // psQuestionWithAnswers.setString(1, questionText);
+            // psQuestionWithAnswers.setString(2, answerTexts2);
+            // psQuestionWithAnswers.setInt(3, indexOfCorrect);
+            // psQuestionWithAnswers.setString(4, quizName);
+            // psQuestionWithAnswers.executeUpdate();
+
+            StringBuilder newQuestionWithAnswers = new StringBuilder();
+String answerTextsFinal = answerTexts2.replace(",", ",,,");  // Converts the array to a JSON string
+newQuestionWithAnswers.append("questionText:==").append(questionText)
+                      .append(",answers:==").append(answerTextsFinal)
+                      .append(",indexOfCorrect:==").append(indexOfCorrect)
+                      .append(",quizName:==").append(quizName);
+            repository.insert(factory.createAClass("websocket", newQuestionWithAnswers.toString()));
 
 
 
