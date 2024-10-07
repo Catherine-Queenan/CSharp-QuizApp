@@ -205,7 +205,6 @@
             margin-top: 10px;
             border-radius: 10px;
             padding: 10px 20px;
-            background-color: #45425A;
             text-decoration: none;
             text-align: center;
             color: rgb(244, 244, 244);
@@ -220,6 +219,15 @@
         .moderateMode:hover {
             transform: scale(1.03);
             box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.3);
+        }
+
+        .moderateAdmin {
+            background-color: #45425A;
+        }
+
+        .moderateGeneral {
+            background-color: #DCEED1;
+            color: #0C1B33;
         }
 
     </style>
@@ -326,14 +334,17 @@
                                     <button type="button" onclick="window.location.href='edit?quizName=testanswer'">Edit Quiz</button>
                                     <button type="button" class="deleteButton">Delete Quiz</button>
                                 </div>
+                                <a href="${pathSegments.join('/')}/moderateMode?quizName=${quiz.name}" class="moderateMode moderateAdmin">
+                                    Moderated Mode
+                                </a>
+                            `;
+                        } else {
+                            quizDiv.innerHTML += `
+                                <a href="${pathSegments.join('/')}/moderateMode?quizName=${quiz.name}" class="moderateMode moderateGeneral">
+                                    Moderated Mode
+                                </a>
                             `;
                         }
-
-                        quizDiv.innerHTML += `
-                            <a href="${pathSegments.join('/')}/moderateMode?quizName=${quiz.name}" class="moderateMode">
-                                Moderated Mode
-                            </a>
-                        `;
     
                         // Append category div to the container
                         quizzesContainer.appendChild(quizDiv);
