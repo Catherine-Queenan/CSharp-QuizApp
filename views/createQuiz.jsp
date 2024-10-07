@@ -110,10 +110,7 @@
 
             <label for="categoryName">Category Name:</label>
             <select name="categoryName" id="categories">
-                <!-- <% ArrayList<String> categories = (ArrayList<String>)request.getAttribute("categories"); %>
-                <% for(int i = 0; i < categories.size(); i++){ %>
-                    <option value="<%= categories.get(i)%>"><%= categories.get(i)%></option>
-                <%} %> -->
+
                 
                 <option value="ADDANOTHERCATEGORY">Other</option>
             </select>
@@ -179,7 +176,7 @@
 
             categories.innerHTML = '';
             if (data.categories.length === 0) {
-                categoriesContainer.innerHTML = '<p>No categories available</p>';
+                categories.innerHTML = '<p>No categories available</p>';
                 return;
             }
 
@@ -189,7 +186,7 @@
                 categoryOption.innerHTML = category.name;
 
                 // Append category div to the container
-                categoriesContainer.appendChild(categoryOption);
+                categories.appendChild(categoryOption);
             });
         })
         .catch(error => {

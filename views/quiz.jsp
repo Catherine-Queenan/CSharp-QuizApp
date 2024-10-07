@@ -216,7 +216,7 @@
                         </form>
                         <!-- adminBtnWrap doesn't display if user isn't admin -->
                         <div class="adminBtnWrap">    
-                            <button type="button" onclick="window.location.href='deleteQuiz?quizName=testanswer'">Delete Quiz</button>
+                            <button type="button" id="deleteButton">Delete Quiz</button>
                             <button type="button" onclick="window.location.href='edit?quizName=testanswer'">Edit Quiz</button>
                         </div>
                     </div>
@@ -237,6 +237,33 @@
             const currentPath = window.location.pathname;
             const pathSegments = currentPath.split('/');
             
+            document.getElementById('deleteButton').addEventListener('click', function() {
+                // Get the quiz name
+                const quizName = document.querySelector('.quiz input[name=quizName]').value;
+                console.log('Deleting quiz:', quizName);
+
+                const url = `/quizzes/delete/${encodeURIComponent(quizName)}`;
+
+                // Send a DELETE request to the server
+                fetch(url, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete quiz');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Quiz deleted:', data);
+                    // Reload the page to reflect the changes
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error('Error deleting quiz:', error);
+                });
+            });
+
             // Extract the category name from URL parameters
             const categoryName = pathSegments[2];
 
