@@ -270,7 +270,7 @@ public class AddQuestionServlet extends HttpServlet {
             // psQuestionMedia.setBytes(2, uuidToBytes(mediaIds[0]));
             // psQuestionMedia.executeUpdate();
 
-            newQuestion.append(",media_id:==").append(new String(uuidToBytes(mediaIds[0]),
+            newQuestion.append(",,,media_id:==").append(new String(uuidToBytes(mediaIds[0]),
             StandardCharsets.UTF_8));
             }
 
