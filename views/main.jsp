@@ -43,6 +43,7 @@
             border-radius: 15px;
             transition-duration: 0.3s;
             font-size: 20px;
+            cursor: pointer;
         }
 
         .category:hover {
@@ -223,6 +224,7 @@
             categoriesContainer.innerHTML = '';
             adminDashboard.innerHTML = '';
 
+            console.log(data.role)
             // If user is an admin, show admin dashboard
             if (data.role === 'admin') {
                 adminDashboard.innerHTML = `

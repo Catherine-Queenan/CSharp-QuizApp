@@ -55,6 +55,13 @@ header button:hover {
     background-color: #DCEED1;
 }
 
+.homeBtn a {
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: #0C1B33;
+}
+
 .logoutBtn {
     background-color: #FF4B3E;
 }
