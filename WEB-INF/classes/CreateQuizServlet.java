@@ -9,6 +9,8 @@ import java.util.UUID;
 import java.nio.ByteBuffer;
 import jakarta.servlet.annotation.MultipartConfig;
 import java.nio.charset.StandardCharsets;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 @MultipartConfig
@@ -35,6 +37,14 @@ public class CreateQuizServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
+
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        PrintWriter out = res.getWriter();
+
+        // Initialize JSON object to store the response
+        JSONObject jsonResponse = new JSONObject();
+
         if (session == null || session.getAttribute("USER_ID") == null) {
             res.sendRedirect("login");
             return;
@@ -54,9 +64,10 @@ public class CreateQuizServlet extends HttpServlet {
         // Connection con = null;
         // PreparedStatement ps = null;
         // ResultSet rs = null;
-        ArrayList<String> categoryNames = new ArrayList<>();
+        // ArrayList<String> categoryNames = new ArrayList<>();
 
         try {
+            JSONArray categoriesArray = new JSONArray();
             // Load MySQL driver
             // Class.forName("com.mysql.cj.jdbc.Driver");
             repository.init("com.mysql.cj.jdbc.Driver");
@@ -70,14 +81,17 @@ public class CreateQuizServlet extends HttpServlet {
             for(int i = 0 ; i < categories.size(); i++){
 
                 JSONObject categoryJSON = categories.get(i).serialize();
-                System.out.println(categoryJSON.getString("name"));
-                categoryNames.add(categoryJSON.getString("name"));
+                categoriesArray.put(categoryJSON);
             }
-            System.out.println(categoryNames);
+            // System.out.println(categoryNames);
 
-            req.setAttribute("categories", categoryNames);
-
+            // req.setAttribute("categories", categoryNames);
+            jsonResponse.put("categories", categoriesArray);
         } catch (Exception e) {
+            e.printStackTrace();
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "An error occurred while fetching categories.");
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Set status to 500
         } 
         // finally {
         //     try {
@@ -100,8 +114,9 @@ public class CreateQuizServlet extends HttpServlet {
         //     }
         // }
         // Forward to the quiz creation form page
-        RequestDispatcher view = req.getRequestDispatcher("/views/createQuiz.jsp");
-        view.forward(req, res);
+        res.getWriter().write(jsonResponse.toString());
+        out.flush();
+        out.close();
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -116,10 +131,8 @@ public class CreateQuizServlet extends HttpServlet {
         String role = (String) session.getAttribute("USER_ROLE");
 
         if (!"a".equals(role)) {
-            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
-            req.setAttribute("errorMessage", "You are not authorized to access this page.");
-            RequestDispatcher view = req.getRequestDispatcher("/views/401.jsp");
-            view.forward(req, res);
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
+        res.getWriter().write("{\"error\": \"You are not authorized to access this page.\"}");
             return;
         }
 
@@ -144,8 +157,8 @@ public class CreateQuizServlet extends HttpServlet {
 
             if (quizName == null || quizName.trim().isEmpty() ||
                     categoryName == null || categoryName.trim().isEmpty()) {
-                req.setAttribute("error", "Quiz name and category name are required.");
-                doGet(req, res);
+                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
+                        res.getWriter().write("{\"error\": \"Quiz name and category name are required.\"}");
                 return;
             }
 
@@ -184,7 +197,7 @@ public class CreateQuizServlet extends HttpServlet {
                     File saveFile = new File(getServletContext().getRealPath("/public/media"));
                     File file = new File(saveFile, categoryFileName);
                     categoryPart.write(file.getAbsolutePath());
-                    mediaUrl = "public/media/" + categoryFileName;
+                    mediaUrl = "../public/media/" + categoryFileName;
 
                     String insertMedia = "id:==" + categoryMediaIdString 
                                         + ",media_type:==IMG" 
@@ -241,7 +254,7 @@ public class CreateQuizServlet extends HttpServlet {
                 File saveFile = new File(getServletContext().getRealPath("/public/media"));
                 File file = new File(saveFile, quizFileName);
                 quizPart.write(file.getAbsolutePath());
-                mediaUrl = "public/media/" + quizFileName;
+                mediaUrl = "../public/media/" + quizFileName;
 
                 String insertMedia = "id:==" + quizMediaIdString 
                                         + ",media_type:==IMG" 
@@ -284,12 +297,14 @@ public class CreateQuizServlet extends HttpServlet {
             //     doGet(req, res);
             // }
 
-            res.sendRedirect("quizzes?categoryName=" + categoryName);
+            // Return success response
+        res.setStatus(HttpServletResponse.SC_CREATED); // 201 Created
+        res.getWriter().write("{\"message\": \"Quiz created successfully!\", \"categoryName\": \"" + categoryName + "\"}");
 
         } catch (Exception e) {
             e.printStackTrace();
-            // req.setAttribute("error", "An error occurred while creating the quiz.");
-            doGet(req, res);
+        res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 Internal Server Error
+        res.getWriter().write("{\"error\": \"An error occurred while creating the quiz.\"}");
         } 
         // finally {
         //     try {

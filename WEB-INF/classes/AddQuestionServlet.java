@@ -144,7 +144,7 @@ public class AddQuestionServlet extends HttpServlet {
                     System.out.println(saveFile + " " + fileName);
                     File file = new File(saveFile, fileName);
                     filePart.write(file.getAbsolutePath());
-                    mediaUrls[filesProcessed] = "public/media/" + fileName;
+                    mediaUrls[filesProcessed] = "../public/media/" + fileName;
                     filesProcessed++;
                 }
             }

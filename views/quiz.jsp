@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
 
+        .homeBtn a {
+            text-decoration: none;
+            color: #0C1B33;
+        }
+
         .wrap {
             padding: 50px;
         }
@@ -356,7 +361,7 @@
                 document.querySelectorAll('.deleteButton').forEach(button => {
                     button.addEventListener('click', function() {
                         // Get the quiz name
-                        const quizName = button.parentElement.parentElement.querySelector(".quizName").innerHTML;
+                        const quizName = button.parentElement.parentElement.querySelector('input[name="quizName"]').value;
                         console.log('Deleting quiz:', quizName);
     
                         // Show a confirmation dialog before proceeding
