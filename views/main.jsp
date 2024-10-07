@@ -81,21 +81,21 @@
             color: #0C1B33; 
         }
 
-        .category form {
+        .categoryLink {
+            all: unset;
             width: 100%;
             height: 100%;
-            padding: 20px;
+            /* padding: 20px; */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
         }
 
-        .category input {
-            all: unset;
+        .categoryName {
             width: 100%;
-            /* height: 100%; */
-            cursor: pointer;
+            /* cursor: pointer; */
         }
         
         /* Category img */
@@ -176,206 +176,141 @@
         <div class="categoryBtnWrap">
             <button class="btn prev"><i class="fa-solid fa-chevron-left"></i></button>
             <div id="categoryWrap">
-                <div class="categories" id="categories">
-
-                    <!-- <%= request.getAttribute("categoriesHtml") %>  -->
-
-                    <!-- Without picture -->
-                    <div class="category">
-                        <form action="quizzes" method="get">
-                            <input type="hidden" name="categoryName" value="categoryName"> <!-- value = catogoryName attribute-->
-                            <input type="submit" value="categoryName"> <!-- value = catogoryName attribute-->
-                            <div class="img"></div>
-                        </form>
-                    </div>
-
-                    <!-- With picture -->
-                    <div class="category">
-                        <form action="quizzes" method="get">
-                            <input type="hidden" name="categoryName" value="categoryName"> <!-- value = catogoryName attribute-->
-                            <input type="submit" value="categoryName"> <!-- value = catogoryName attribute-->
-                            <div class="img">
-                                <img src="pathToPic" alt="testimgg" class="categoryImg">
-                            </div>
-                        </form>
-                    </div>
-
-                </div>
+                <div class="categories" id="categories"></div>
             </div>
             <button class="btn next"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
-        <div class="adminWrap" id="adminDashboard">
-            <%= request.getAttribute("adminHtml") %> 
-        </div>
+        <div class="categoryContent"></div>
+
+        <div class="adminWrap" id="adminDashboard"></div>
     </div>
-    
-    <script>
 
-        // ------ Making categories display able to slide ------ \\
-        
-        const categories = document.getElementById('categories');
-        const prevBtn = document.querySelector('.prev');
-        const nextBtn = document.querySelector('.next');
-        const totalCategories = categories.children.length;
-        const visibleCategories = 3; // Display 3 at a time
-        let index = 0;
-
-        // Adjust width dynamically based on the number of categories
-        categories.style.width = `${(totalCategories / visibleCategories) * 100}%`;
-
-        // Function to slide categories
-        function updateCategories() {
-            const offset = -index * (document.getElementById("categoryWrap").clientWidth / visibleCategories); // Calculate the offset
-            categories.style.transform = `translateX(${offset}px)`;
-        }
-
-        // Event listener for next button
-        nextBtn.addEventListener('click', () => {
-            if (index < totalCategories - visibleCategories) {
-                index++;
-            } else {
-                index = 0; // Loop back to the first page
-            }
-            updateCategories();
-        });
-
-        // Event listener for previous button
-        prevBtn.addEventListener('click', () => {
-            if (index > 0) {
-                index--;
-            } else {
-                index = totalCategories - visibleCategories; // Loop back to the last page
-            }
-            updateCategories();
-        });
-
-        // Disable buttons if there are not enough categories
-        if (totalCategories <= visibleCategories) {
-            nextBtn.style.display = 'none';
-            prevBtn.style.display = 'none';
-        }
-
-        // If there are less than three categories
-        window.onload = function() {
-            if (totalCategories < 3) {
-                categories.style.display = "flex";
-                categories.style.justifyContent = "center"
-                categories.style.width = `${100}%`;
-                document.querySelectorAll(".category").forEach(function(category) {
-                    category.style.width = `${40}%`;
-                });
-            }
-        };
-
-    </script>
 </body>
 <script src="scripts\logout.js"></script>
 <script>
 
-const currentPath = window.location.pathname;
-const pathSegments = currentPath.split('/');
+    document.addEventListener('DOMContentLoaded', function() {
+        const categories = document.getElementById('categories');
+        const prevBtn = document.querySelector('.prev');
+        const nextBtn = document.querySelector('.next');
+        const visibleCategories = 3; // Display 3 at a time
+        let index = 0;
 
-// Fetch categories and render them dynamically
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Fetching categories...');
-    pathSegments.pop();
-    let newPath = pathSegments.join('/') + '/home-json';
-    // Fetch categories and other user data
-    fetch(newPath, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to fetch categories');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Fetched categories:', data);
-        const categoriesContainer = document.getElementById('categoriesContainer');
-        const adminDashboard = document.getElementById('adminDashboard');
+        const currentPath = window.location.pathname;
+        const pathSegments = currentPath.split('/');
+        pathSegments.pop();
+        let newPath = pathSegments.join('/') + '/home-json';
 
-        categoriesContainer.innerHTML = '';
-        adminDashboard.innerHTML = '';
-
-        // If user is an admin, show admin dashboard
-        if (data.role === 'admin') {
+        // Fetch categories and render them dynamically
+        fetch(newPath, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch categories');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Fetched categories:', data);
+            const categoriesContainer = document.getElementById('categories');
             const adminDashboard = document.getElementById('adminDashboard');
-            adminDashboard.innerHTML = `
-                <div class="title cherry-cream-soda">Admin Dashboard</div>
-                <div class="admin">
-                    <button class="newQuiz" onclick="window.location.href='createQuiz'">Create a new Quiz</button>
-                </div>
-            `;
-        }
 
-        // Render categories dynamically
-        if (data.categories.length === 0) {
-            categoriesContainer.innerHTML = '<p>No categories available</p>';
-            return;
-        }
-        data.categories.forEach(category => {
-        const categoryDiv = document.createElement('div');
-        categoryDiv.className = 'category';
+            categoriesContainer.innerHTML = '';
+            adminDashboard.innerHTML = '';
 
-        let mediaHtml = '';
-        if (category.media && category.media.mediaFilePath) {
-            mediaHtml = `<img src="${category.media.mediaFilePath}" alt="${category.categoryName}" class="categoryImg">`;
-        } else {
-            mediaHtml = '<div class="categoryImg"></div>';
-        }
+            // If user is an admin, show admin dashboard
+            if (data.role === 'admin') {
+                adminDashboard.innerHTML = `
+                    <div class="title cherry-cream-soda">Admin Dashboard</div>
+                    <div class="admin">
+                        <button class="newQuiz" onclick="window.location.href='createQuiz'">Create a new Quiz</button>
+                    </div>
+                `;
+            }
 
-        // Add a button for each category that will fetch quizzes RESTfully
-        categoryDiv.innerHTML = `
-            <div class="categoryContent">
-                <div class="categoryName">${category.categoryName}</div>
-                <div class="img">${mediaHtml}</div>
-                <button class="categoryButton">View Quizzes</button>
-            </div>
-        `;
+            // Render categories dynamically
+            if (data.categories.length === 0) {
+                categoriesContainer.innerHTML = '<p>No categories available</p>';
+                return;
+            }
 
-            // Handle category button click to fetch quizzes
-            categoryDiv.querySelector('.categoryButton').addEventListener('click', () => {
-                // Fetch quizzes for the selected category
-                fetch(`/quizzes-json?categoryName=${encodeURIComponent(category.categoryName)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(quizzes => {
-                    // Display the quizzes (this part can be customized based on your requirements)
-                    console.log('Fetched quizzes for category:', category.categoryName);
-                    console.log(quizzes);
+            data.categories.forEach(category => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category';
 
-                    // For example, display the quiz titles dynamically:
-                    let quizzesHtml = '<div class="quizList">';
-                    quizzes.forEach(quiz => {
-                        quizzesHtml += `<div class="quizItem">${quiz.title}</div>`;
-                    });
-                    quizzesHtml += '</div>';
-                    categoryDiv.querySelector('.categoryContent').innerHTML += quizzesHtml;
-                })
-                .catch(error => {
-                    console.error('Error fetching quizzes:', error);
-                    categoryDiv.querySelector('.categoryContent').innerHTML += '<p>Error loading quizzes. Please try again later.</p>';
-                });
+                let mediaHtml = '';
+                if (category.media && category.media.mediaFilePath) {
+                    mediaHtml = `<img src="${category.media.mediaFilePath}" alt="${category.categoryName}" class="categoryImg">`;
+                }
+
+                categoryDiv.innerHTML = `
+                    <a class="categoryLink" href="/quizzes-json?categoryName=${encodeURIComponent(category.categoryName)}">
+                        <div class="categoryName">${category.categoryName}</div>
+                        <div class="img">${mediaHtml}</div>
+                    </a>
+                `;
+
+                // Append category div to the container
+                categoriesContainer.appendChild(categoryDiv);
             });
 
-            categoriesContainer.appendChild(categoryDiv);
+            // Set up the sliding mechanism
+            const totalCategories = categories.children.length;
+
+            categories.style.width = `${(totalCategories / visibleCategories) * 100}%`;
+
+            // Function to slide categories
+            function updateCategories() {
+                const offset = -index * (document.getElementById("categoryWrap").clientWidth / visibleCategories); // Calculate the offset
+                categories.style.transform = `translateX(${offset}px)`;
+            }
+
+            // Event listener for next button
+            nextBtn.addEventListener('click', () => {
+                if (index < totalCategories - visibleCategories) {
+                    index++;
+                } else {
+                    index = 0; // Loop back to the first page
+                }
+                updateCategories();
+            });
+
+            // Event listener for previous button
+            prevBtn.addEventListener('click', () => {
+                if (index > 0) {
+                    index--;
+                } else {
+                    index = totalCategories - visibleCategories; // Loop back to the last page
+                }
+                updateCategories();
+            });
+
+            // Disable buttons if there are not enough categories
+            if (totalCategories <= visibleCategories) {
+                nextBtn.style.display = 'none';
+                prevBtn.style.display = 'none';
+            }
+
+            // Adjust for fewer categories on load
+            if (totalCategories < 3) {
+                categories.style.display = "flex";
+                categories.style.justifyContent = "center"
+                categories.style.width = `100%`;
+                document.querySelectorAll(".category").forEach(function(category) {
+                    category.style.width = `40%`;
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching categories:', error);
+            categoriesContainer.innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
         });
-    })
-    .catch(error => {
-        console.error('Error fetching categories:', error);
-        categoriesContainer.innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
     });
-});
+
 
 </script>
-
-</body>
 </html>
