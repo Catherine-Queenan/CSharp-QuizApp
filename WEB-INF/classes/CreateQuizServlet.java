@@ -2,7 +2,7 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
 import java.net.URLEncoder;
-// import java.sql.*;
+
 import java.util.ArrayList;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -66,7 +66,7 @@ public class CreateQuizServlet extends HttpServlet {
             ArrayList<AClass> categories = repository.select("category", "");
             // ps = con.prepareStatement("SELECT name FROM categories");
             // rs = ps.executeQuery();
-            System.out.println(categories.size());
+            System.out.println(categories.get(0).serialize());
             for(int i = 0 ; i < categories.size(); i++){
 
                 JSONObject categoryJSON = categories.get(i).serialize();
@@ -162,8 +162,8 @@ public class CreateQuizServlet extends HttpServlet {
 
             //If a new category needs creating
             if(categoryName.equalsIgnoreCase("ADDANOTHERCATEGORY")){
-                String newCategory = req.getParameter("newCategory");
-                String insertCategory = "name: " + newCategory;
+                categoryName = req.getParameter("newCategory");
+                String insertCategory = "name:==" + categoryName;
                 
                 
                 // psCategories = con.prepareStatement("INSERT INTO categories (name) VALUES (?)");
@@ -178,18 +178,18 @@ public class CreateQuizServlet extends HttpServlet {
 
                 // Insert media information into the `media` table
                 if(categoryFileName != null && !categoryFileName.equals("")){
-                    insertCategory = "name:" + newCategory + ",media_id:" + categoryMediaIdString;
-                    String mediaUrl = null;
-                    System.out.println("Current folder: " + (new File(".")).getCanonicalPath());
+                    insertCategory = "name:==" + categoryName + ",media_id:==" + categoryMediaIdString;
+                    String mediaUrl;
+                    System.out.println("Current folder= " + (new File(".")).getCanonicalPath());
                     File saveFile = new File(getServletContext().getRealPath("/public/media"));
                     File file = new File(saveFile, categoryFileName);
                     categoryPart.write(file.getAbsolutePath());
                     mediaUrl = "public/media/" + categoryFileName;
 
-                    String insertMedia = "id:" + categoryMediaIdString 
-                                        + ",media_type:IMG" 
-                                        + ",media_file_path:" + mediaUrl
-                                        + ",media_filename:" + categoryFileName;
+                    String insertMedia = "id:==" + categoryMediaIdString 
+                                        + ",media_type:==IMG" 
+                                        + ",media_file_path:==" + mediaUrl
+                                        + ",media_filename:==" + categoryFileName;
                     repository.insert(factory.createAClass("media", insertMedia));
 
                     // String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path, media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?)";
@@ -213,9 +213,9 @@ public class CreateQuizServlet extends HttpServlet {
                 repository.insert(factory.createAClass("category", insertCategory));
             }
 
-            String insertQuiz = "name:" + quizName 
-                    + ",category_name:" + categoryName 
-                    + ",description:" + description;
+            String insertQuiz = "name:==" + quizName 
+                    + ",category_name:==" + categoryName 
+                    + ",description:==" + description;
             // Insert new quiz with generated keys
             // String sql = "INSERT INTO quizzes (name, category_name, description) VALUES (?, ?, ?)";
             // ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -231,10 +231,10 @@ public class CreateQuizServlet extends HttpServlet {
 
             // Insert media information into the `media` table
             if(quizFileName != null && !quizFileName.equals("")){
-                insertQuiz = "name:" + quizName 
-                    + ",category_name:" + categoryName 
-                    + ",description:" + description
-                    + ",media_id:" + quizMediaIdString;
+                insertQuiz = "name:==" + quizName 
+                    + ",category_name:==" + categoryName 
+                    + ",description:==" + description
+                    + ",media_id:==" + quizMediaIdString;
 
                 String mediaUrl = null;
                 System.out.println("Current folder: " + (new File(".")).getCanonicalPath());
@@ -243,10 +243,10 @@ public class CreateQuizServlet extends HttpServlet {
                 quizPart.write(file.getAbsolutePath());
                 mediaUrl = "public/media/" + quizFileName;
 
-                String insertMedia = "id:" + quizMediaIdString 
-                                        + ",media_type:IMG" 
-                                        + ",media_file_path:" + mediaUrl
-                                        + ",media_filename:" + quizFileName;
+                String insertMedia = "id:==" + quizMediaIdString 
+                                        + ",media_type:==IMG" 
+                                        + ",media_file_path:==" + mediaUrl
+                                        + ",media_filename:==" + quizFileName;
                 repository.insert(factory.createAClass("media", insertMedia));
 
                 // String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path, media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?)";

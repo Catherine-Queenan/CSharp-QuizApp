@@ -13,12 +13,16 @@ public class Category extends AClass{
         super("category");
         String[] keyvaluePairs = constructorParams.split(",");
         for (String pair : keyvaluePairs) {
-            String[] keyvaluePair = pair.split(":");
+            String[] keyvaluePair = pair.split(":==");
+            if(keyvaluePair.length > 1){
             switch (keyvaluePair[0]) {
                 case "name": this.name = keyvaluePair[1]; break;
                 case "media_id": this.media_id = keyvaluePair[1].getBytes(); break;
             }
+        }
         } 
+
+        System.out.println(this.name);
     }
 
     public String getName(){
@@ -38,11 +42,17 @@ public class Category extends AClass{
     }
 
     @Override
-    JSONObject serialize() {
-        JSONObject jo = new JSONObject();
+    public JSONObject serialize() {
+        JSONObject jo = null;
+        try {
+            jo = new JSONObject();
         jo.put("name", this.name);
-        jo.put("media_id", new String(this.media_id, StandardCharsets.UTF_8));
-
+        jo.put("media_id", (this.media_id != null ? new String(this.media_id, StandardCharsets.UTF_8 ): this.media_id));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println(jo);
         return jo;
     }
 }

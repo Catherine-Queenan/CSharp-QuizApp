@@ -18,30 +18,32 @@ public class Media extends AClass {
         super("media");
         String[] keyvaluePairs = constructorParams.split(",");
         for (String pair : keyvaluePairs) {
-            String[] keyvaluePair = pair.split(":");
-            switch (keyvaluePair[0]) {
-                case "id":
-                    this.id = keyvaluePair[1].getBytes();
-                    break; // Assuming id is being set as a string representation
-                case "description":
-                    this.description = keyvaluePair[1];
-                    break; // Fixed key
-                case "media_type":
-                    this.media_type = keyvaluePair[1];
-                    break;
-                case "media_file_path":
-                    this.media_file_path = keyvaluePair[1];
-                    break;
-                case "media_filename":
-                    this.media_filename = keyvaluePair[1];
-                    break;
-                case "media_start":
-                    this.media_start = Integer.valueOf(keyvaluePair[1]);
-                    break;
-                case "media_end":
-                    this.media_end = Integer.valueOf(keyvaluePair[1]);
-                    break;
-            }
+            String[] keyvaluePair = pair.split(":==");
+            if(keyvaluePair.length > 1){
+                switch (keyvaluePair[0]) {
+                    case "id":
+                        this.id = keyvaluePair[1].getBytes();
+                        break; // Assuming id is being set as a string representation
+                    case "description":
+                        this.description = keyvaluePair[1];
+                        break; // Fixed key
+                    case "media_type":
+                        this.media_type = keyvaluePair[1];
+                        break;
+                    case "media_file_path":
+                        this.media_file_path = keyvaluePair[1];
+                        break;
+                    case "media_filename":
+                        this.media_filename = keyvaluePair[1];
+                        break;
+                    case "media_start":
+                        this.media_start = Integer.valueOf(keyvaluePair[1]);
+                        break;
+                    case "media_end":
+                        this.media_end = Integer.valueOf(keyvaluePair[1]);
+                        break;
+                }
+        }
         }
     }
 
@@ -102,15 +104,21 @@ public class Media extends AClass {
     }
 
     @Override
-    JSONObject serialize() {
-        JSONObject jo = new JSONObject();
-        jo.put("id", new String(this.id, StandardCharsets.UTF_8));
+    public JSONObject serialize() {
+        JSONObject jo = null;
+        
+        try {
+        jo = new JSONObject();
+        jo.put("id", (this.id != null ? new String(this.id, StandardCharsets.UTF_8 ): this.id));
         jo.put("description", this.description);
         jo.put("media_type", this.media_type);
         jo.put("media_file_path", this.media_file_path);
         jo.put("media_filename", this.media_filename);
         jo.put("media_start", this.media_start);
         jo.put("media_end", this.media_end);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
         return jo;
     }

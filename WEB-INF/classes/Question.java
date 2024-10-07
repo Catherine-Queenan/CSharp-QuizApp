@@ -1,4 +1,5 @@
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import org.json.JSONObject;
 
@@ -17,7 +18,8 @@ public class Question extends AClass {
         super("question");
         String[] keyvaluePairs = constructorParams.split(",");
         for (String pair : keyvaluePairs) {
-            String[] keyvaluePair = pair.split(":");
+            String[] keyvaluePair = pair.split(":==");
+            if(keyvaluePair.length > 1){
             switch (keyvaluePair[0]) {
                 case "id":
                     this.id = keyvaluePair[1].getBytes();
@@ -35,6 +37,7 @@ public class Question extends AClass {
                     this.media_id = keyvaluePair[1].getBytes(); 
                     break;
             }
+        }
         }
     }
 
@@ -79,14 +82,21 @@ public class Question extends AClass {
     }
 
     @Override
-    JSONObject serialize() {
-        JSONObject jo = new JSONObject();
-        jo.put("id", new String(this.id, StandardCharsets.UTF_8));
+    public JSONObject serialize() {
+        JSONObject jo = null;
+    
+    try {
+        jo = new JSONObject();
+        jo.put("id", (this.id != null ? new String(this.id, StandardCharsets.UTF_8) : this.id));
         jo.put("quiz_name", this.quiz_name);
         jo.put("question_text", this.question_text);
         jo.put("question_type", this.question_type);
-        jo.put("media_id", new String(this.media_id, StandardCharsets.UTF_8));
-        return jo;
+        jo.put("media_id", (this.media_id != null ? new String(this.media_id, StandardCharsets.UTF_8) : this.media_id));
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    
+    return jo;
     }
 
 }

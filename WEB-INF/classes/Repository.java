@@ -1,8 +1,10 @@
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 
 import org.json.JSONObject;
 
@@ -48,7 +50,7 @@ public class Repository implements IRepository {
             ps.setString(3, entry.getString("description"));
             ps.executeUpdate();
             System.out.println(entry);
-            
+
             if (!entry.isNull("media_id")) {
                 // Associate quiz with respective media
                 String mediaQuery = "INSERT INTO quiz_media (quiz_name, media_id) VALUES (?, ?)";
@@ -122,7 +124,7 @@ public class Repository implements IRepository {
     private void insertMedia(JSONObject entry) {
         try {
             // Insert Media
-            String query = "INSERT INTO media (id, description, media_type, media_file_path, media_filename) VALUES (?, ?, ?, ?, ?)";
+            String query = "INSERT INTO media (id, description, media_type, media_file_path, media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = con.prepareStatement(query);
 
             ps.setBytes(1, entry.getString("id").getBytes());
@@ -130,6 +132,8 @@ public class Repository implements IRepository {
             ps.setString(3, entry.getString("media_type"));
             ps.setString(4, entry.getString("media_file_path"));
             ps.setString(5, entry.getString("media_filename"));
+            ps.setInt(6, entry.getInt("media_start"));
+            ps.setInt(7, entry.getInt("media_end"));
             ps.executeUpdate();
 
         } catch (SQLException ex) {
@@ -156,7 +160,7 @@ public class Repository implements IRepository {
         }
     }
 
-    private String createConstructorParameters(ResultSet rs) {
+    private String createConstructorParameters(ResultSet rs, String tableType) {
         StringBuilder parameters = new StringBuilder();
         try {
             ResultSetMetaData resultMetaData = rs.getMetaData();
@@ -165,20 +169,54 @@ public class Repository implements IRepository {
             String prefix = "";
             for (int i = 1; i <= columns; i++) {
                 String colName = resultMetaData.getColumnName(i);
-                parameters.append(prefix).append(colName).append(":");
+                parameters.append(prefix).append(colName).append(":==");
                 prefix = ",";
                 if (colName.equals("id") || colName.contains("_id")) {
                     byte[] id = rs.getBytes(colName);
-                    parameters.append(new String (id, StandardCharsets.UTF_8));
+                    parameters.append(new String(id, StandardCharsets.UTF_8));
                 } else {
                     String entry = rs.getString(colName);
                     parameters.append(entry);
                 }
             }
+
+            String mediaQuery;
+            PreparedStatement psMedia = null;
+            switch (tableType) {
+                case "category":
+                    mediaQuery = "SELECT media_id FROM category_media WHERE category_name = ?";
+                    psMedia = con.prepareStatement(mediaQuery);
+                    psMedia.setString(1, rs.getString("name"));
+                    break;
+                case "quiz":
+                    mediaQuery = "SELECT media_id FROM quiz_media WHERE quiz_name = ?";
+                    psMedia = con.prepareStatement(mediaQuery);
+                    psMedia.setString(1, rs.getString("name"));
+                    break;
+                case "question":
+                    mediaQuery = "SELECT media_id FROM question_media WHERE question_id = ?";
+                    psMedia = con.prepareStatement(mediaQuery);
+                    psMedia.setBytes(1, rs.getBytes("id"));
+                    break;
+                case "answer":
+                    mediaQuery = "SELECT media_id FROM answer_media WHERE answer_id = ?";
+                    psMedia = con.prepareStatement(mediaQuery);
+                    psMedia.setBytes(1, rs.getBytes("id"));
+                    break;
+            }
+
+            if (psMedia != null) {
+                ResultSet rsMedia = psMedia.executeQuery();
+
+                if (rsMedia.next()) {
+                    byte[] media_id = rsMedia.getBytes("media_id");
+                    parameters.append(prefix).append("media_id:==").append(new String(media_id, StandardCharsets.UTF_8));
+                }
+            }
         } catch (SQLException ex) {
             throw new RuntimeException("Error reading results of a select query from the database", ex);
         }
-        
+
         return parameters.toString();
     }
 
@@ -271,7 +309,7 @@ public class Repository implements IRepository {
             }
 
             deleteStatement.executeUpdate(update);
-        } catch(SQLException ex) {
+        } catch (SQLException ex) {
             throw new RuntimeException("Error deleting from the database");
         }
 
@@ -284,8 +322,9 @@ public class Repository implements IRepository {
         ArrayList<AClass> selectedEntries = new ArrayList<>();
 
         try {
-            Statement selectStatement = con.createStatement();
+
             String query;
+            byte[] id = null;
             String where = (criteria.equals("")) ? criteria : "WHERE " + criteria;
             switch (tableType) {
                 case "category":
@@ -298,19 +337,32 @@ public class Repository implements IRepository {
                     query = "SELECT * FROM questions " + where;
                     break;
                 case "answer":
-                    query = "SELECT * FROM answers " + where;
+                    query = "SELECT * FROM answers WHERE question_id = ? " + criteria.split(",")[1];
+                    id = criteria.split(",")[0].getBytes();
                     break;
                 case "media":
-                    query = "SELECT * FROM media " + where;
+                    System.out.println(criteria);
+                    id = criteria.getBytes();
+                    query = "SELECT * FROM media WHERE id = ?";
                     break;
                 default:
                     throw new RuntimeException("Error selecting from the database. Entered type cannot be select");
             }
+            PreparedStatement selectStatement = con.prepareStatement(query);
+            
+            if (id != null) {
+                selectStatement.setBytes(1, id);
+            }
 
-            ResultSet rs = selectStatement.executeQuery(query);
+            ResultSet rs = selectStatement.executeQuery();
+            System.out.println(rs.getMetaData());
             while (rs.next()) {
-                String parameters = createConstructorParameters(rs);
-                selectedEntries.add(factory.createAClass(tableType, parameters));
+                System.out.println(rs);
+                String parameters = createConstructorParameters(rs, tableType);
+                System.out.println(parameters);
+                AClass cat = factory.createAClass(tableType, parameters);
+                System.out.println(cat.serialize());
+                selectedEntries.add(cat);
             }
 
             return selectedEntries;

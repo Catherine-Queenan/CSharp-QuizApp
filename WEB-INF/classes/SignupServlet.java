@@ -85,6 +85,7 @@ public class SignupServlet extends HttpServlet {
             //Session creation
             HttpSession session = req.getSession(true);
             session.setAttribute("USER_ID", username);
+            session.setAttribute("USER_ROLE", "g");
             res.setStatus(302);
 
             res.sendRedirect("home");
