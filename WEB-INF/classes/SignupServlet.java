@@ -159,11 +159,20 @@ public class SignupServlet extends HttpServlet {
         // }
 
         
+<<<<<<< HEAD
         // if(username != null){
         //     //Session creation
         //     HttpSession session = req.getSession(true);
         //     session.setAttribute("USER_ID", username);
         //     res.setStatus(302);
+=======
+        if(username != null){
+            //Session creation
+            HttpSession session = req.getSession(true);
+            session.setAttribute("USER_ID", username);
+            session.setAttribute("USER_ROLE", "g");
+            res.setStatus(302);
+>>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
 
         //     res.sendRedirect("home");
         // } else {

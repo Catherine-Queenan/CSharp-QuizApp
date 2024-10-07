@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 
 DatabaseUtil.java
 *.class
 
+=======
+DatabaseUtil.java
+*.class
+.vscode
+>>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66

@@ -1,8 +1,11 @@
 import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
+<<<<<<< HEAD
 import java.sql.*;
 import org.json.JSONObject;
+=======
+>>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
 
 public class DeleteQuizServlet extends HttpServlet {
     @Override
@@ -27,7 +30,13 @@ public class DeleteQuizServlet extends HttpServlet {
             return jsonResponse;
         }
 
+<<<<<<< HEAD
         String role = getUserRoleFromDatabase(username);
+=======
+        // String username = (String) session.getAttribute("USER_ID");
+        // String role = getUserRoleFromDatabase(username);
+        String role = (String)session.getAttribute("USER_ROLE");
+>>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
 
         if (!"a".equals(role)) {
             jsonResponse.put("status", "error");
@@ -41,9 +50,10 @@ public class DeleteQuizServlet extends HttpServlet {
             return jsonResponse;
         }
 
-        Connection con = null;
-        PreparedStatement ps = null;
+        // Connection con = null;
+        // PreparedStatement ps = null;
 
+<<<<<<< HEAD
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
             con = DatabaseUtil.getConnection();
@@ -52,6 +62,22 @@ public class DeleteQuizServlet extends HttpServlet {
             ps = con.prepareStatement(deleteQuizSql);
             ps.setString(1, quizName);
             int rowsAffected = ps.executeUpdate();
+=======
+        IRepository repository = new Repository();
+        repository.init("com.mysql.cj.jdbc.Driver");
+        String condition = "name = \"" + quizName + "\"";
+        repository.delete("quiz", condition);
+
+        // try {
+        //     Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+
+        //     con = DatabaseUtil.getConnection();
+        //     // Delete the quiz
+        //     String deleteQuizSql = "DELETE FROM quizzes WHERE name = ?";
+        //     ps = con.prepareStatement(deleteQuizSql);
+        //     ps.setString(1, quizName);
+        //     ps.executeUpdate();
+>>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
 
             if (rowsAffected > 0) {
                 jsonResponse.put("status", "success");
@@ -60,6 +86,7 @@ public class DeleteQuizServlet extends HttpServlet {
                 jsonResponse.put("status", "error");
                 jsonResponse.put("message", "Quiz not found.");
             }
+<<<<<<< HEAD
         } catch (Exception e) {
             e.printStackTrace();
             jsonResponse.put("status", "error");
@@ -173,29 +200,51 @@ public class DeleteQuizServlet extends HttpServlet {
         PreparedStatement ps = null;
         ResultSet rs = null;
         String role = null;
+=======
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // } finally {
+        //     try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+        //     try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+        // }
+    }
 
-            con = DatabaseUtil.getConnection();
+    // private String getUserRoleFromDatabase(String username) {
+    //     Connection con = null;
+    //     PreparedStatement ps = null;
+    //     ResultSet rs = null;
+    //     String role = null;
+>>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
 
-            // Query to get the user's role
-            String sql = "SELECT role FROM users WHERE username = ?";
-            ps = con.prepareStatement(sql);
-            ps.setString(1, username);
-            rs = ps.executeQuery();
+    //     try {
+    //         Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
 
-            if (rs.next()) {
-                role = rs.getString("role");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
-        }
+    //         con = DatabaseUtil.getConnection();
 
+    //         // Query to get the user's role
+    //         String sql = "SELECT role FROM users WHERE username = ?";
+    //         ps = con.prepareStatement(sql);
+    //         ps.setString(1, username);
+    //         rs = ps.executeQuery();
+
+    //         if (rs.next()) {
+    //             role = rs.getString("role");
+    //         }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     } finally {
+    //         try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //         try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //         try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //     }
+
+<<<<<<< HEAD
         return role;
     }
 }
+=======
+    //     return role;
+    // }
+}
+>>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66

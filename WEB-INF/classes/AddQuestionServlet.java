@@ -2,14 +2,18 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
 import java.nio.file.Paths;
-import java.sql.*;
+
 import java.util.UUID;
 import java.nio.ByteBuffer;
 import jakarta.servlet.annotation.MultipartConfig;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 @MultipartConfig
 public class AddQuestionServlet extends HttpServlet {
+
+    private final IRepository repository = new Repository();
+    private final AClassFactory factory = new AClassFactory();
 
     // Convert UUID to binary (byte array)
     public byte[] uuidToBytes(UUID uuid) {
@@ -35,7 +39,8 @@ public class AddQuestionServlet extends HttpServlet {
         }
 
         String username = (String) session.getAttribute("USER_ID");
-        String role = getUserRoleFromDatabase(username);
+        String role = (String) session.getAttribute("USER_ROLE");
+        // String role = getUserRoleFromDatabase(username);
 
         if (!"a".equals(role)) {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
@@ -53,17 +58,18 @@ public class AddQuestionServlet extends HttpServlet {
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        Connection con = null;
-        PreparedStatement psQuestion = null;
-        PreparedStatement psAnswer = null;
-        PreparedStatement psMedia = null;
-        PreparedStatement psQuestionMedia = null;
-        PreparedStatement psAnswerMedia = null;
+        // Connection con = null;
+        // PreparedStatement psQuestion = null;
+        // PreparedStatement psAnswer = null;
+        // PreparedStatement psMedia = null;
+        // PreparedStatement psQuestionMedia = null;
+        // PreparedStatement psAnswerMedia = null;
 
         try {
             // Load MySQL driver and establish connection
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DatabaseUtil.getConnection();
+            // Class.forName("com.mysql.cj.jdbc.Driver");
+            repository.init("com.mysql.cj.jdbc.Driver");
+            // con = DatabaseUtil.getConnection();
             // Get form data from the request
             // Question info
             String quizName = req.getParameter("quizName");
@@ -102,87 +108,99 @@ public class AddQuestionServlet extends HttpServlet {
             String addAnotherQuestion = req.getParameter("addQuestion");
             String answerType = req.getParameter("answerType");
 
-            UUID[] mediaIds = new UUID[answerTexts.length + 1]; //There will at most be 1 media per answer and 1 media for the question itself (answers + 1)
+            UUID[] mediaIds = new UUID[answerTexts.length + 1]; // There will at most be 1 media per answer and 1 media
+                                                                // for the question itself (answers + 1)
             String[] mediaUrls = new String[answerTexts.length + 1];
-            
+
             String[] mediaFileNames = new String[answerTexts.length + 1];
 
             // for (Part part : req.getParts()) {
-            //     System.out.println("Part Name: " + part.getName());
-            //     System.out.println("Submitted File Name: " + part.getSubmittedFileName());
+            // System.out.println("Part Name: " + part.getName());
+            // System.out.println("Submitted File Name: " + part.getSubmittedFileName());
             // }
 
-                int filesProcessed = 0;
-                if(questionType.equals("VID")){
-                    mediaUrls[filesProcessed] = videoUrls[0];
-                    mediaFileNames[filesProcessed] = "N/A";
-                    filesProcessed++;
-                }
+            int filesProcessed = 0;
+            if (questionType.equals("VID")) {
+                mediaUrls[filesProcessed] = videoUrls[0];
+                mediaFileNames[filesProcessed] = "N/A";
+                filesProcessed++;
+            }
 
-                for (Part filePart : fileParts) {
-                    String fileName = filePart.getSubmittedFileName();
-                    
-                        // Generate a UUID for the media
-                        // UUID mediaUUID = UUID.randomUUID();
-                        // byte[] mediaIdBinary = uuidToBytes(mediaUUID);
-                        // mediaIds[filesProcessed] = mediaUUID;
+            for (Part filePart : fileParts) {
+                String fileName = filePart.getSubmittedFileName();
 
-                        // Insert media information into the `media` table
-                        // String mediaUrl = null;
-                        if ((filePart.getName().equals("mediaFile") && fileName != null && !fileName.isEmpty()) 
+                // Generate a UUID for the media
+                // UUID mediaUUID = UUID.randomUUID();
+                // byte[] mediaIdBinary = uuidToBytes(mediaUUID);
+                // mediaIds[filesProcessed] = mediaUUID;
+
+                // Insert media information into the `media` table
+                // String mediaUrl = null;
+                if ((filePart.getName().equals("mediaFile") && fileName != null && !fileName.isEmpty())
                         && ((questionType.equals("IMG") || questionType.equals("AUD") && filesProcessed == 0)
                                 || (questionType.equals("TEXT") && answerType.equals("IMG") || answerType.equals("AUD"))
                                 || (filesProcessed > 0 && answerType.equals("IMG") || answerType.equals("AUD")))) {
-                            File saveFile = new File(getServletContext().getRealPath("/public/media"));
-                            System.out.println(saveFile + " " + fileName);
-                            File file = new File(saveFile, fileName);
-                            filePart.write(file.getAbsolutePath());
-                            mediaUrls[filesProcessed] = "public/media/" + fileName;
-                            filesProcessed++;
-                        }
-                }
-
-                if(answerType.equals("VID")){
-                    System.out.println("THERE IS A VIDEO ANSWER");
-                    mediaUrls[filesProcessed] = videoUrls[1];
-                    System.out.println(mediaUrls[filesProcessed]);
-                    mediaFileNames[filesProcessed] = "N/A";
+                    File saveFile = new File(getServletContext().getRealPath("/public/media"));
+                    System.out.println(saveFile + " " + fileName);
+                    File file = new File(saveFile, fileName);
+                    filePart.write(file.getAbsolutePath());
+                    mediaUrls[filesProcessed] = "public/media/" + fileName;
                     filesProcessed++;
                 }
+            }
 
-                for(int i = 0; i < filesProcessed; i++){
-                    System.out.println("Url count: " + mediaUrls.length);
-                    System.out.println("Index: " + i);
-                    UUID mediaUUID = UUID.randomUUID();
-                    byte[] mediaIdBinary = uuidToBytes(mediaUUID);
-                    mediaIds[i] = mediaUUID;
+            if (answerType.equals("VID")) {
+                System.out.println("THERE IS A VIDEO ANSWER");
+                mediaUrls[filesProcessed] = videoUrls[1];
+                System.out.println(mediaUrls[filesProcessed]);
+                mediaFileNames[filesProcessed] = "N/A";
+                filesProcessed++;
+            }
 
-                    String mediaType = (!questionType.equals("TEXT") && i == 0) ? questionType : answerType;
+            for (int i = 0; i < filesProcessed; i++) {
+                System.out.println("Url count: " + mediaUrls.length);
+                System.out.println("Index: " + i);
+                UUID mediaUUID = UUID.randomUUID();
+                byte[] mediaIdBinary = uuidToBytes(mediaUUID);
+                mediaIds[i] = mediaUUID;
 
-                    String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path, media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?)";
-                    psMedia = con.prepareStatement(insertMediaSql);
-                    psMedia.setBytes(1, mediaIdBinary);
-                    psMedia.setString(2, mediaType);
-                    psMedia.setString(3, mediaUrls[i]);
-                    psMedia.setString(4, mediaFileNames[i]);
-                    if (i == 0 && questionType.equals("VID")) {
-                        psMedia.setInt(5, videoStarts[i]);
-                        psMedia.setInt(6, videoEnds[i]);
-                    } else if (i == 0 && questionType.equals("AUD")) {
-                        psMedia.setInt(5, audioStarts[i]);
-                        psMedia.setInt(6, audioEnds[i]);
-                    } else if (answerType.equals("VID")) {
-                        psMedia.setInt(5, videoStarts[i]);
-                        psMedia.setInt(6, videoEnds[i]);
-                    } else {
-                        psMedia.setInt(5, audioStarts[i]);
-                        psMedia.setInt(6, audioEnds[i]);
-                    }
+                String mediaType = (!questionType.equals("TEXT") && i == 0) ? questionType : answerType;
+                StringBuilder criteria = new StringBuilder();
+                criteria.append("id:==").append(new String(mediaIdBinary, StandardCharsets.UTF_8))
+                        .append(",media_type:==").append(mediaType)
+                        .append(",media_file_path:==").append(mediaUrls[i])
+                        .append(",media_filename:==").append(mediaFileNames[i]);
 
-                    psMedia.executeUpdate();
+                // String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path,
+                // media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?)";
+                // psMedia = con.prepareStatement(insertMediaSql);
+                // psMedia.setBytes(1, mediaIdBinary);
+                // psMedia.setString(2, mediaType);
+                // psMedia.setString(3, mediaUrls[i]);
+                // psMedia.setString(4, mediaFileNames[i]);
+                if (i == 0 && questionType.equals("VID")) {
+                    // psMedia.setInt(5, videoStarts[i]);
+                    // psMedia.setInt(6, videoEnds[i]);
+                    criteria.append(",media_start:==").append(videoStarts[i])
+                            .append(",media_end:==").append(videoEnds[i]);
+
+                } else if (i == 0 && questionType.equals("AUD")) {
+                    // psMedia.setInt(5, audioStarts[i]);
+                    // psMedia.setInt(6, audioEnds[i]);
+                    criteria.append(",media_start:==").append(audioStarts[i])
+                            .append(",media_end:==").append(audioEnds[i]);
+                } else if (answerType.equals("VID")) {
+                    // psMedia.setInt(5, videoStarts[i]);
+                    // psMedia.setInt(6, videoEnds[i]);
+                    criteria.append(",media_start:==").append(videoStarts[i])
+                            .append(",media_end:==").append(videoEnds[i]);
+                } else {
+                    criteria.append(",media_start:==").append(audioStarts[i])
+                            .append(",media_end:==").append(audioEnds[i]);
                 }
-                
-            
+                repository.insert(factory.createAClass("media", criteria.toString()));
+                // psMedia.executeUpdate();
+            }
 
             System.out.println(mediaIds.length);
             // int filesProcessed = 0;
@@ -221,29 +239,42 @@ public class AddQuestionServlet extends HttpServlet {
             // psMedia.setInt(5, videoStart);
             // psMedia.setInt(6, videoEnd);
             // psMedia.executeUpdate();
-            
+
             // Generate a UUID for the question
             UUID questionUUID = UUID.randomUUID();
             byte[] questionIdBinary = uuidToBytes(questionUUID);
 
-            // Insert the new question into the `questions` table
-            String insertQuestionSql = "INSERT INTO questions (id, quiz_name, question_text, question_type) VALUES (?, ?, ?, ?)";
-            psQuestion = con.prepareStatement(insertQuestionSql);
-            psQuestion.setBytes(1, questionIdBinary);
-            psQuestion.setString(2, quizName);
-            psQuestion.setString(3, questionText);
-            psQuestion.setString(4, questionType);
-            psQuestion.executeUpdate();
+            // // Insert the new question into the `questions` table
+            // String insertQuestionSql = "INSERT INTO questions (id, quiz_name,
+            // question_text, question_type) VALUES (?, ?, ?, ?)";
+            // psQuestion = con.prepareStatement(insertQuestionSql);
+            // psQuestion.setBytes(1, questionIdBinary);
+            // psQuestion.setString(2, quizName);
+            // psQuestion.setString(3, questionText);
+            // psQuestion.setString(4, questionType);
+            // psQuestion.executeUpdate();
 
-            // Insert into `question_media` table to link the question and the media
+            StringBuilder newQuestion = new StringBuilder();
+            newQuestion.append("id:==").append(new String(questionIdBinary, StandardCharsets.UTF_8))
+                    .append(",quiz_name:==").append(quizName)
+                    .append(",question_text:==").append(questionText)
+                    .append(",question_type:==").append(questionType);
+
+            // // Insert into `question_media` table to link the question and the media
             if (!questionType.equals("TEXT")) {
-                System.out.println(mediaIds[0]);
-                String insertQuestionMediaSql = "INSERT INTO question_media (question_id, media_id) VALUES (?, ?)";
-                psQuestionMedia = con.prepareStatement(insertQuestionMediaSql);
-                psQuestionMedia.setBytes(1, questionIdBinary);
-                psQuestionMedia.setBytes(2, uuidToBytes(mediaIds[0]));
-                psQuestionMedia.executeUpdate();
+            System.out.println(mediaIds[0]);
+            // String insertQuestionMediaSql = "INSERT INTO question_media (question_id,
+            // media_id) VALUES (?, ?)";
+            // psQuestionMedia = con.prepareStatement(insertQuestionMediaSql);
+            // psQuestionMedia.setBytes(1, questionIdBinary);
+            // psQuestionMedia.setBytes(2, uuidToBytes(mediaIds[0]));
+            // psQuestionMedia.executeUpdate();
+
+            newQuestion.append(",media_id:==").append(new String(uuidToBytes(mediaIds[0]),
+            StandardCharsets.UTF_8));
             }
+
+            repository.insert(factory.createAClass("question", newQuestion.toString()));
 
             // Insert answers into the `answers` table
 
@@ -252,33 +283,47 @@ public class AddQuestionServlet extends HttpServlet {
                 byte[] answerIdBinary = uuidToBytes(answerUUID);
                 boolean isCorrect = (correctAnswer != null && Integer.parseInt(correctAnswer) == i + 1);
 
-                String insertAnswerSql = "INSERT INTO answers (id, question_id, answer_text, is_correct, answer_type) VALUES (?, ?, ?, ?, ?)";
-                psAnswer = con.prepareStatement(insertAnswerSql);
-                psAnswer.setBytes(1, answerIdBinary);
-                psAnswer.setBytes(2, questionIdBinary);
-                psAnswer.setString(3, answerTexts[i]);
-                psAnswer.setBoolean(4, isCorrect);
-                psAnswer.setString(5, answerType); // Assuming answer_type is 'text' for now
-                psAnswer.executeUpdate();
+                StringBuilder newAnswer = new StringBuilder();
+                newAnswer.append("id:==").append(new String(answerIdBinary, StandardCharsets.UTF_8))
+                        .append(",question_id:==").append(new String(questionIdBinary, StandardCharsets.UTF_8))
+                        .append(",answer_text:==").append(answerTexts[i])
+                        .append(",is_correct:==").append((isCorrect ? 1 : 0))
+                        .append(",answer_type:==").append(answerType);
 
-                String insertAnswerMediaSql = "INSERT INTO answer_media (answer_id, media_id) VALUES (?, ?)";
+                // String insertAnswerSql = "INSERT INTO answers (id, question_id, answer_text,
+                // is_correct, answer_type) VALUES (?, ?, ?, ?, ?)";
+                // psAnswer = con.prepareStatement(insertAnswerSql);
+                // psAnswer.setBytes(1, answerIdBinary);
+                // psAnswer.setBytes(2, questionIdBinary);
+                // psAnswer.setString(3, answerTexts[i]);
+                // psAnswer.setBoolean(4, isCorrect);
+                // psAnswer.setString(5, answerType);
+                // psAnswer.executeUpdate();
+
+                // String insertAnswerMediaSql = "INSERT INTO answer_media (answer_id, media_id) VALUES (?, ?)";
                 if (answerType.equals("IMG")) {
-                    System.out.println(mediaIds[i]);
-                    psAnswerMedia = con.prepareStatement(insertAnswerMediaSql);
-                    psAnswerMedia.setBytes(1, answerIdBinary);
+                    // System.out.println(mediaIds[i]);
+                    // psAnswerMedia = con.prepareStatement(insertAnswerMediaSql);
+                    // psAnswerMedia.setBytes(1, answerIdBinary);
                     byte[] mediaId = (questionType.equals("TEXT")) ? uuidToBytes(mediaIds[i])
                             : uuidToBytes(mediaIds[i + 1]);
-                    psAnswerMedia.setBytes(2, mediaId);
-                    psAnswerMedia.executeUpdate();
-                } else if(!answerType.equals("TEXT") && isCorrect){
-                    System.out.println(mediaIds[i]);
-                    psAnswerMedia = con.prepareStatement(insertAnswerMediaSql);
-                    psAnswerMedia.setBytes(1, answerIdBinary);
+                    // psAnswerMedia.setBytes(2, mediaId);
+                    // psAnswerMedia.executeUpdate();
+
+                    newAnswer.append(",media_id:==").append(new String (mediaId, StandardCharsets.UTF_8));
+                } else if (!answerType.equals("TEXT") && isCorrect) {
+                    // System.out.println(mediaIds[i]);
+                    // psAnswerMedia = con.prepareStatement(insertAnswerMediaSql);
+                    // psAnswerMedia.setBytes(1, answerIdBinary);
                     byte[] mediaId = (questionType.equals("TEXT")) ? uuidToBytes(mediaIds[i])
                             : uuidToBytes(mediaIds[i + 1]);
-                    psAnswerMedia.setBytes(2, mediaId);
-                    psAnswerMedia.executeUpdate();
+                    // psAnswerMedia.setBytes(2, mediaId);
+                    // psAnswerMedia.executeUpdate();
+
+                    newAnswer.append(",media_id:==").append(new String (mediaId, StandardCharsets.UTF_8));
                 }
+
+                repository.insert(factory.createAClass("answer", newAnswer.toString()));
             }
 
             // Redirect back to the quiz creation page or show success message
@@ -286,69 +331,70 @@ public class AddQuestionServlet extends HttpServlet {
 
         } catch (Exception e) {
             throw new ServletException("Error processing question addition", e);
-        } finally {
-            try {
-                if (psQuestion != null)
-                    psQuestion.close();
-                if (psAnswer != null)
-                    psAnswer.close();
-                if (psMedia != null)
-                    psMedia.close();
-                if (psQuestionMedia != null)
-                    psQuestionMedia.close();
-                if (con != null)
-                    con.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        } 
+        // finally {
+        //     try {
+        //         if (psQuestion != null)
+        //             psQuestion.close();
+        //         if (psAnswer != null)
+        //             psAnswer.close();
+        //         if (psMedia != null)
+        //             psMedia.close();
+        //         if (psQuestionMedia != null)
+        //             psQuestionMedia.close();
+        //         if (con != null)
+        //             con.close();
+        //     } catch (SQLException e) {
+        //         e.printStackTrace();
+        //     }
+        // }
     }
 
-    private String getUserRoleFromDatabase(String username) {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        String role = null;
+    // private String getUserRoleFromDatabase(String username) {
+    //     Connection con = null;
+    //     PreparedStatement ps = null;
+    //     ResultSet rs = null;
+    //     String role = null;
 
-        try {
-            // Load MySQL driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
+    //     try {
+    //         // Load MySQL driver
+    //         Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Database connection
-            con = DatabaseUtil.getConnection();
+    //         // Database connection
+    //         con = DatabaseUtil.getConnection();
 
-            // Query to get the user's role
-            String sql = "SELECT role FROM users WHERE username = ?";
-            ps = con.prepareStatement(sql);
-            ps.setString(1, username);
-            rs = ps.executeQuery();
+    //         // Query to get the user's role
+    //         String sql = "SELECT role FROM users WHERE username = ?";
+    //         ps = con.prepareStatement(sql);
+    //         ps.setString(1, username);
+    //         rs = ps.executeQuery();
 
-            if (rs.next()) {
-                role = rs.getString("role");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null)
-                    rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (ps != null)
-                    ps.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (con != null)
-                    con.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+    //         if (rs.next()) {
+    //             role = rs.getString("role");
+    //         }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     } finally {
+    //         try {
+    //             if (rs != null)
+    //                 rs.close();
+    //         } catch (SQLException e) {
+    //             e.printStackTrace();
+    //         }
+    //         try {
+    //             if (ps != null)
+    //                 ps.close();
+    //         } catch (SQLException e) {
+    //             e.printStackTrace();
+    //         }
+    //         try {
+    //             if (con != null)
+    //                 con.close();
+    //         } catch (SQLException e) {
+    //             e.printStackTrace();
+    //         }
+    //     }
 
-        return role;
-    }
+    //     return role;
+    // }
 }
