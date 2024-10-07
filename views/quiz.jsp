@@ -201,6 +201,27 @@
             font-size: 25px;
         }
 
+        .moderateMode {
+            margin-top: 10px;
+            border-radius: 10px;
+            padding: 10px 20px;
+            background-color: #45425A;
+            text-decoration: none;
+            text-align: center;
+            color: rgb(244, 244, 244);
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition-duration: 0.3s;
+            cursor: pointer;
+        }
+
+        .moderateMode:hover {
+            transform: scale(1.03);
+            box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.3);
+        }
+
     </style>
 </head>
 <body>
@@ -284,10 +305,7 @@
                         }
     
                         quizDiv.innerHTML = `
-                        <a href="${pathSegments.join('/')}/moderateMode?quizName=${quiz.name}">
-                        <button type=\"button\" onclick=\"">Moderated Mode</button></a>
                             <form method="post" action="${pathSegments.join('/')}/quizzes-json" class="quizLink">
-                                
                                 <input type="hidden" name="quizName" value="${quiz.name}">
                                 <input type="submit" value="${quiz.name}">
                                 <p class="quiz-description">${quiz.description}</p>
@@ -310,6 +328,12 @@
                                 </div>
                             `;
                         }
+
+                        quizDiv.innerHTML += `
+                            <a href="${pathSegments.join('/')}/moderateMode?quizName=${quiz.name}" class="moderateMode">
+                                Moderated Mode
+                            </a>
+                        `;
     
                         // Append category div to the container
                         quizzesContainer.appendChild(quizDiv);
