@@ -111,7 +111,7 @@
         <%=request.getAttribute("userName")%>
     </p>
     <button id="next-button">Next Question</button>
-    <div class="wrap">
+    <div class="wrap" style="display: none;">
 
         <div class="questions" style="display: none;">
             <%=request.getAttribute("questionsHtml")%>
@@ -128,14 +128,10 @@
 
 
     <script type="text/javascript">
+       
         let role = document.getElementById("role").textContent.trim();
         console.log("Rolee: ", role);
-        if (role !== "a") {
-            document.getElementById("next-button").style.display = "none";
-            document.getElementById("answerCounts").style.display = "none";
-            document.getElementById("question").style.display = "none";
-            // document.getElementById("media-container").style.display = "hidden";
-        }
+
         let webSocket = new WebSocket('ws://localhost:8081/project1/questionsws');
         let questions = [];
         let answers = [];
@@ -209,88 +205,114 @@
             let response = JSON.parse(message.data);
             questionIndex = response.questionIndex;
 
+            if(response.type === "end"){
+                webSocket.onclose = function () {
+            console.log("Connection closed ...");
+             globalThis.end = true;
+            window.location.href = "end";
+        };
+            }
             if (response.question && response.answers) {
                 displayQuestion(response.question, response.answers, response.images, response.videos);
             } else if (response.type === "answerCounts") {
                 displayAnswerCounts(response.counts);
             } else {
-                console.log("Invalid message received:", response);
+                console.log("Invalid message received from server:", response);
             }
         };
+
+        webSocket.onclose = function () {
+            console.log("Connection closed ...");
+             globalThis.end = true;
+            window.location.href = "end";
+        };
+        // console.log("End: ", end);
+        // if(end){
+        //         window.location.href = "end";
+        //     }
         // Display question, answers, and media (images, videos)
-        // Display question, answers, and media (images, videos)
-function displayQuestion(question, answers, images, videos) {
-    document.getElementById("question").textContent = question;
-    const optionsDiv = document.getElementById("options");
-    optionsDiv.innerHTML = '';  // Clear previous answers
+        function displayQuestion(question, answers, images, videos) {
+            document.getElementById("question").textContent = question;
+            const optionsDiv = document.getElementById("options");
+            optionsDiv.innerHTML = '';  // Clear previous answers
 
-    // Display answers as buttons
-    answers.forEach(answer => {
-        const answerElement = document.createElement("button");
-        answerElement.textContent = answer;
-        answerElement.classList.add("answer");
-        optionsDiv.appendChild(answerElement);
+            // Display answers as buttons
+            answers.forEach(answer => {
+                const answerElement = document.createElement("button");
+                answerElement.textContent = answer;
+                answerElement.classList.add("answer");
+                optionsDiv.appendChild(answerElement);
 
-        answerElement.addEventListener("click", function () {
-            console.log("Sending answer:", answer);  // Log the selected answer
-            webSocket.send(JSON.stringify({ type: "answer", answer: answer }));
-        });
-    });
+                answerElement.addEventListener("click", function () {
+                    console.log("Sending answer:", answer);  // Log the selected answer
+                    webSocket.send(JSON.stringify({ type: "answer", answer: answer }));
+                });
+            });
 
-    // Clear previous media before displaying new media
-    let mediaDiv = document.getElementById("media-container");
-    if (mediaDiv) {
-        mediaDiv.remove();  // Remove the old media container
-    }
+            // Clear previous media before displaying new media
+            let mediaDiv = document.getElementById("media-container");
+            if (mediaDiv) {
+                mediaDiv.remove();  // Remove the old media container
+            }
 
-    // Create a new media container
-    const questionContainer = document.getElementById("question-container");
-    mediaDiv = document.createElement("div");
-    mediaDiv.id = "media-container";
-    questionContainer.appendChild(mediaDiv);
+            // Create a new media container
+            const questionContainer = document.getElementById("question-container");
+            mediaDiv = document.createElement("div");
+            mediaDiv.id = "media-container";
+            questionContainer.appendChild(mediaDiv);
 
-    // Display images (if any)
-    if (images && images.length > 0) {
-        images.forEach(imageSrc => {
-            const imgElement = document.createElement("img");
-            imgElement.src = imageSrc;
-            imgElement.alt = "Question Image";
-            imgElement.style.width = "100%"; // Adjust image size
-            mediaDiv.appendChild(imgElement);
-        });
-    }
+            // Display images (if any)
+            if (images && images.length > 0) {
+                images.forEach(imageSrc => {
+                    const imgElement = document.createElement("img");
+                    if(role !== "a"){
+                        imgElement.style.display = "none";
+                    }
+                    imgElement.src = imageSrc;
+                    imgElement.alt = "Question Image";
+                    imgElement.style.width = "100%"; // Adjust image size
+                    mediaDiv.appendChild(imgElement);
+                });
+            }
 
-    // Display YouTube videos (if any)
-    if (videos && videos.length > 0) {
-        videos.forEach(videoUrl => {
-            const videoElement = document.createElement("iframe");
-            videoElement.src = videoUrl.replace("watch?v=", "embed/");
-            videoElement.width = "100%";
-            videoElement.height = "315";
-            videoElement.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-            videoElement.allowFullscreen = true;
-            mediaDiv.appendChild(videoElement);
-        });
-    }
+            // Display YouTube videos (if any)
+            if (videos && videos.length > 0) {
+                videos.forEach(videoUrl => {
+                    const videoElement = document.createElement("iframe");
+                    if(role !== "a"){
+                        videoElement.style.display = "none";
+                    }
+                    videoElement.src = videoUrl.replace("watch?v=", "embed/");
+                    videoElement.width = "100%";
+                    videoElement.height = "315";
+                    videoElement.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+                    videoElement.allowFullscreen = true;
+                    mediaDiv.appendChild(videoElement);
+                });
+            }
 
-    if (role === "a") {
-        document.getElementById("next-button").style.display = "block";  // Show next button for admin
-        document.getElementById("options").style.display = "none";
-    }
-}
+        }
 
-
+        if (role === "a") {
+            document.getElementById("next-button").style.display = "block";  // Show next button for admin
+            document.getElementById("options").style.display = "none";
+        }
+        if (role !== "a") {
+            document.getElementById("next-button").style.display = "none";
+            document.getElementById("answerCounts").style.display = "none";
+            document.getElementById("question").style.display = "none";
+           
+        } 
         // Handle "Next Question" button click
         document.getElementById("next-button").addEventListener("click", function () {
+            //clear answer counts
             console.log("Sending next question request");
             console.log("Question index: ", questionIndex);
             console.log("Number of questions: ", numOfQuestions);
-            if (questionIndex == numOfQuestions - 1) {
-                window.location.href = "end";
-            }
             webSocket.send(JSON.stringify({ type: "next" }));
         });
 
+       
         // Display answer counts
         function displayAnswerCounts(counts) {
             let totalElement = document.getElementById("answerCounts");
