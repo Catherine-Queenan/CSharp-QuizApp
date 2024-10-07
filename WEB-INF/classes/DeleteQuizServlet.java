@@ -1,11 +1,8 @@
 import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
-<<<<<<< HEAD
 import java.sql.*;
 import org.json.JSONObject;
-=======
->>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
 
 public class DeleteQuizServlet extends HttpServlet {
     @Override
@@ -30,13 +27,9 @@ public class DeleteQuizServlet extends HttpServlet {
             return jsonResponse;
         }
 
-<<<<<<< HEAD
-        String role = getUserRoleFromDatabase(username);
-=======
         // String username = (String) session.getAttribute("USER_ID");
         // String role = getUserRoleFromDatabase(username);
         String role = (String)session.getAttribute("USER_ROLE");
->>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
 
         if (!"a".equals(role)) {
             jsonResponse.put("status", "error");
@@ -53,20 +46,17 @@ public class DeleteQuizServlet extends HttpServlet {
         // Connection con = null;
         // PreparedStatement ps = null;
 
-<<<<<<< HEAD
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
-            con = DatabaseUtil.getConnection();
-
-            String deleteQuizSql = "DELETE FROM quizzes WHERE name = ?";
-            ps = con.prepareStatement(deleteQuizSql);
-            ps.setString(1, quizName);
-            int rowsAffected = ps.executeUpdate();
-=======
         IRepository repository = new Repository();
         repository.init("com.mysql.cj.jdbc.Driver");
         String condition = "name = \"" + quizName + "\"";
-        repository.delete("quiz", condition);
+        try {
+            repository.delete("quiz", condition);
+            jsonResponse.put("status", "success");
+            jsonResponse.put("message", "Quiz deleted successfully.");
+        } catch(Exception e) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "Quiz not found.");
+        }
 
         // try {
         //     Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
@@ -77,24 +67,11 @@ public class DeleteQuizServlet extends HttpServlet {
         //     ps = con.prepareStatement(deleteQuizSql);
         //     ps.setString(1, quizName);
         //     ps.executeUpdate();
->>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
 
-            if (rowsAffected > 0) {
-                jsonResponse.put("status", "success");
-                jsonResponse.put("message", "Quiz deleted successfully.");
-            } else {
-                jsonResponse.put("status", "error");
-                jsonResponse.put("message", "Quiz not found.");
-            }
-<<<<<<< HEAD
-        } catch (Exception e) {
-            e.printStackTrace();
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "An error occurred while deleting the quiz.");
-        } finally {
-            try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
-        }
+        // finally {
+        //     try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+        //     try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+        // }
         return jsonResponse;
     }
 
@@ -195,27 +172,11 @@ public class DeleteQuizServlet extends HttpServlet {
     //     }
     // }
 
-    private String getUserRoleFromDatabase(String username) {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        String role = null;
-=======
-
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        // } finally {
-        //     try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-        //     try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
-        // }
-    }
-
     // private String getUserRoleFromDatabase(String username) {
     //     Connection con = null;
     //     PreparedStatement ps = null;
     //     ResultSet rs = null;
     //     String role = null;
->>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
 
     //     try {
     //         Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
@@ -239,12 +200,6 @@ public class DeleteQuizServlet extends HttpServlet {
     //         try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
     //     }
 
-<<<<<<< HEAD
-        return role;
-    }
-}
-=======
     //     return role;
     // }
 }
->>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66

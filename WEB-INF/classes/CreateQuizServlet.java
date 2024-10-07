@@ -290,46 +290,6 @@ public class CreateQuizServlet extends HttpServlet {
             e.printStackTrace();
             // req.setAttribute("error", "An error occurred while creating the quiz.");
             doGet(req, res);
-<<<<<<< HEAD
-        } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (psQuizMedia != null)
-                    ps.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (psMediaQ != null)
-                    ps.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (psCategoryMedia != null)
-                    ps.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (psMediaC != null)
-                    ps.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (con != null)
-                    con.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-=======
         } 
         // finally {
         //     try {
@@ -345,7 +305,6 @@ public class CreateQuizServlet extends HttpServlet {
         //         e.printStackTrace();
         //     }
         // }
->>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
     }
 
     // private String getUserRoleFromDatabase(String username) {

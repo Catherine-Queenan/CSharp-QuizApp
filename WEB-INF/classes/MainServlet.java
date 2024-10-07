@@ -31,14 +31,9 @@ public class MainServlet extends HttpServlet {
         }
 
         String username = (String) session.getAttribute("USER_ID");
-<<<<<<< HEAD
-        String role = getUserRoleFromDatabase(username);
-
-=======
         String role = (String) session.getAttribute("USER_ID");
         // getUserRoleFromDatabase(username);
         StringBuilder adminHtml = new StringBuilder();
->>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
         if ("a".equals(role)) {
             jsonResponse.put("role", "admin");
         }
@@ -48,59 +43,8 @@ public class MainServlet extends HttpServlet {
             session.removeAttribute("currQuestion");
         }
 
-<<<<<<< HEAD
-        Connection con = null;
-        PreparedStatement psCategories = null;
-        ResultSet rsCategories = null;
-        PreparedStatement psMedia = null;
-        PreparedStatement psCategoryMedia = null;
-        ResultSet rsMedia = null;
-        ResultSet rsCategoryMedia = null;
-
         JSONArray categoriesArray = new JSONArray();
 
-        try {
-            // Load MySQL driver and set up connection
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DatabaseUtil.getConnection();
-
-            // Query to get all categories
-            psCategories = con.prepareStatement("SELECT name FROM categories");
-            rsCategories = psCategories.executeQuery();
-
-            // Query to get media for each category
-            psMedia = con.prepareStatement("SELECT media_id FROM category_media WHERE category_name = ?");
-            psCategoryMedia = con.prepareStatement("SELECT media_file_path FROM media WHERE id = ?");
-
-            while (rsCategories.next()) {
-                String categoryName = rsCategories.getString("name");
-                JSONObject categoryObject = new JSONObject();
-            
-                // Get media for the category
-                psMedia.setString(1, categoryName);
-                rsMedia = psMedia.executeQuery();
-            
-                // Process the media item (assuming there is only one)
-                if (rsMedia.next()) {  // Changed to check only for one media item
-                    InputStream mediaId = rsMedia.getBinaryStream("media_id");
-                    if (mediaId != null) {
-                        psCategoryMedia.setBinaryStream(1, mediaId);
-                        rsCategoryMedia = psCategoryMedia.executeQuery();
-                        if (rsCategoryMedia.next()) {
-                            String mediaFilePath = rsCategoryMedia.getString("media_file_path");
-                            JSONObject mediaObject = new JSONObject();
-                            mediaObject.put("mediaFilePath", mediaFilePath);
-                            
-                            // Store the media object in the category object
-                            categoryObject.put("media", mediaObject);
-                        }
-                    }
-                }
-            
-                // Create JSON object for the category
-                categoryObject.put("categoryName", categoryName);
-                categoriesArray.put(categoryObject);
-=======
         // Connection con = null;
         // PreparedStatement psCategories = null;
         // ResultSet rsCategories = null;
@@ -138,10 +82,12 @@ public class MainServlet extends HttpServlet {
                 // rsMedia = psMedia.executeQuery();
                 if(!categoryJSON.isNull("media_id")){
                     AClass categoryMedia = repository.select("media", categoryJSON.getString("media_id")).get(0);
-                    String mediaFilePath = categoryMedia.serialize().getString("media_file_path");
-                            mediaHtml.append("<img src=\"").append(mediaFilePath).append("\" alt=\"").append(categoryName).append("\" class=\"categoryImg\">");
+                    // String mediaFilePath = categoryMedia.serialize().getString("media_file_path");
+                    //         mediaHtml.append("<img src=\"").append(mediaFilePath).append("\" alt=\"").append(categoryName).append("\" class=\"categoryImg\">");
+                    categoryJSON.put("media", categoryMedia);
                 }
                 
+                categoriesArray.put(categoryJSON);
 
                 // while(rsMedia.next()){
 
@@ -158,34 +104,22 @@ public class MainServlet extends HttpServlet {
                 // }
 
                 // Create a form for each category to redirect to the quizzes page
-                categoriesHtml.append("<div class=\"category\">\n")
-                             .append("<form action=\"quizzes\" method=\"get\">\n")
-                             .append("    <input type=\"hidden\" name=\"categoryName\" value=\"" + categoryName + "\" />\n")
-                             .append("    <input type=\"submit\" value=\"" + categoryName + "\" />\n")
-                             .append("  <div class=\"img\">").append(mediaHtml.toString()).append("</div>\n")
-                             .append("</div>\n")
-                             .append("</form>\n");
->>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
+                // categoriesHtml.append("<div class=\"category\">\n")
+                //              .append("<form action=\"quizzes\" method=\"get\">\n")
+                //              .append("    <input type=\"hidden\" name=\"categoryName\" value=\"" + categoryName + "\" />\n")
+                //              .append("    <input type=\"submit\" value=\"" + categoryName + "\" />\n")
+                //              .append("  <div class=\"img\">").append(mediaHtml.toString()).append("</div>\n")
+                //              .append("</div>\n")
+                //              .append("</form>\n");
             }
             
             // Add categores to the JSON response
             jsonResponse.put("categories", categoriesArray);
         } catch (Exception e) {
             e.printStackTrace();
-<<<<<<< HEAD
             jsonResponse.put("status", "error");
             jsonResponse.put("message", "An error occurred while fetching categories.");
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Set status to 500
-        } finally {
-            try { if (rsCategories != null) rsCategories.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (rsMedia != null) rsMedia.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (rsCategoryMedia != null) rsCategoryMedia.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (psCategories != null) psCategories.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (psMedia != null) psMedia.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (psCategoryMedia != null) psCategoryMedia.close(); } catch (Exception e) { e.printStackTrace(); }
-            try { if (con != null) con.close(); } catch (Exception e) { e.printStackTrace(); }
-        }
-=======
         } 
         // finally {
         //     try { if (rsCategories != null) rsCategories.close(); } catch (Exception e) { e.printStackTrace(); }
@@ -196,27 +130,18 @@ public class MainServlet extends HttpServlet {
         //     try { if (psCategoryMedia != null) psCategoryMedia.close(); } catch (Exception e) { e.printStackTrace(); }
         //     try { if (con != null) con.close(); } catch (Exception e) { e.printStackTrace(); }
         // }
->>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
 
-        // Write the JSON response
+        // Write the JSON responses
         res.getWriter().write(jsonResponse.toString());
         out.flush();
         out.close();
     }
-<<<<<<< HEAD
-
-    private String getUserRoleFromDatabase(String username) {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        String role = null;
-=======
+    
     // private String getUserRoleFromDatabase(String username) {
     //     Connection con = null;
     //     PreparedStatement ps = null;
     //     ResultSet rs = null;
     //     String role = null;
->>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
 
     //     try {
     //         // Load MySQL driver
@@ -242,14 +167,6 @@ public class MainServlet extends HttpServlet {
     //         try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
     //     }
 
-<<<<<<< HEAD
-        return role;
-    }
-}
-=======
     //     return role;
     // }
 }
-
-
->>>>>>> 933e5804cd95d4d3afa99e04fe5a72433eb29d66
