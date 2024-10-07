@@ -35,6 +35,8 @@ Completed Tasks for 1(a):
         b. *REDID: Functionality for adding questions to a quiz so that it is functional
         c. Debugged existing code and refactored
         d. Linked Liam's code to the rest of the web service so that it can be accessed
+        e. Downloaded audio files
+        f. Coded autoplay for videos and audio
     4. Saba Karbakhsh
         a. *Functionalties on the admin side to create quizzes
         b. *Functionality for adding questions to a quiz
