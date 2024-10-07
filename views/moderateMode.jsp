@@ -130,9 +130,21 @@
     <script type="text/javascript">
        
         let role = document.getElementById("role").textContent.trim();
-        console.log("Rolee: ", role);
+        console.log("Role: ", role);
 
-        let webSocket = new WebSocket('ws://localhost:8081/project1/questionsws');
+         const currentPath = window.location.pathname;
+            const pathSegments = currentPath.split('/');
+            // Extract the base path dynamically (remove last segment if it's quiz-related)
+            console.log(pathSegments);
+            pathSegments.pop();         
+            console.log(pathSegments);
+            console.log(pathSegments.join('/'));
+
+            // Construct the new path dynamically
+            const newPath = pathSegments.join('/') + `/questionsws`;
+
+
+        let webSocket = new WebSocket('ws://localhost:8081/'+ newPath);
         let questions = [];
         let answers = [];
         let images = [];
@@ -204,6 +216,8 @@
             console.log("Received message from server:", message.data);  // Log the incoming message
             let response = JSON.parse(message.data);
             questionIndex = response.questionIndex;
+
+            console.log(response);
 
             if(response.type === "end"){
                 webSocket.onclose = function () {

@@ -303,8 +303,8 @@ public class CreateQuizServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-        res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 Internal Server Error
-        res.getWriter().write("{\"error\": \"An error occurred while creating the quiz.\"}");
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 Internal Server Error
+            res.getWriter().write("{\"error\": \"An error occurred while creating the quiz.\"}");
         } 
         // finally {
         //     try {
