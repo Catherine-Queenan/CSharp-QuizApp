@@ -13,7 +13,7 @@ public class Repository implements IRepository {
     public static final String URL = "jdbc:mysql://localhost:3306/QuizApp";
     public static final String USER = "root";
     public static final String PASSWORD = "Cathgirlh6*";
-    private Connection con = null;
+    private Connection con = null;   
 
     private void insertCategory(JSONObject entry) {
         try {
