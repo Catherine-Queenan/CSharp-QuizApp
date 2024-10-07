@@ -58,13 +58,14 @@ Completed Tasks for 1(b):
     2. Eugenie Kim:
         a. Completed all components related to introducing MVC, Factory, DAO Patterns in the backend code
         b. Coded the ability to add media to answers (images AS answers, video and audio that plays after the correct answer is selected)
-        c. Debugged
+        c. *Refactored web sockets to function with existing code
+        d. Debugged
     3. Soomin Jeong:
         a. Restyled and styled all css as changes were made (added feature for quizzes and categories to be scrolled through smoothly)
         b. Refactored quizzes to be RESTful
         c. Debugged
     4. Saba Karbakhsh
-        a. *Created the websocket functionalities, minus the functionality to load media and ability to compile
+        a. *Created the websocket functionalities, minus the functionality to load media
     5. Liam Janicke
         a. Introduced AOP *ONLY WORKS IF YOU COMPILE WITH JDK 11* 
         b. Introduced FP *ONLY WORKS IF YOU COMPILE WITH JDK 11*
