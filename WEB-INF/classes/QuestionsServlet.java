@@ -40,7 +40,8 @@ public class QuestionsServlet extends HttpServlet {
         StringBuilder mediaHtml = new StringBuilder();  // For holding the media HTML
         Integer currQuestion = (Integer) session.getAttribute("currQuestion");
         ArrayList<AClass> questions = (ArrayList<AClass>) session.getAttribute("questions");
-        
+        String role = (String) session.getAttribute("USER_ROLE");
+        req.setAttribute("role", role);
         //Autoplay quiz
         Boolean autoplayEnabled = (Boolean) session.getAttribute("autoplay");
         if (autoplayEnabled == null) {
@@ -135,7 +136,7 @@ public class QuestionsServlet extends HttpServlet {
                 String questionType = questionJSON.getString("question_type");
                 // // Display question
                 questionsHtml.append("<div class=\"question\"").append(">\n")
-                             .append("<p>").append(questionText).append("</p>\n");
+                             .append("<p class=\"questionText\">").append(questionText).append("</p>\n");
                              
                 if(!questionType.equals("TEXT")){
                     System.out.println("INSERT QUESTION MEDIA");
@@ -364,4 +365,36 @@ public class QuestionsServlet extends HttpServlet {
             return null;
         }
     }
+    // private String getUserRoleFromDatabase(String username) {
+    //     Connection con = null;
+    //     PreparedStatement ps = null;
+    //     ResultSet rs = null;
+    //     String role = null;
+
+    //     try {
+    //         // Load MySQL driver
+    //         Class.forName("com.mysql.cj.jdbc.Driver");
+
+    //         // Database connection
+    //         con = DatabaseUtil.getConnection();
+            
+    //         // Query to get the user's role
+    //         String sql = "SELECT role FROM users WHERE username = ?";
+    //         ps = con.prepareStatement(sql);
+    //         ps.setString(1, username);
+    //         rs = ps.executeQuery();
+
+    //         if (rs.next()) {
+    //             role = rs.getString("role");
+    //         }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     } finally {
+    //         try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //         try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //         try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //     }
+
+    //     return role;
+    // }
 }

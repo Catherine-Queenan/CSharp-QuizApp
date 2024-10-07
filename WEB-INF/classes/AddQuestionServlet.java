@@ -8,6 +8,8 @@ import java.nio.ByteBuffer;
 import jakarta.servlet.annotation.MultipartConfig;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import org.json.JSONArray;
+
 
 @MultipartConfig
 public class AddQuestionServlet extends HttpServlet {
@@ -276,12 +278,24 @@ public class AddQuestionServlet extends HttpServlet {
 
             repository.insert(factory.createAClass("question", newQuestion.toString()));
 
+            int indexOfCorrect =0;
             // Insert answers into the `answers` table
 
             for (int i = 0; i < answerTexts.length; i++) {
                 UUID answerUUID = UUID.randomUUID();
                 byte[] answerIdBinary = uuidToBytes(answerUUID);
                 boolean isCorrect = (correctAnswer != null && Integer.parseInt(correctAnswer) == i + 1);
+                if(isCorrect){
+                    indexOfCorrect = i;
+                }
+                // String insertAnswerSql = "INSERT INTO answers (id, question_id, answer_text, is_correct, answer_type) VALUES (?, ?, ?, ?, ?)";
+                // psAnswer = con.prepareStatement(insertAnswerSql);
+                // psAnswer.setBytes(1, answerIdBinary);
+                // psAnswer.setBytes(2, questionIdBinary);
+                // psAnswer.setString(3, answerTexts[i]);
+                // psAnswer.setBoolean(4, isCorrect);
+                // psAnswer.setString(5, "text");  // Assuming answer_type is 'text' for now
+                // psAnswer.executeUpdate();
 
                 StringBuilder newAnswer = new StringBuilder();
                 newAnswer.append("id:==").append(new String(answerIdBinary, StandardCharsets.UTF_8))
@@ -325,6 +339,20 @@ public class AddQuestionServlet extends HttpServlet {
 
                 repository.insert(factory.createAClass("answer", newAnswer.toString()));
             }
+
+
+
+            JSONArray jsonArray = new JSONArray(answerTexts);
+            String answerTexts2 = jsonArray.toString();  // Converts the array to a JSON string
+            String insertQuestionWithAnswersSql = "INSERT INTO QuestionsWithAnswers (questionText, answers, indexOfCorrect,quizName) VALUES (?, ?, ?,?)";
+            psQuestionWithAnswers = con.prepareStatement(insertQuestionWithAnswersSql);
+            psQuestionWithAnswers.setString(1, questionText);
+            psQuestionWithAnswers.setString(2, answerTexts2);
+            psQuestionWithAnswers.setInt(3, indexOfCorrect);
+            psQuestionWithAnswers.setString(4, quizName);
+            psQuestionWithAnswers.executeUpdate();
+
+
 
             // Redirect back to the quiz creation page or show success message
             res.sendRedirect("editQuestions?quizName=" + quizName);
