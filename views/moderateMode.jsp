@@ -26,6 +26,21 @@
             cursor: pointer;
         }
 
+        /* Displaying media */
+        #media-container {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        #media-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+
         /* options */
         #options {
             width: 100%;
@@ -321,7 +336,7 @@
                     }
                     imgElement.src = imageSrc;
                     imgElement.alt = "Question Image";
-                    imgElement.style.width = "100%"; // Adjust image size
+                    // imgElement.style.width = "50%"; // Adjust image size
                     mediaDiv.appendChild(imgElement);
                 });
             }
