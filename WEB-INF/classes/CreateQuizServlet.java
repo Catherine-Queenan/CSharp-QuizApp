@@ -197,7 +197,7 @@ public class CreateQuizServlet extends HttpServlet {
                     File saveFile = new File(getServletContext().getRealPath("/public/media"));
                     File file = new File(saveFile, categoryFileName);
                     categoryPart.write(file.getAbsolutePath());
-                    mediaUrl = "../public/media/" + categoryFileName;
+                    mediaUrl = "public/media/" + categoryFileName;
 
                     String insertMedia = "id:==" + categoryMediaIdString 
                                         + ",,,media_type:==IMG" 

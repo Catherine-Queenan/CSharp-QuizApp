@@ -91,7 +91,7 @@ public class MainServlet extends HttpServlet {
                     AClass categoryMedia = repository.select("media", categoryJSON.getString("media_id")).get(0);
                     // String mediaFilePath = categoryMedia.serialize().getString("media_file_path");
                     //         mediaHtml.append("<img src=\"").append(mediaFilePath).append("\" alt=\"").append(categoryName).append("\" class=\"categoryImg\">");
-                    categoryJSON.put("media", categoryMedia);
+                    categoryJSON.put("media", categoryMedia.serialize());
                 }
                 
                 categoriesArray.put(categoryJSON);
