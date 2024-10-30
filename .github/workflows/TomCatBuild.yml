@@ -48,7 +48,7 @@ jobs:
     - name: Compile Project
       run: |
         # Define the source directory
-        SOURCE_DIR="src"  # Change if needed
+        SOURCE_DIR="WEB-INF/classes"
 
         # Create build directory and compile the Java files
         mkdir -p build/WEB-INF/classes
