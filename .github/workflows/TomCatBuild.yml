@@ -79,10 +79,15 @@ jobs:
       
     - name: Set up Tomcat
       run: |
-        curl -L -O https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.74/bin/apache-tomcat-9.0.74.tar.gz
-        file apache-tomcat-9.0.74.tar.gz  # Optional check for file type
-        tar -xzf apache-tomcat-9.0.74.tar.gz
-        mv apache-tomcat-9.0.74 tomcat
+        curl -L -O https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.74/bin/apache-tomcat-9.0.74.tar.gz
+        # Verify that the downloaded file is a gzip archive
+        if file apache-tomcat-9.0.74.tar.gz | grep -q 'gzip compressed data'; then
+          tar -xzf apache-tomcat-9.0.74.tar.gz
+          mv apache-tomcat-9.0.74 tomcat
+        else
+          echo "Download failed or file is not in gzip format"
+          exit 1
+        fi
       env:
         CATALINA_HOME: ${{ github.workspace }}/tomcat
 
