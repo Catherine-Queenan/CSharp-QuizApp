@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
 
+        body {
+            overflow-x: hidden;
+        }
+        
         .wrap {
             padding: 60px 0;
             overflow-y: scroll;
@@ -115,7 +119,7 @@
         }
 
         /* Displaying media */
-        .imgWrap {
+        .question>.imgWrap {
             width: 100%;
             height: 400px;
             margin-top: 20px;
@@ -148,6 +152,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+
+        /* Media display for the answers */
+        .answersOption img {
+            border-radius: 10px;
+            max-width: 90%;
+            width: 100%;
+            max-height: 400px;
+            height: 100%;
+            object-fit: cover;
         }
 
         /* Timer */
@@ -210,7 +224,7 @@
         </form>
     </header>
 
-    <div class="wrap">
+    <div class="wrap" id="wrap">
         <div class="title cherry-cream-soda">
             Question <%=request.getAttribute("qNumber")%> / <%=request.getAttribute("quizSize")%>
         </div>
@@ -243,6 +257,14 @@
         buttons.forEach(function(button) {
             button.style.height = maxHeight + "px";
         });
+
+
+        // Changing the display depending on how long the content is
+        if (document.querySelector(".questions").offsetHeight > 600) {
+            document.getElementById("wrap").style.height = `fit-content`;
+        } else {
+            document.getElementById("wrap").style.height = `${100}vh`;
+        }
     };
 
     let correctAnswer = document.getElementById('questionForm');
@@ -266,9 +288,8 @@
 
     function submitCorrectAnswer() {
         setTimeout(() => {
-                    correctAnswer.submit();
-                    
-            }, 500);
+            correctAnswer.submit();
+        }, 500);
     }
 
     function nextQuestion() {
@@ -276,16 +297,17 @@
             answerMedia.style.display = "flex";
             let audioAnswer = document.getElementById("audio-answer");
             let audioQuestion = document.getElementById("audio-question");
-            if(audioAnswer != null){
-                audioAnswer.play();
-            } else {
-                playerAnswer.playVideo();
-            }
-
+            
             if(audioQuestion != null){
                 audioQuestion.pause();
             } else if(playerQuestion) {
                 playerQuestion.stopVideo();
+            }
+            
+            if(audioAnswer != null){
+                audioAnswer.play();
+            } else {
+                playerAnswer.playVideo();
             }
         } else {
             submitCorrectAnswer()
@@ -479,8 +501,6 @@
         }
     }
 
- 
-
-
 </script>
+<script src="scripts\logout.js"></script>
 </html>

@@ -100,7 +100,18 @@
             margin-bottom: 20px;
         }
 
-        #imageAudioUploadQuestion {
+        /* Answer media */
+        #videoUrlAnswer,
+        .audioStartEndAnswer {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        #imageAudioUploadQuestion,
+        #audioUploadAnswer {
+            display: flex;
             flex-direction: column;
         }
 
@@ -133,7 +144,7 @@
             <button class="homeBtn" type="Submit">Home</button>
         </form>
         <form action="logout">
-            <button class="logoutBtn" type="Submit">Log Out</button>
+            <button id="logoutButton" class="logoutBtn" type="Submit">Log Out</button>
         </form>
     </header>
 
@@ -157,8 +168,10 @@
             </select>
 
             <div id="imageAudioUploadQuestion" style="display: none;">
-                <label for="mediaFile">File:</label>
-                <input type="file" id="mediaFile" name="mediaFile" accept="audio/*,image/*" />
+                <div>
+                    <label for="mediaFile">File:</label>
+                    <input type="file" id="mediaFile" name="mediaFile" accept="audio/*,image/*" />
+                </div>
                 <div id="audioStartEnd" style="display: none;">
                     <div>
                         <label for="audioStart">Audio Start (seconds):</label>
@@ -212,8 +225,10 @@
                 </div>
 
                 <div id="audioUploadAnswer" style="display: none;">
-                    <label for="mediaFile">File:</label>
-                    <input type="file"  class="mediaFileAnswer" name="mediaFile" accept="audio/*,image/*" />
+                    <div>
+                        <label for="mediaFile">File:</label>
+                        <input type="file"  class="mediaFileAnswer" name="mediaFile" accept="audio/*,image/*" />
+                    </div>
                     <div class="audioStartEndAnswer">
                         <div>
                             <label for="audioStart">Audio Start (seconds):</label>
@@ -247,7 +262,7 @@
             <button class="addQuestionBtn" type="submit">Add Question</button>
         </form>
     </div>
-
+    <script src="scripts\logout.js"></script>
     <script>
         console.log(document.getElementById("quizName").value);
         let questionMedia = document.getElementById('questionType');

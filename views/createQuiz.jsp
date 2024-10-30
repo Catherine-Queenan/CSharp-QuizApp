@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,6 +70,10 @@
             outline: none;
         }
 
+        #categoryImage {
+            margin-top: 30px;
+        }
+
     </style>
     <%@page import="java.util.ArrayList" %>
 </head>
@@ -81,7 +83,7 @@
             <button class="homeBtn" type="Submit">Home</button>
         </form>
         <form action="logout">
-            <button class="logoutBtn" type="Submit">Log Out</button>
+            <button id="logoutButton" class="logoutBtn" type="Submit">Log Out</button>
         </form>
     </header>
 
@@ -95,6 +97,14 @@
         <form class="newQuizForm" method="post" action="createQuiz" enctype="multipart/form-data">
             <label for="quizName">Quiz Name:</label>
             <input type="text" id="quizName" name="quizName" required />
+            <div class="quizImgWrap">
+                <input type="checkbox" name="quizImage" id="quizImage">
+                <label for="quizImage">Add Quiz Image</label>
+                <div id="imageUploadQuiz" style="display: none;">
+                    <label for="quizMediaFile">File:</label>
+                    <input type="file" id="quizMediaFile" name="quizMedia" accept="image/*" />
+                </div>
+            </div>
 
             <label for="categoryName">Category Name:</label>
             <select name="categoryName" id="category">
@@ -107,6 +117,7 @@
             <div id="newCatDiv" style="display:none;">
                 <label for="newCategory">Other Category:</label>
                 <input id="newCategory" name="newCategory" type="text" />
+                <br>
                 <input type="checkbox" name="categoryImage" id="categoryImage">
                 <label for="categoryImage">Add Category Image</label>
                 <div id="imageUploadCategory" style="display: none;">
@@ -117,12 +128,7 @@
 
             <label for="description">Description:</label>
             <textarea id="description" name="description"></textarea>
-            <input type="checkbox" name="quizImage" id="quizImage">
-                <label for="quizImage">Add Quiz Image</label>
-                <div id="imageUploadQuiz" style="display: none;">
-                    <label for="quizMediaFile">File:</label>
-                    <input type="file" id="quizMediaFile" name="quizMedia" accept="image/*" />
-                </div>
+
             <button class="createQuizBtn" type="submit">Create Quiz</button>
 
         </form>
@@ -139,6 +145,7 @@
         <% } %>
     </div>
 </body>
+<script src="scripts\logout.js"></script>
 <script>
     function addAnswer() {
         const answerDiv = document.createElement('div');
