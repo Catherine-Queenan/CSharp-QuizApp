@@ -44,6 +44,24 @@ jobs:
         java-version: ${{ matrix.java }}
         distribution: zulu
 
+    # Step to download jakarta.servlet-api.jar
+    - name: Download Servlet API
+      run: |
+        curl -O https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/5.0.0/jakarta.servlet-api-5.0.0.jar
+
+    # Compile Project Step with Servlet API in Classpath
+    - name: Compile Project
+      run: |
+        # Define the source directory, update if necessary
+        SOURCE_DIR="WEB-INF/classes"  # Use your correct source directory here
+
+        # Create build directory
+        mkdir -p build
+
+        # Compile the files with the servlet API in classpath
+        find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp jakarta.servlet-api-5.0.0.jar -d build
+      shell: bash
+
     # Compile Project Step
     - name: Compile Project
       run: |
