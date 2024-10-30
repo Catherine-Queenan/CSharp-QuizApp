@@ -49,30 +49,21 @@ jobs:
       run: |
         curl -O https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/5.0.0/jakarta.servlet-api-5.0.0.jar
 
-    # Compile Project Step with Servlet API in Classpath
+   # Step to download org.json library
+    - name: Download JSON Library
+      run: |
+        curl -O https://repo1.maven.org/maven2/org/json/json/20230227/json-20230227.jar
+
+    # Compile Project Step with both libraries in Classpath
     - name: Compile Project
       run: |
-        # Define the source directory, update if necessary
-        SOURCE_DIR="WEB-INF/classes"  # Use your correct source directory here
-
-        # Create build directory
+        SOURCE_DIR="WEB-INF/classes" 
         mkdir -p build
 
-        # Compile the files with the servlet API in classpath
-        find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp jakarta.servlet-api-5.0.0.jar -d build
+        # Compile the files with the servlet API and JSON library in classpath
+        find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp "jakarta.servlet-api-5.0.0.jar:json-20230227.jar" -d build
       shell: bash
-
-    # Compile Project Step
-    - name: Compile Project
-      run: |
-        # Define the source directory
-        SOURCE_DIR="WEB-INF/classes"
-
-        # Create build directory and compile the Java files
-        mkdir -p build/WEB-INF/classes
-        find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -d build/WEB-INF/classes
-      shell: bash
-
+      
     - name: Set up Tomcat
       run: |
         curl -O https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.74/bin/apache-tomcat-9.0.74.tar.gz
