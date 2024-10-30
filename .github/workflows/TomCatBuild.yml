@@ -106,7 +106,7 @@ jobs:
     - name: Run Smoke Test
       run: |
         sleep 20  # Allow time for Tomcat to start
-        curl --fail http://localhost:8081/login || exit 1
+        curl --fail http://localhost:8081/QuizApp || exit 1
 
     - name: Upload Logs
       uses: actions/upload-artifact@v4
