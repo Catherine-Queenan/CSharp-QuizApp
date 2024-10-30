@@ -79,7 +79,8 @@ jobs:
       
     - name: Set up Tomcat
       run: |
-        curl -O https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.74/bin/apache-tomcat-9.0.74.tar.gz
+        curl -L -O https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.74/bin/apache-tomcat-9.0.74.tar.gz
+        file apache-tomcat-9.0.74.tar.gz  # Optional check for file type
         tar -xzf apache-tomcat-9.0.74.tar.gz
         mv apache-tomcat-9.0.74 tomcat
       env:
