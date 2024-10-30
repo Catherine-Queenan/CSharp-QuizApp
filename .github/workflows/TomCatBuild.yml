@@ -54,14 +54,27 @@ jobs:
       run: |
         curl -O https://repo1.maven.org/maven2/org/json/json/20230227/json-20230227.jar
 
-    # Compile Project Step with both libraries in Classpath
+    # Step to download AspectJ
+    - name: Download AspectJ Library
+      run: |
+        curl -O https://repo1.maven.org/maven2/org/aspectj/aspectjrt/1.9.19/aspectjrt-1.9.19.jar
+
+    # Step to download Jakarta WebSocket API
+    - name: Download Jakarta WebSocket API
+      run: |
+        curl -O https://repo1.maven.org/maven2/jakarta/websocket/jakarta.websocket-api/2.0.0/jakarta.websocket-api-2.0.0.jar
+
+    # Compile Project Step with all libraries in Classpath
     - name: Compile Project
       run: |
-        SOURCE_DIR="WEB-INF/classes" 
+        # Define the source directory, update if necessary
+        SOURCE_DIR="WEB-INF/classes"  # Use your correct source directory here
+
+        # Create build directory
         mkdir -p build
 
-        # Compile the files with the servlet API and JSON library in classpath
-        find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp "jakarta.servlet-api-5.0.0.jar:json-20230227.jar" -d build
+        # Compile the files with all libraries in classpath
+        find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp "jakarta.servlet-api-5.0.0.jar:json-20230227.jar:aspectjrt-1.9.19.jar:jakarta.websocket-api-2.0.0.jar" -d build
       shell: bash
       
     - name: Set up Tomcat
