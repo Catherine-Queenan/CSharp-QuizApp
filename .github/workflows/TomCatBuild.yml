@@ -103,15 +103,22 @@ jobs:
 
     - name: Deploy to Tomcat
       run: |
-        # Remove the existing ROOT application if necessary
         if ($env:RUNNER_OS -eq "Windows") {
-            Remove-Item -Recurse -Force "$env:CATALINA_HOME\webapps\ROOT"
+            # Check if ROOT directory exists before removing
+            if (Test-Path "$env:CATALINA_HOME\webapps\ROOT") {
+                Remove-Item -Recurse -Force "$env:CATALINA_HOME\webapps\ROOT"
+            }
+            # Create ROOT directory if it does not exist
+            New-Item -ItemType Directory -Path "$env:CATALINA_HOME\webapps\ROOT"
             Copy-Item -Recurse build\* "$env:CATALINA_HOME\webapps\ROOT"
             # Start Tomcat using cmd.exe
             Start-Process -NoNewWindow -File "cmd.exe" -ArgumentList "/c $env:CATALINA_HOME\bin\startup.bat"
         } else {
             # For Unix-like systems
-            rm -rf "$env:CATALINA_HOME/webapps/ROOT"
+            if [ -d "$env:CATALINA_HOME/webapps/ROOT" ]; then
+                rm -rf "$env:CATALINA_HOME/webapps/ROOT"
+            fi
+            mkdir -p "$env:CATALINA_HOME/webapps/ROOT"
             cp -r build/* "$env:CATALINA_HOME/webapps/ROOT"
             # Start Tomcat (ensure that startup.sh is executable)
             bash "$env:CATALINA_HOME/bin/startup.sh"
@@ -120,8 +127,8 @@ jobs:
       env:
         LC_ALL: en_US.UTF-8
         JAVA_HOME: C:\hostedtoolcache\windows\Java_Zulu_jdk\23.0.1-11\x64
-        JAVA_HOME_23_ARM64: /Users/runner/hostedtoolcache/Java_Zulu_jdk/23.0.1-11/arm64
         JAVA_HOME_23_X64: C:\hostedtoolcache\windows\Java_Zulu_jdk\23.0.1-11\x64
+        JAVA_HOME_23_ARM64: /Users/runner/hostedtoolcache/Java_Zulu_jdk/23.0.1-11/arm64
         CATALINA_HOME: D:\a\CS-QuizGame\CS-QuizGame\tomcat
 
     - name: Run Smoke Test
