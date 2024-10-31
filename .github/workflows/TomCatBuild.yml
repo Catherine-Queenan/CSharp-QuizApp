@@ -112,9 +112,10 @@ jobs:
             }
         }
     
-        # Proceed to remove the existing ROOT application if necessary
+        # Define the ROOT path for consistency
         $rootPath = "$env:CATALINA_HOME/webapps/ROOT"
     
+        # Now, proceed to remove the existing ROOT application if necessary
         if ($env:RUNNER_OS -eq "Windows") {
             # Check if ROOT directory exists before removing
             if (Test-Path $rootPath) {
@@ -144,14 +145,17 @@ jobs:
             }
             # Create ROOT directory if it does not exist
             New-Item -ItemType Directory -Path $rootPath -Force
-            cp -r build/* $rootPath
-            
+    
+            # Use a more reliable method to copy files to the ROOT directory
+            cp -r build/* "$rootPath"
+    
             # Check if startup.sh exists before trying to run it
-            if (Test-Path "$env:CATALINA_HOME/bin/startup.sh") {
+            $startupScript = "$env:CATALINA_HOME/bin/startup.sh"
+            if (Test-Path $startupScript) {
                 # Start Tomcat for macOS
-                bash "$env:CATALINA_HOME/bin/startup.sh"
+                bash "$startupScript"
             } else {
-                Write-Host "Error: startup.sh not found at $env:CATALINA_HOME/bin/startup.sh"
+                Write-Host "Error: startup.sh not found at $startupScript"
                 exit 1
             }
         }
