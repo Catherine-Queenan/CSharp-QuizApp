@@ -92,6 +92,11 @@ jobs:
       env:
         CATALINA_HOME: ${{ github.workspace }}/tomcat
 
+    - name: Verify Tomcat Installation
+      run: |
+        echo "Contents of CATALINA_HOME:"
+        ls -la $CATALINA_HOME/bin/
+
     - name: Deploy to Tomcat
       run: |
         # Check if JAVA_HOME is set, and use it for Windows or Unix
@@ -106,9 +111,10 @@ jobs:
                 exit 1
             }
         }
-    
-        # Check if ROOT directory exists before removing
+        
+        # Now, proceed to remove the existing ROOT application if necessary
         if ($env:RUNNER_OS -eq "Windows") {
+            # Check if ROOT directory exists before removing
             if (Test-Path "$env:CATALINA_HOME\webapps\ROOT") {
                 Remove-Item -Recurse -Force "$env:CATALINA_HOME\webapps\ROOT"
             }
@@ -118,23 +124,16 @@ jobs:
             # Start Tomcat using cmd.exe
             Start-Process -NoNewWindow -File "cmd.exe" -ArgumentList "/c $env:CATALINA_HOME\bin\startup.bat"
         } else {
-            # For Unix-like systems (Linux and macOS)
+            # For Unix-like systems
             # Check if ROOT directory exists before removing
             if (Test-Path "$env:CATALINA_HOME/webapps/ROOT") {
-                Remove-Item -Recurse -Force "$env:CATALINA_HOME/webapps/ROOT"
+                Remove-Item -Recurse -Force "$env:CATALINA_HOME/webapps\ROOT"
             }
             # Create ROOT directory if it does not exist
-            New-Item -ItemType Directory -Path "$env:CATALINA_HOME/webapps/ROOT" -Force
-            cp -r build/* "$env:CATALINA_HOME/webapps/ROOT"
-            
+            New-Item -ItemType Directory -Path "$env:CATALINA_HOME/webapps\ROOT" -Force
+            cp -r build/* "$env:CATALINA_HOME/webapps\ROOT"
             # Start Tomcat (ensure that startup.sh is executable)
-            if [ -f "$env:CATALINA_HOME/bin/startup.sh" ]; then
-                chmod +x "$env:CATALINA_HOME/bin/startup.sh"  # Ensure the script is executable
-                bash "$env:CATALINA_HOME/bin/startup.sh"
-            else
-                echo "startup.sh not found in $env:CATALINA_HOME/bin/"
-                exit 1
-            fi
+            bash "$env:CATALINA_HOME/bin/startup.sh"
         }
       shell: pwsh
       env:
