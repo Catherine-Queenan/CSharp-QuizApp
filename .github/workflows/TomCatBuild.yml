@@ -20,7 +20,7 @@ jobs:
       matrix:
         isMain:
           - ${{ contains(github.ref, 'main') }}
-        java: [ 21, 23, 24-ea ]
+        java: [17, 21, 23, 24-ea ]
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         exclude:
           - os: windows-latest
@@ -73,8 +73,15 @@ jobs:
         # Create build directory
         mkdir -p build
 
-        # Compile the files with all libraries in classpath
-        find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp "jakarta.servlet-api-5.0.0.jar:json-20230227.jar:aspectjrt-1.9.19.jar:jakarta.websocket-api-2.0.0.jar" -d build
+        # Determine classpath separator based on OS
+        if [[ "$RUNNER_OS" == "Windows" ]]; then
+            CP="jakarta.servlet-api-5.0.0.jar;json-20230227.jar;aspectjrt-1.9.19.jar;jakarta.websocket-api-2.0.0.jar"
+        else
+            CP="jakarta.servlet-api-5.0.0.jar:json-20230227.jar:aspectjrt-1.9.19.jar:jakarta.websocket-api-2.0.0.jar"
+        fi
+
+        # Compile
+        find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp "$CP" -d build
       shell: bash
       
     - name: Set up Tomcat
