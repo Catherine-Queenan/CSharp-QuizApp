@@ -94,63 +94,77 @@ jobs:
 
     - name: Deploy to Tomcat
       run: |
-        # Define the path for the ROOT directory
-        ROOT_PATH="$CATALINA_HOME/webapps/ROOT"
+        # Check if JAVA_HOME is set
+        if (-Not $env:JAVA_HOME) {
+            Write-Host "JAVA_HOME is not set. Please set JAVA_HOME in your environment."
+            exit 1
+        }
     
-        # Check if the OS is Linux or macOS
-        if [[ "$RUNNER_OS" == "Linux" || "$RUNNER_OS" == "macOS" ]]; then
-            # Removing existing ROOT directory
-            if [ -d "$ROOT_PATH" ]; then
-                echo "Removing existing ROOT directory..."
-                rm -rf "$ROOT_PATH"
-            fi
+        # Define paths for ROOT and startup script
+        $rootPath = "$env:CATALINA_HOME/webapps/ROOT"
+        $startupScript = "$env:CATALINA_HOME/bin/startup.sh"
     
-            # Creating ROOT directory
-            echo "Creating ROOT directory..."
-            mkdir -p "$ROOT_PATH"
-    
-            if [ ! -d "$ROOT_PATH" ]; then
-                echo "Error: ROOT directory was not created successfully."
-                exit 1
-            fi
-    
-            # Copying build files to ROOT directory
-            echo "Copying build files to ROOT directory..."
-            cp -R build/* "$ROOT_PATH"
-        elif [[ "$RUNNER_OS" == "Windows" ]]; then
-            # PowerShell commands for Windows
-            Write-Host "Removing existing ROOT directory..."
-            if (Test-Path $ROOT_PATH) {
-                Remove-Item -Recurse -Force $ROOT_PATH
+        # Determine the operating system and perform actions accordingly
+        if ($env:RUNNER_OS -eq "Windows") {
+            # Remove existing ROOT directory if it exists
+            if (Test-Path $rootPath) {
+                Write-Host "Removing existing ROOT directory..."
+                Remove-Item -Recurse -Force $rootPath
             }
     
+            # Create ROOT directory
             Write-Host "Creating ROOT directory..."
-            New-Item -ItemType Directory -Path $ROOT_PATH -Force
+            New-Item -ItemType Directory -Path $rootPath -Force
     
-            if (-Not (Test-Path $ROOT_PATH)) {
+            # Copy files to ROOT directory
+            Write-Host "Copying build files to ROOT directory..."
+            Copy-Item -Recurse build\* $rootPath
+    
+            # Start Tomcat
+            Write-Host "Starting Tomcat..."
+            Start-Process -NoNewWindow -File "cmd.exe" -ArgumentList "/c $env:CATALINA_HOME\bin\startup.bat"
+        } else {
+            # For Unix-like systems (Ubuntu and macOS)
+            # Remove existing ROOT directory if it exists
+            if (Test-Path $rootPath) {
+                Write-Host "Removing existing ROOT directory..."
+                Remove-Item -Recurse -Force $rootPath
+            }
+    
+            # Create ROOT directory
+            Write-Host "Creating ROOT directory..."
+            New-Item -ItemType Directory -Path $rootPath -Force
+    
+            # List contents of the build directory for debugging
+            Write-Host "Listing contents of build directory:"
+            ls build
+    
+            # Copy files to ROOT directory
+            Write-Host "Copying build files to ROOT directory..."
+            cp -r build/* "$rootPath" || { Write-Host "Error copying files to ROOT"; exit 1 }
+    
+            # Check if ROOT directory was created successfully
+            if (-Not (Test-Path $rootPath)) {
                 Write-Host "Error: ROOT directory was not created successfully."
                 exit 1
             }
     
-            Write-Host "Copying build files to ROOT directory..."
-            Copy-Item -Recurse build\* $ROOT_PATH
-        else
-            echo "Unsupported OS: $RUNNER_OS"
-            exit 1
-        fi
-    
-        # Start Tomcat
-        STARTUP_SCRIPT="$CATALINA_HOME/bin/startup.sh"
-    
-        echo "Starting Tomcat..."
-        if [ -f "$STARTUP_SCRIPT" ]; then
-            chmod +x "$STARTUP_SCRIPT"  # Ensure the script is executable
-            bash "$STARTUP_SCRIPT"
-        else
-            echo "Error: startup.sh not found at $STARTUP_SCRIPT"
-            exit 1
-        fi
-      shell: bash
+            # Start Tomcat
+            Write-Host "Checking for startup script at $startupScript..."
+            if (Test-Path $startupScript) {
+                Write-Host "Starting Tomcat..."
+                chmod +x "$startupScript"  # Ensure the script is executable
+                bash "$startupScript"
+            } else {
+                Write-Host "Error: startup.sh not found at $startupScript"
+                exit 1
+            }
+        }
+      shell: pwsh
+      env:
+        LC_ALL: en_US.UTF-8
+        CATALINA_HOME: /home/runner/work/CS-QuizGame/CS-QuizGame/tomcat
+
 
     - name: Smoke Test for Tomcat
       run: |
