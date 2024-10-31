@@ -33,7 +33,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: ${{ matrix.java }}
-        distribution: zulu
+        distribution: oracle
 
     # Step to download jakarta.servlet-api.jar
     - name: Download Servlet API
@@ -96,9 +96,9 @@ jobs:
       run: |
         # Set JAVA_HOME based on OS
         if ($env:RUNNER_OS -eq "Windows") {
-            $env:JAVA_HOME = "C:\hostedtoolcache\windows\Java_Zulu_jdk\17.0.9-11\x64"  # Update path for Zulu 17
+            $env:JAVA_HOME = "C:\Program Files\Common Files\Oracle\Java\javapath"  # Path for Oracle JDK
         } else {
-            $env:JAVA_HOME = "/usr/local/java/zulu-17"  # Update path for Unix to match Zulu 17
+            $env:JAVA_HOME = "/usr/lib/jvm/java-17-oracle"  # Update path for Unix to your Oracle JDK installation
         }
     
         # Check if JAVA_HOME is set correctly
@@ -122,7 +122,7 @@ jobs:
             # For Unix-like systems
             # Check if ROOT directory exists before removing
             if (Test-Path "$env:CATALINA_HOME/webapps/ROOT") {
-                Remove-Item -Recurse -Force "$env:CATALINA_HOME/webapps/ROOT"
+                Remove-Item -Recurse -Force "$env:CATALINA_HOME/webapps\ROOT"
             }
             # Create ROOT directory if it does not exist
             New-Item -ItemType Directory -Path "$env:CATALINA_HOME/webapps/ROOT" -Force
