@@ -97,57 +97,47 @@ jobs:
         # Define the path for the ROOT directory
         ROOT_PATH="$CATALINA_HOME/webapps/ROOT"
     
-        # Function to create the ROOT directory
-        create_root_directory() {
+        # Check if the OS is Linux or macOS
+        if [[ "$RUNNER_OS" == "Linux" || "$RUNNER_OS" == "macOS" ]]; then
+            # Removing existing ROOT directory
             if [ -d "$ROOT_PATH" ]; then
                 echo "Removing existing ROOT directory..."
                 rm -rf "$ROOT_PATH"
             fi
-            
+    
+            # Creating ROOT directory
             echo "Creating ROOT directory..."
             mkdir -p "$ROOT_PATH"
-            
+    
             if [ ! -d "$ROOT_PATH" ]; then
                 echo "Error: ROOT directory was not created successfully."
                 exit 1
             fi
-        }
     
-        # Function to copy files to the ROOT directory
-        copy_files() {
+            # Copying build files to ROOT directory
             echo "Copying build files to ROOT directory..."
             cp -R build/* "$ROOT_PATH"
-        }
+        elif [[ "$RUNNER_OS" == "Windows" ]]; then
+            # PowerShell commands for Windows
+            Write-Host "Removing existing ROOT directory..."
+            if (Test-Path $ROOT_PATH) {
+                Remove-Item -Recurse -Force $ROOT_PATH
+            }
     
-        # Detect the operating system and set commands accordingly
-        case "$RUNNER_OS" in
-            'Linux' | 'macOS')
-                create_root_directory
-                copy_files
-                ;;
-            'Windows')
-                # Use PowerShell commands for Windows
-                Write-Host "Removing existing ROOT directory..."
-                if (Test-Path $ROOT_PATH) {
-                    Remove-Item -Recurse -Force $ROOT_PATH
-                }
-                
-                Write-Host "Creating ROOT directory..."
-                New-Item -ItemType Directory -Path $ROOT_PATH -Force
-                
-                if (-Not (Test-Path $ROOT_PATH)) {
-                    Write-Host "Error: ROOT directory was not created successfully."
-                    exit 1
-                }
-                
-                Write-Host "Copying build files to ROOT directory..."
-                Copy-Item -Recurse build\* $ROOT_PATH
-                ;;
-            *)
-                echo "Unsupported OS: $RUNNER_OS"
+            Write-Host "Creating ROOT directory..."
+            New-Item -ItemType Directory -Path $ROOT_PATH -Force
+    
+            if (-Not (Test-Path $ROOT_PATH)) {
+                Write-Host "Error: ROOT directory was not created successfully."
                 exit 1
-                ;;
-        esac
+            }
+    
+            Write-Host "Copying build files to ROOT directory..."
+            Copy-Item -Recurse build\* $ROOT_PATH
+        else
+            echo "Unsupported OS: $RUNNER_OS"
+            exit 1
+        fi
     
         # Start Tomcat
         STARTUP_SCRIPT="$CATALINA_HOME/bin/startup.sh"
