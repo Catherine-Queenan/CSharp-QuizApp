@@ -94,45 +94,73 @@ jobs:
 
     - name: Deploy to Tomcat
       run: |
-        # Define paths for ROOT and startup script
-        $rootPath = "$env:CATALINA_HOME/webapps/ROOT"
-        $startupScript = "$env:CATALINA_HOME/bin/startup.sh"
+        # Define the path for the ROOT directory
+        ROOT_PATH="$CATALINA_HOME/webapps/ROOT"
     
-        # Remove existing ROOT directory if it exists
-        if (Test-Path $rootPath) {
-            if ((Get-Item $rootPath).PSIsContainer) {
-                Write-Host "Removing existing ROOT directory..."
-                Remove-Item -Recurse -Force $rootPath
-            } else {
-                Write-Host "Error: A file exists at $rootPath. Cannot create ROOT directory."
+        # Function to create the ROOT directory
+        create_root_directory() {
+            if [ -d "$ROOT_PATH" ]; then
+                echo "Removing existing ROOT directory..."
+                rm -rf "$ROOT_PATH"
+            fi
+            
+            echo "Creating ROOT directory..."
+            mkdir -p "$ROOT_PATH"
+            
+            if [ ! -d "$ROOT_PATH" ]; then
+                echo "Error: ROOT directory was not created successfully."
                 exit 1
-            }
+            fi
         }
     
-        # Create ROOT directory
-        Write-Host "Creating ROOT directory..."
-        New-Item -ItemType Directory -Path $rootPath -Force
-    
-        # Check if ROOT directory was created successfully
-        if (-Not (Test-Path $rootPath)) {
-            Write-Host "Error: ROOT directory was not created successfully."
-            exit 1
+        # Function to copy files to the ROOT directory
+        copy_files() {
+            echo "Copying build files to ROOT directory..."
+            cp -R build/* "$ROOT_PATH"
         }
     
-        # Copy files to ROOT directory
-        Write-Host "Copying build files to ROOT directory..."
-        Copy-Item -Recurse build\* $rootPath
+        # Detect the operating system and set commands accordingly
+        case "$RUNNER_OS" in
+            'Linux' | 'macOS')
+                create_root_directory
+                copy_files
+                ;;
+            'Windows')
+                # Use PowerShell commands for Windows
+                Write-Host "Removing existing ROOT directory..."
+                if (Test-Path $ROOT_PATH) {
+                    Remove-Item -Recurse -Force $ROOT_PATH
+                }
+                
+                Write-Host "Creating ROOT directory..."
+                New-Item -ItemType Directory -Path $ROOT_PATH -Force
+                
+                if (-Not (Test-Path $ROOT_PATH)) {
+                    Write-Host "Error: ROOT directory was not created successfully."
+                    exit 1
+                }
+                
+                Write-Host "Copying build files to ROOT directory..."
+                Copy-Item -Recurse build\* $ROOT_PATH
+                ;;
+            *)
+                echo "Unsupported OS: $RUNNER_OS"
+                exit 1
+                ;;
+        esac
     
         # Start Tomcat
-        Write-Host "Starting Tomcat..."
-        if (Test-Path $startupScript) {
-            chmod +x "$startupScript"  # Ensure the script is executable
-            bash "$startupScript"
-        } else {
-            Write-Host "Error: startup.sh not found at $startupScript"
+        STARTUP_SCRIPT="$CATALINA_HOME/bin/startup.sh"
+    
+        echo "Starting Tomcat..."
+        if [ -f "$STARTUP_SCRIPT" ]; then
+            chmod +x "$STARTUP_SCRIPT"  # Ensure the script is executable
+            bash "$STARTUP_SCRIPT"
+        else
+            echo "Error: startup.sh not found at $STARTUP_SCRIPT"
             exit 1
-        }
-      shell: pwsh
+        fi
+      shell: bash
 
     - name: Smoke Test for Tomcat
       run: |
