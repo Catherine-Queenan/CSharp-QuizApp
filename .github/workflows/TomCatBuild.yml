@@ -94,7 +94,7 @@ jobs:
 
     - name: Deploy to Tomcat
       run: |
-        # Check if JAVA_HOME is set, and use it for Windows, Ubuntu, or macOS
+        # Check if JAVA_HOME is set for Windows, Ubuntu, or macOS
         if ($env:RUNNER_OS -eq "Windows") {
             if (-Not $env:JAVA_HOME) {
                 Write-Host "JAVA_HOME is not set. Please set JAVA_HOME in your environment."
@@ -111,40 +111,49 @@ jobs:
                 exit 1
             }
         }
-        
-        # Now, proceed to remove the existing ROOT application if necessary
+    
+        # Proceed to remove the existing ROOT application if necessary
+        $rootPath = "$env:CATALINA_HOME/webapps/ROOT"
+    
         if ($env:RUNNER_OS -eq "Windows") {
             # Check if ROOT directory exists before removing
-            if (Test-Path "$env:CATALINA_HOME\webapps\ROOT") {
-                Remove-Item -Recurse -Force "$env:CATALINA_HOME\webapps\ROOT"
+            if (Test-Path $rootPath) {
+                Remove-Item -Recurse -Force $rootPath
             }
             # Create ROOT directory if it does not exist
-            New-Item -ItemType Directory -Path "$env:CATALINA_HOME\webapps\ROOT" -Force
-            Copy-Item -Recurse build\* "$env:CATALINA_HOME\webapps\ROOT"
+            New-Item -ItemType Directory -Path $rootPath -Force
+            Copy-Item -Recurse build\* $rootPath
             # Start Tomcat using cmd.exe
             Start-Process -NoNewWindow -File "cmd.exe" -ArgumentList "/c $env:CATALINA_HOME\bin\startup.bat"
         } elseif ($env:RUNNER_OS -eq "Linux") {
             # For Ubuntu (Linux)
             # Check if ROOT directory exists before removing
-            if (Test-Path "$env:CATALINA_HOME/webapps/ROOT") {
-                Remove-Item -Recurse -Force "$env:CATALINA_HOME/webapps/ROOT"
+            if (Test-Path $rootPath) {
+                Remove-Item -Recurse -Force $rootPath
             }
             # Create ROOT directory if it does not exist
-            New-Item -ItemType Directory -Path "$env:CATALINA_HOME/webapps/ROOT" -Force
-            cp -r build/* "$env:CATALINA_HOME/webapps/ROOT"
+            New-Item -ItemType Directory -Path $rootPath -Force
+            cp -r build/* $rootPath
             # Start Tomcat
             bash "$env:CATALINA_HOME/bin/startup.sh"
         } elseif ($env:RUNNER_OS -eq "macOS") {
             # For macOS
             # Check if ROOT directory exists before removing
-            if (Test-Path "$env:CATALINA_HOME/webapps/ROOT") {
-                Remove-Item -Recurse -Force "$env:CATALINA_HOME/webapps/ROOT"
+            if (Test-Path $rootPath) {
+                Remove-Item -Recurse -Force $rootPath
             }
             # Create ROOT directory if it does not exist
-            New-Item -ItemType Directory -Path "$env:CATALINA_HOME/webapps/ROOT" -Force
-            cp -r build/* "$env:CATALINA_HOME/webapps/ROOT"
-            # Start Tomcat for macOS
-            bash "$env:CATALINA_HOME/bin/startup.sh"
+            New-Item -ItemType Directory -Path $rootPath -Force
+            cp -r build/* $rootPath
+            
+            # Check if startup.sh exists before trying to run it
+            if (Test-Path "$env:CATALINA_HOME/bin/startup.sh") {
+                # Start Tomcat for macOS
+                bash "$env:CATALINA_HOME/bin/startup.sh"
+            } else {
+                Write-Host "Error: startup.sh not found at $env:CATALINA_HOME/bin/startup.sh"
+                exit 1
+            }
         }
       shell: pwsh
       env:
