@@ -140,7 +140,7 @@ jobs:
         }
         
         # This line is to specify the shell and pass the script
-        shell: /usr/bin/pwsh -command ". '{0}'"
+        shell: pwsh
         env:
             LC_ALL: en_US.UTF-8
             JAVA_HOME: /opt/hostedtoolcache/Java_Zulu_jdk/17.0.13-11/x64
