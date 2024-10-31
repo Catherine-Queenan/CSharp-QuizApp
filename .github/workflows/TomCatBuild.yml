@@ -100,7 +100,7 @@ jobs:
         } else {
             $env:JAVA_HOME = "/usr/local/java/zulu-23" # Replace with the correct path for Unix
         }
-    
+        
         # Remove the existing ROOT application if necessary
         if ($env:RUNNER_OS -eq "Windows") {
             # Check if ROOT directory exists before removing
@@ -112,36 +112,40 @@ jobs:
             Copy-Item -Recurse build\* "$env:CATALINA_HOME\webapps\ROOT"
             # Start Tomcat using cmd.exe
             Start-Process -NoNewWindow -File "cmd.exe" -ArgumentList "/c $env:CATALINA_HOME\bin\startup.bat"
-        else {
-          # For Unix-like systems
-          # Check if ROOT directory exists before removing
-          if (Test-Path "$env:CATALINA_HOME/webapps/ROOT") {
-              Remove-Item -Recurse -Force "$env:CATALINA_HOME/webapps/ROOT"
-          }
-          # Create ROOT directory if it does not exist
-          New-Item -ItemType Directory -Path "$env:CATALINA_HOME/webapps/ROOT" -Force
-          # Check if ROOT directory was created successfully
-          if (-Not (Test-Path "$env:CATALINA_HOME/webapps/ROOT")) {
-              Write-Host "Failed to create ROOT directory."
-              exit 1
-          }
-          cp -r build/* "$env:CATALINA_HOME/webapps/ROOT"
-      
-          # Verify the existence of startup.sh
-          if (-Not (Test-Path "$env:CATALINA_HOME/bin/startup.sh")) {
-              Write-Host "startup.sh not found at $env:CATALINA_HOME/bin/startup.sh"
-              exit 1
-          }
-          # Ensure startup.sh is executable
-          chmod +x "$env:CATALINA_HOME/bin/startup.sh"
-          
-          # Start Tomcat
-          bash "$env:CATALINA_HOME/bin/startup.sh"
-          }
-      shell: pwsh
-      env:
-        LC_ALL: en_US.UTF-8
-        CATALINA_HOME: /home/runner/work/CS-QuizGame/CS-QuizGame/tomcat
+        } else {
+            # For Unix-like systems
+            # Check if ROOT directory exists before removing
+            if (Test-Path "$env:CATALINA_HOME/webapps/ROOT") {
+                Remove-Item -Recurse -Force "$env:CATALINA_HOME/webapps/ROOT"
+            }
+            # Create ROOT directory if it does not exist
+            New-Item -ItemType Directory -Path "$env:CATALINA_HOME/webapps/ROOT" -Force
+            # Check if ROOT directory was created successfully
+            if (-Not (Test-Path "$env:CATALINA_HOME/webapps/ROOT")) {
+                Write-Host "Failed to create ROOT directory."
+                exit 1
+            }
+            cp -r build/* "$env:CATALINA_HOME/webapps/ROOT"
+        
+            # Verify the existence of startup.sh
+            if (-Not (Test-Path "$env:CATALINA_HOME/bin/startup.sh")) {
+                Write-Host "startup.sh not found at $env:CATALINA_HOME/bin/startup.sh"
+                exit 1
+            }
+            # Ensure startup.sh is executable
+            chmod +x "$env:CATALINA_HOME/bin/startup.sh"
+            
+            # Start Tomcat
+            bash "$env:CATALINA_HOME/bin/startup.sh"
+        }
+        
+        # This line is to specify the shell and pass the script
+        shell: /usr/bin/pwsh -command ". '{0}'"
+        env:
+            LC_ALL: en_US.UTF-8
+            JAVA_HOME: /opt/hostedtoolcache/Java_Zulu_jdk/17.0.13-11/x64
+            JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Zulu_jdk/17.0.13-11/x64
+            CATALINA_HOME: /home/runner/work/CS-QuizGame/CS-QuizGame/tomcat
 
     - name: Run Smoke Test
       run: |
