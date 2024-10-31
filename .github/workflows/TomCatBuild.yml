@@ -91,11 +91,3 @@ jobs:
       shell: bash
       env:
         CATALINA_HOME: ${{ github.workspace }}/tomcat
-
-    - name: Upload Logs
-      uses: actions/upload-artifact@v4
-      with:
-        name: JDK${{ matrix.java }}-${{ matrix.os }}-logs
-        path: |
-          $CATALINA_HOME/logs/*
-        retention-days: 7
