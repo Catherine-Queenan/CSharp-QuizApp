@@ -172,28 +172,18 @@ jobs:
         echo "Waiting for Tomcat to start..."
         Start-Sleep -Seconds 20
     
+        # Test the connection
         if ($env:RUNNER_OS -eq "Windows") {
-            # Check if Tomcat is listening on the expected port
-            $connectionTest = Test-NetConnection -ComputerName "localhost" -Port 8081
-            
-            if ($connectionTest.TcpTestSucceeded) {
-                Write-Host "Tomcat is running and accessible on port 8081."
-                # Optionally, you can do an HTTP request here as well
-                try {
-                    $response = Invoke-WebRequest -Uri $url -UseBasicP
-                    if ($response.StatusCode -eq 200) {
-                        Write-Host "Smoke test passed: Application is accessible."
-                    }
-                } catch {
-                    Write-Host "Error accessing the application: $_"
-                    exit 1
+            try {
+                $response = Invoke-WebRequest -Uri $url -UseBasicP
+                if ($response.StatusCode -eq 200) {
+                    Write-Host "Smoke test passed: Tomcat is running and accessible."
                 }
-            } else {
-                Write-Host "Smoke test failed: Tomcat is not accessible on port 8081."
+            } catch {
+                Write-Host "Smoke test failed: Unable to connect to Tomcat. Error: $_"
                 exit 1
             }
         } else {
-            # For Unix-like systems
             curl --fail "$url" || { Write-Host "Smoke test failed: Unable to connect to Tomcat."; exit 1; }
             Write-Host "Smoke test passed: Tomcat is running and accessible."
         }
