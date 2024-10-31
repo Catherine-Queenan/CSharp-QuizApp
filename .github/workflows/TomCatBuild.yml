@@ -99,6 +99,12 @@ jobs:
             $env:JAVA_HOME = "C:\hostedtoolcache\windows\Java_Zulu_jdk\23.0.1-11\x64"
         } else {
             $env:JAVA_HOME = "/usr/local/java/zulu-23" # Replace with the correct path for Unix
+            
+            # Check if JAVA_HOME is set correctly
+            if (-Not (Test-Path "$env:JAVA_HOME")) {
+                Write-Host "JAVA_HOME not found at $env:JAVA_HOME"
+                exit 1
+            }
         }
     
         # Remove the existing ROOT application if necessary
@@ -120,15 +126,30 @@ jobs:
             }
             # Create ROOT directory if it does not exist
             New-Item -ItemType Directory -Path "$env:CATALINA_HOME/webapps/ROOT" -Force
+    
+            # Verify ROOT directory was created successfully
+            if (-Not (Test-Path "$env:CATALINA_HOME/webapps/ROOT")) {
+                Write-Host "Failed to create ROOT directory."
+                exit 1
+            }
+    
+            # Copy files to the ROOT directory
             cp -r build/* "$env:CATALINA_HOME/webapps/ROOT"
+    
+            # Check if startup.sh exists
+            if (-Not (Test-Path "$env:CATALINA_HOME/bin/startup.sh")) {
+                Write-Host "startup.sh not found at $env:CATALINA_HOME/bin/startup.sh"
+                exit 1
+            }
+    
             # Start Tomcat (ensure that startup.sh is executable)
+            chmod +x "$env:CATALINA_HOME/bin/startup.sh"  # Ensure it is executable
             bash "$env:CATALINA_HOME/bin/startup.sh"
         }
       shell: pwsh
       env:
         LC_ALL: en_US.UTF-8
         CATALINA_HOME: /home/runner/work/CS-QuizGame/CS-QuizGame/tomcat
-
 
     - name: Run Smoke Test
       run: |
