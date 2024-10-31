@@ -74,8 +74,8 @@ jobs:
         mkdir -p build
 
         # Determine classpath separator based on OS
-        if [[ "$RUNNER_OS" == "Windows" ]]; then
-            CP="jakarta.servlet-api-5.0.0.jar;json-20230227.jar;aspectjrt-1.9.19.jar;jakarta.websocket-api-2.0.0.jar"
+        if [ "$RUNNER_OS" == "Windows" ]; then
+            set CP=jakarta.servlet-api-5.0.0.jar;json-20230227.jar;aspectjrt-1.9.19.jar;jakarta.websocket-api-2.0.0.jar
         else
             CP="jakarta.servlet-api-5.0.0.jar:json-20230227.jar:aspectjrt-1.9.19.jar:jakarta.websocket-api-2.0.0.jar"
         fi
