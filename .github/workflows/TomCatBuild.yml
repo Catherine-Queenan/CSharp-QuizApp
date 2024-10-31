@@ -106,32 +106,27 @@ jobs:
     
         # Determine the operating system and perform actions accordingly
         if ($env:RUNNER_OS -eq "Windows") {
-            # Remove existing ROOT directory if it exists
+            # Windows commands
             if (Test-Path $rootPath) {
                 Write-Host "Removing existing ROOT directory..."
                 Remove-Item -Recurse -Force $rootPath
             }
     
-            # Create ROOT directory
             Write-Host "Creating ROOT directory..."
             New-Item -ItemType Directory -Path $rootPath -Force
     
-            # Copy files to ROOT directory
             Write-Host "Copying build files to ROOT directory..."
             Copy-Item -Recurse build\* $rootPath
     
-            # Start Tomcat
             Write-Host "Starting Tomcat..."
             Start-Process -NoNewWindow -File "cmd.exe" -ArgumentList "/c $env:CATALINA_HOME\bin\startup.bat"
         } else {
-            # For Unix-like systems (Ubuntu and macOS)
-            # Remove existing ROOT directory if it exists
+            # Unix-like systems (Ubuntu and macOS)
             if (Test-Path $rootPath) {
                 Write-Host "Removing existing ROOT directory..."
                 Remove-Item -Recurse -Force $rootPath
             }
     
-            # Create ROOT directory
             Write-Host "Creating ROOT directory..."
             New-Item -ItemType Directory -Path $rootPath -Force
     
@@ -139,17 +134,15 @@ jobs:
             Write-Host "Listing contents of build directory:"
             ls build
     
-            # Copy files to ROOT directory
             Write-Host "Copying build files to ROOT directory..."
             cp -r build/* "$rootPath" || { Write-Host "Error copying files to ROOT"; exit 1 }
     
-            # Check if ROOT directory was created successfully
+            # Verify that the ROOT directory was created successfully
             if (-Not (Test-Path $rootPath)) {
                 Write-Host "Error: ROOT directory was not created successfully."
                 exit 1
             }
     
-            # Start Tomcat
             Write-Host "Checking for startup script at $startupScript..."
             if (Test-Path $startupScript) {
                 Write-Host "Starting Tomcat..."
