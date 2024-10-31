@@ -121,10 +121,12 @@ jobs:
       env:
         LC_ALL: en_US.UTF-8
         JAVA_HOME: C:\hostedtoolcache\windows\Java_Zulu_jdk\23.0.1-11\x64
+        JAVA_HOME_17_ARM64: /Users/runner/hostedtoolcache/Java_Zulu_jdk/17.0.13-11/arm64
         JAVA_HOME_17_X64: C:\hostedtoolcache\windows\Java_Zulu_jdk\17.0.13-11\x64
         JAVA_HOME_23_ARM64: /Users/runner/hostedtoolcache/Java_Zulu_jdk/23.0.1-11/arm64
         JAVA_HOME_23_X64: C:\hostedtoolcache\windows\Java_Zulu_jdk\23.0.1-11\x64
-        CATALINA_HOME: D:\a\CS-QuizGame\CS-QuizGame\tomcat
+        # Adjust CATALINA_HOME to a path that exists in the runner environment
+        CATALINA_HOME: ${{ github.workspace }}/tomcat  # Example of a path that will exist
 
     - name: Run Smoke Test
       run: |
