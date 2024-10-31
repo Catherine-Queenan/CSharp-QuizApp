@@ -166,10 +166,33 @@ jobs:
         CATALINA_HOME: /home/runner/work/CS-QuizGame/CS-QuizGame/tomcat
 
 
-    - name: Run Smoke Test
+    - name: Smoke Test for Tomcat
       run: |
-        sleep 20  # Allow time for Tomcat to start
-        curl --fail http://localhost:8081/QuizApp || exit 1
+        # Define the port and the URL to test
+        $port = 8081
+        $url = "http://localhost:$port/QuizApp"
+    
+        # Give Tomcat time to start up
+        Write-Host "Waiting for Tomcat to start..."
+        Start-Sleep -Seconds 20
+    
+        # Test the connection
+        if ($env:RUNNER_OS -eq "Windows") {
+            # On Windows, use Invoke-WebRequest instead of curl
+            $response = Invoke-WebRequest -Uri $url -UseBasicP | Out-Null
+    
+            if ($response.StatusCode -eq 200) {
+                Write-Host "Smoke test passed: Tomcat is running and accessible."
+            } else {
+                Write-Host "Smoke test failed: Tomcat returned status code $($response.StatusCode)."
+                exit 1
+            }
+        } else {
+            # On Ubuntu (Unix-like systems), use curl
+            curl --fail "$url" || { Write-Host "Smoke test failed: Unable to connect to Tomcat."; exit 1; }
+            Write-Host "Smoke test passed: Tomcat is running and accessible."
+        }
+      shell: pwsh
 
     - name: Upload Logs
       uses: actions/upload-artifact@v4
