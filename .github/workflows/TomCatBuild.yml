@@ -104,13 +104,17 @@ jobs:
     - name: Deploy to Tomcat
       run: |
         # Remove the existing ROOT application if necessary
-        rm -rf $CATALINA_HOME/webapps/ROOT
+        Remove-Item -Recurse -Force "$env:CATALINA_HOME\webapps\ROOT"
         # Copy the compiled classes to the correct location
-        cp -r build/* $CATALINA_HOME/webapps/ROOT
-        # Start Tomcat
-        $CATALINA_HOME/bin/startup.bat
+        Copy-Item -Recurse build\* "$env:CATALINA_HOME\webapps\ROOT"
+        # Start Tomcat using cmd.exe
+        Start-Process -NoNewWindow -File "cmd.exe" -ArgumentList "/c $env:CATALINA_HOME\bin\startup.bat"
+      shell: pwsh
       env:
-        CATALINA_HOME: ${{ github.workspace }}/tomcat
+        LC_ALL: en_US.UTF-8
+        JAVA_HOME: C:\hostedtoolcache\windows\Java_Zulu_jdk\23.0.1-11\x64
+        JAVA_HOME_23_X64: C:\hostedtoolcache\windows\Java_Zulu_jdk\23.0.1-11\x64
+        CATALINA_HOME: D:\a\CS-QuizGame\CS-QuizGame\tomcat
 
     - name: Run Smoke Test
       run: |
