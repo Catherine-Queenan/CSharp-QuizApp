@@ -96,13 +96,21 @@ jobs:
       run: |
         # Remove the existing ROOT application if necessary
         if ($env:RUNNER_OS -eq "Windows") {
-            Remove-Item -Recurse -Force "$env:CATALINA_HOME\webapps\ROOT"
+            # Check if ROOT directory exists before removing
+            if (Test-Path "$env:CATALINA_HOME\webapps\ROOT") {
+                Remove-Item -Recurse -Force "$env:CATALINA_HOME\webapps\ROOT"
+            }
+            # Create ROOT directory if it does not exist
+            New-Item -ItemType Directory -Path "$env:CATALINA_HOME\webapps\ROOT" -Force
             Copy-Item -Recurse build\* "$env:CATALINA_HOME\webapps\ROOT"
             # Start Tomcat using cmd.exe
             Start-Process -NoNewWindow -File "cmd.exe" -ArgumentList "/c $env:CATALINA_HOME\bin\startup.bat"
         } else {
             # For Unix-like systems
-            rm -rf "$env:CATALINA_HOME/webapps/ROOT"
+            if [ -d "$env:CATALINA_HOME/webapps/ROOT" ]; then
+                rm -rf "$env:CATALINA_HOME/webapps/ROOT"
+            fi
+            mkdir -p "$env:CATALINA_HOME/webapps/ROOT"
             cp -r build/* "$env:CATALINA_HOME/webapps/ROOT"
             # Start Tomcat (ensure that startup.sh is executable)
             bash "$env:CATALINA_HOME/bin/startup.sh"
