@@ -115,18 +115,19 @@ jobs:
             Start-Process -NoNewWindow -File "cmd.exe" -ArgumentList "/c $env:CATALINA_HOME\bin\startup.bat"
         } else {
             # For Unix-like systems
-            if [ -d "$env:CATALINA_HOME/webapps/ROOT" ]; then
+            if (Test-Path "$env:CATALINA_HOME/webapps/ROOT") {
                 rm -rf "$env:CATALINA_HOME/webapps/ROOT"
-            fi
+            }
             mkdir -p "$env:CATALINA_HOME/webapps/ROOT"
             cp -r build/* "$env:CATALINA_HOME/webapps/ROOT"
             # Start Tomcat (ensure that startup.sh is executable)
             bash "$env:CATALINA_HOME/bin/startup.sh"
         }
-      shell: pwsh
+        shell: /usr/bin/pwsh -command ". '{0}'"
       env:
         LC_ALL: en_US.UTF-8
         JAVA_HOME: C:\hostedtoolcache\windows\Java_Zulu_jdk\23.0.1-11\x64
+        JAVA_HOME_21_X64: /opt/hostedtoolcache/Java_Zulu_jdk/21.0.5-11/x64
         JAVA_HOME_23_X64: C:\hostedtoolcache\windows\Java_Zulu_jdk\23.0.1-11\x64
         JAVA_HOME_23_ARM64: /Users/runner/hostedtoolcache/Java_Zulu_jdk/23.0.1-11/arm64
         CATALINA_HOME: D:\a\CS-QuizGame\CS-QuizGame\tomcat
