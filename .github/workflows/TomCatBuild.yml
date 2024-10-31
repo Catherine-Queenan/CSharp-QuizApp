@@ -74,15 +74,15 @@ jobs:
         mkdir -p build
 
         # Determine classpath separator based on OS
-        if [ "$RUNNER_OS" == "Windows" ]; then
-            set CP=jakarta.servlet-api-5.0.0.jar;json-20230227.jar;aspectjrt-1.9.19.jar;jakarta.websocket-api-2.0.0.jar
+        if [[ "$RUNNER_OS" == "Windows" ]]; then
+            CP="jakarta.servlet-api-5.0.0.jar;json-20230227.jar;aspectjrt-1.9.19.jar;jakarta.websocket-api-2.0.0.jar"
         else
             CP="jakarta.servlet-api-5.0.0.jar:json-20230227.jar:aspectjrt-1.9.19.jar:jakarta.websocket-api-2.0.0.jar"
         fi
 
-        # Compile
+        # Compile using javac with the appropriate classpath
         find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp "$CP" -d build
-      shell: bash
+      shell: bash  # Use bash for all platforms
       
     - name: Set up Tomcat
       run: |
@@ -106,7 +106,7 @@ jobs:
         # Copy the compiled classes to the correct location
         cp -r build/* $CATALINA_HOME/webapps/ROOT
         # Start Tomcat
-        $CATALINA_HOME/bin/startup.sh
+        $CATALINA_HOME/bin/startup.bat
       env:
         CATALINA_HOME: ${{ github.workspace }}/tomcat
 
