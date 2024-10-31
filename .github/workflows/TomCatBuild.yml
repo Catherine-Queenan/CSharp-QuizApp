@@ -95,69 +95,38 @@ jobs:
     - name: Deploy to Tomcat
       run: |
         # Check if JAVA_HOME is set for Windows, Ubuntu, or macOS
-        if ($env:RUNNER_OS -eq "Windows") {
-            if (-Not $env:JAVA_HOME) {
-                Write-Host "JAVA_HOME is not set. Please set JAVA_HOME in your environment."
-                exit 1
-            }
-        } elseif ($env:RUNNER_OS -eq "Linux") {
-            if (-Not $env:JAVA_HOME) {
-                Write-Host "JAVA_HOME is not set. Please set JAVA_HOME in your environment."
-                exit 1
-            }
-        } elseif ($env:RUNNER_OS -eq "macOS") {
-            if (-Not $env:JAVA_HOME) {
-                Write-Host "JAVA_HOME is not set. Please set JAVA_HOME in your environment."
-                exit 1
-            }
+        if (-Not $env:JAVA_HOME) {
+            Write-Host "JAVA_HOME is not set. Please set JAVA_HOME in your environment."
+            exit 1
         }
     
         # Define the ROOT path for consistency
         $rootPath = "$env:CATALINA_HOME/webapps/ROOT"
+        $startupScript = "$env:CATALINA_HOME/bin/startup.sh"
     
-        # Now, proceed to remove the existing ROOT application if necessary
-        if ($env:RUNNER_OS -eq "Windows") {
-            # Check if ROOT directory exists before removing
-            if (Test-Path $rootPath) {
-                Remove-Item -Recurse -Force $rootPath
-            }
-            # Create ROOT directory if it does not exist
-            New-Item -ItemType Directory -Path $rootPath -Force
-            Copy-Item -Recurse build\* $rootPath
-            # Start Tomcat using cmd.exe
-            Start-Process -NoNewWindow -File "cmd.exe" -ArgumentList "/c $env:CATALINA_HOME\bin\startup.bat"
-        } elseif ($env:RUNNER_OS -eq "Linux") {
-            # For Ubuntu (Linux)
-            # Check if ROOT directory exists before removing
-            if (Test-Path $rootPath) {
-                Remove-Item -Recurse -Force $rootPath
-            }
-            # Create ROOT directory if it does not exist
-            New-Item -ItemType Directory -Path $rootPath -Force
-            cp -r build/* $rootPath
-            # Start Tomcat
-            bash "$env:CATALINA_HOME/bin/startup.sh"
-        } elseif ($env:RUNNER_OS -eq "macOS") {
-            # For macOS
-            # Check if ROOT directory exists before removing
-            if (Test-Path $rootPath) {
-                Remove-Item -Recurse -Force $rootPath
-            }
-            # Create ROOT directory if it does not exist
-            New-Item -ItemType Directory -Path $rootPath -Force
+        # Remove the existing ROOT application if it exists
+        if (Test-Path $rootPath) {
+            Write-Host "Removing existing ROOT directory..."
+            Remove-Item -Recurse -Force $rootPath
+        }
     
-            # Use a more reliable method to copy files to the ROOT directory
-            cp -r build/* "$rootPath"
+        # Create the ROOT directory
+        Write-Host "Creating ROOT directory..."
+        New-Item -ItemType Directory -Path $rootPath -Force
     
-            # Check if startup.sh exists before trying to run it
-            $startupScript = "$env:CATALINA_HOME/bin/startup.sh"
-            if (Test-Path $startupScript) {
-                # Start Tomcat for macOS
-                bash "$startupScript"
-            } else {
-                Write-Host "Error: startup.sh not found at $startupScript"
-                exit 1
-            }
+        # Copy files into the ROOT directory
+        Write-Host "Copying build files to ROOT directory..."
+        cp -r build/* "$rootPath" || { Write-Host "Error copying files to ROOT"; exit 1 }
+    
+        # Start Tomcat
+        Write-Host "Checking for startup script at $startupScript..."
+        if (Test-Path $startupScript) {
+            Write-Host "Starting Tomcat..."
+            chmod +x "$startupScript"  # Ensure the script is executable
+            bash "$startupScript"
+        } else {
+            Write-Host "Error: startup.sh not found at $startupScript"
+            exit 1
         }
       shell: pwsh
       env:
