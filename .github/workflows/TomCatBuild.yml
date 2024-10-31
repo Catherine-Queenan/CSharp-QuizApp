@@ -135,9 +135,19 @@ jobs:
             Write-Host "Creating ROOT directory..."
             New-Item -ItemType Directory -Path $rootPath -Force
     
+            # List contents of the build directory for debugging
+            Write-Host "Listing contents of build directory:"
+            ls build
+    
             # Copy files to ROOT directory
             Write-Host "Copying build files to ROOT directory..."
             cp -r build/* "$rootPath" || { Write-Host "Error copying files to ROOT"; exit 1 }
+    
+            # Check if ROOT directory was created successfully
+            if (-Not (Test-Path $rootPath)) {
+                Write-Host "Error: ROOT directory was not created successfully."
+                exit 1
+            }
     
             # Start Tomcat
             Write-Host "Checking for startup script at $startupScript..."
@@ -154,6 +164,7 @@ jobs:
       env:
         LC_ALL: en_US.UTF-8
         CATALINA_HOME: /home/runner/work/CS-QuizGame/CS-QuizGame/tomcat
+
 
     - name: Run Smoke Test
       run: |
