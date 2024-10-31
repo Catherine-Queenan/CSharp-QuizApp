@@ -94,20 +94,20 @@ jobs:
 
     - name: Deploy to Tomcat
       run: |
-        # Set JAVA_HOME based on OS
+        # Check if JAVA_HOME is set, and use it for Windows or Unix
         if ($env:RUNNER_OS -eq "Windows") {
-            $env:JAVA_HOME = "C:\Program Files\Common Files\Oracle\Java\javapath"  # Path for Oracle JDK
+            if (-Not $env:JAVA_HOME) {
+                Write-Host "JAVA_HOME is not set. Please set JAVA_HOME in your environment."
+                exit 1
+            }
         } else {
-            $env:JAVA_HOME = "/usr/lib/jvm/java-17-oracle"  # Update path for Unix to your Oracle JDK installation
+            if (-Not $env:JAVA_HOME) {
+                Write-Host "JAVA_HOME is not set. Please set JAVA_HOME in your environment."
+                exit 1
+            }
         }
-    
-        # Check if JAVA_HOME is set correctly
-        if (-Not (Test-Path $env:JAVA_HOME)) {
-            Write-Host "JAVA_HOME not found at $env:JAVA_HOME"
-            exit 1
-        }
-    
-        # Remove the existing ROOT application if necessary
+        
+        # Now, proceed to remove the existing ROOT application if necessary
         if ($env:RUNNER_OS -eq "Windows") {
             # Check if ROOT directory exists before removing
             if (Test-Path "$env:CATALINA_HOME\webapps\ROOT") {
@@ -125,8 +125,8 @@ jobs:
                 Remove-Item -Recurse -Force "$env:CATALINA_HOME/webapps\ROOT"
             }
             # Create ROOT directory if it does not exist
-            New-Item -ItemType Directory -Path "$env:CATALINA_HOME/webapps/ROOT" -Force
-            cp -r build/* "$env:CATALINA_HOME/webapps/ROOT"
+            New-Item -ItemType Directory -Path "$env:CATALINA_HOME/webapps\ROOT" -Force
+            cp -r build/* "$env:CATALINA_HOME/webapps\ROOT"
             # Start Tomcat (ensure that startup.sh is executable)
             bash "$env:CATALINA_HOME/bin/startup.sh"
         }
