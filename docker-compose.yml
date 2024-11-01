@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quizapp-app
+    environment:
+      DB_URL: jdbc:mysql://host.docker.internal:3306/testdb  # Use host.docker.internal to access localhost
+      DB_USER: root
+      DB_PASSWORD: ""  # Set your actual password if necessary
+    ports:
+      - "8083:8080"
+    networks:
+      - quizapp-network
+
+networks:
+  quizapp-network:
