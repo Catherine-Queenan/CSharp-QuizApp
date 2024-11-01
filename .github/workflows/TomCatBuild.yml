@@ -106,11 +106,11 @@ jobs:
     - name: Login to Render
       env:
         RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }} 
-        run: |
-          curl -X POST https://api.render.com/deploys \
-          -H "Content-Type: application/json" \
-          -H "Authorization: Bearer $RENDER_API_KEY" \
-          -d '{
-                "serviceId": "${{ secrets.RENDER_SERVICE_ID }}",  # Replace with your Render service ID
-                "branch": "main"  
-              }'
+      run: |
+        curl -X POST https://api.render.com/deploys \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $RENDER_API_KEY" \
+        -d '{
+              "serviceId": "${{ secrets.RENDER_SERVICE_ID }}",  # Replace with your Render service ID
+              "branch": "main"  
+            }'
