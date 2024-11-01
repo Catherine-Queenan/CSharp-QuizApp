@@ -145,7 +145,6 @@
   <servlet-name>ModerateModeServlet</servlet-name>
   <url-pattern>/moderateMode</url-pattern>
 </servlet-mapping>
-
   <servlet>
     <servlet-name>CreateQuizServlet</servlet-name>
     <servlet-class>CreateQuizServlet</servlet-class>

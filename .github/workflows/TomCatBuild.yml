@@ -1,0 +1,93 @@
+name: Tomcat Smoke Test
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+env:
+  LC_ALL: en_US.UTF-8
+
+jobs:
+  Tomcat_Test_Matrix:
+    strategy:
+      fail-fast: false
+      matrix:
+        isMain:
+          - ${{ contains(github.ref, 'main') }}
+        java: [17]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    name: JDK${{ matrix.java }} ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Git Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ matrix.java }}
+        distribution: oracle
+
+    # Step to download jakarta.servlet-api.jar
+    - name: Download Servlet API
+      run: |
+        curl -O https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/5.0.0/jakarta.servlet-api-5.0.0.jar
+
+   # Step to download org.json library
+    - name: Download JSON Library
+      run: |
+        curl -O https://repo1.maven.org/maven2/org/json/json/20230227/json-20230227.jar
+
+    # Step to download AspectJ
+    - name: Download AspectJ Library
+      run: |
+        curl -O https://repo1.maven.org/maven2/org/aspectj/aspectjrt/1.9.19/aspectjrt-1.9.19.jar
+
+    # Step to download Jakarta WebSocket API
+    - name: Download Jakarta WebSocket API
+      run: |
+        curl -O https://repo1.maven.org/maven2/jakarta/websocket/jakarta.websocket-api/2.0.0/jakarta.websocket-api-2.0.0.jar
+
+    # Compile Project Step with all libraries in Classpath
+    - name: Compile Project
+      run: |
+        # Define the source directory, update if necessary
+        SOURCE_DIR="WEB-INF/classes"  # Use your correct source directory here
+
+        # Create build directory
+        mkdir -p build
+
+        # Determine classpath separator based on OS
+        if [[ "$RUNNER_OS" == "Windows" ]]; then
+            CP="jakarta.servlet-api-5.0.0.jar;json-20230227.jar;aspectjrt-1.9.19.jar;jakarta.websocket-api-2.0.0.jar"
+        else
+            CP="jakarta.servlet-api-5.0.0.jar:json-20230227.jar:aspectjrt-1.9.19.jar:jakarta.websocket-api-2.0.0.jar"
+        fi
+
+        # Compile using javac with the appropriate classpath
+        find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp "$CP" -d build
+      shell: bash  # Use bash for all platforms
+      
+    - name: Set up Tomcat
+      run: |
+        curl -L -O https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.74/bin/apache-tomcat-9.0.74.tar.gz
+        # Verify the downloaded file type using file command in bash
+        if [ "$(file apache-tomcat-9.0.74.tar.gz | grep 'gzip compressed data')" ]; then
+          # Use 7z to extract the .tar.gz file if available, else consider using PowerShell extraction commands
+          7z x apache-tomcat-9.0.74.tar.gz -aoa
+          tar -xvf apache-tomcat-9.0.74.tar
+          mv apache-tomcat-9.0.74 tomcat
+        else
+          echo "Download failed or file is not in gzip format"
+          exit 1
+        fi
+      shell: bash
+      env:
+        CATALINA_HOME: ${{ github.workspace }}/tomcat
