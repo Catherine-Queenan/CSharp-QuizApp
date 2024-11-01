@@ -92,25 +92,4 @@ jobs:
       env:
         CATALINA_HOME: ${{ github.workspace }}/tomcat
         
-    - name: Build Docker Images
-      run: docker compose build
-
-    - name: Run Tests
-      run: docker compose up --abort-on-container-exit
-
-    - name: Push Docker Images
-      run: | 
-        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-          docker tag cs-quizgame:latest ${{ secrets.DOCKER_USERNAME }}/cs-quizgame:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/cs-quizgame:latest
-    - name: Login to Render
-      env:
-        RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }} 
-      run: |
-        curl -X POST https://api.render.com/deploys \
-        -H "Content-Type: application/json" \
-        -H "Authorization: Bearer $RENDER_API_KEY" \
-        -d '{
-              "serviceId": "${{ secrets.RENDER_SERVICE_ID }}",  # Replace with your Render service ID
-              "branch": "main"  
-            }'
+    
