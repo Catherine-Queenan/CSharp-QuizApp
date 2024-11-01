@@ -14,17 +14,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        isMain:
+          - ${{ contains(github.ref, 'main') }}
+        java: [17]
         os: [ ubuntu-latest, windows-latest]
+    name: JDK${{ matrix.java }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    - name: Git Checkout
+      uses: actions/checkout@v4
 
-    - name: Set up JDK
-      uses: actions/setup-java@v2
+    - name: Set up Java
+      uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: ${{ matrix.java }}
         distribution: oracle
         
     - name: Build Docker Images
