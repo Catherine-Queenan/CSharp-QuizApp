@@ -17,6 +17,8 @@ public class EditServlet extends HttpServlet {
             return;
         }
 
+        JSONObject jsonResponse = new JSONObject();
+
         String username = (String) session.getAttribute("USER_ID");
         String role = (String) session.getAttribute("USER_ROLE");
         // getUserRoleFromDatabase(username);
@@ -57,22 +59,22 @@ public class EditServlet extends HttpServlet {
 
             AClass quiz = repository.select("quiz", "name=\"" + quizName +"\"").get(0);
             JSONObject quizJSON = quiz.serialize();
-                String quizTitle = quizJSON.getString("name");
-                String quizDescription = quizJSON.getString("description");
+                // String quizTitle = quizJSON.getString("name");
+                // String quizDescription = quizJSON.getString("description");
 
-                // Generate the edit form for the quiz
-                editHtml.append("<div class=\"title cherry-cream-soda\">Edit Quiz: ").append(quizTitle).append("</div>")
-                    .append("<form class=\"eidtQuizForm\" method='post' action='edit'>")
-                    .append("<label for='title'>Quiz Title:</label>")
-                    .append("<input type='text' id='title' name='title' value='").append(quizTitle).append("'>")
-                    .append("<label for='description'>Description:</label>")
-                    .append("<textarea id='description' name='description'>").append(quizDescription).append("</textarea>")
-                    .append("<input type='hidden' name='quizName' value='").append(quizName).append("'>")
-                    .append("<div class='button-container'>")
-                    .append("<a href='editQuestions?quizName=").append(quizName).append("' class='button-link'>Go to List of Questions</a>")
-                    .append("<button class=\"saveBtn\" type='submit'>Save Changes</button>")
-                    .append("</div>")
-                    .append("</form>");
+                // // Generate the edit form for the quiz
+                // editHtml.append("<div class=\"title cherry-cream-soda\">Edit Quiz: ").append(quizTitle).append("</div>")
+                //     .append("<form class=\"eidtQuizForm\" method='post' action='edit'>")
+                //     .append("<label for='title'>Quiz Title:</label>")
+                //     .append("<input type='text' id='title' name='title' value='").append(quizTitle).append("'>")
+                //     .append("<label for='description'>Description:</label>")
+                //     .append("<textarea id='description' name='description'>").append(quizDescription).append("</textarea>")
+                //     .append("<input type='hidden' name='quizName' value='").append(quizName).append("'>")
+                //     .append("<div class='button-container'>")
+                //     .append("<a href='editQuestions?quizName=").append(quizName).append("' class='button-link'>Go to List of Questions</a>")
+                //     .append("<button class=\"saveBtn\" type='submit'>Save Changes</button>")
+                //     .append("</div>")
+                //     .append("</form>");
             
 
         } catch (Exception e) {
