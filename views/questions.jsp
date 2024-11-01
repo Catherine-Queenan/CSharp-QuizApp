@@ -260,7 +260,7 @@
 
 
         // Changing the display depending on how long the content is
-        if (document.querySelector(".questions").offsetHeight > 600) {
+        if (document.querySelector(".questions").offsetHeight > 700) {
             document.getElementById("wrap").style.height = `fit-content`;
         } else {
             document.getElementById("wrap").style.height = `${100}vh`;
