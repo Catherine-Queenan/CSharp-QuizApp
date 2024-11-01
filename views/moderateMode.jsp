@@ -1,92 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz</title>
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
 
-        #question-container {
-            margin: 20px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 600px;
+        .title {
+            padding: 10px 100px;
             text-align: center;
-        }
-
-        #question {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        #options button {
-            display: block;
-            width: 100%;
-            margin: 10px 0;
-            padding: 15px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        #options button:hover {
-            background-color: #2980b9;
+            font-size: 30px;
+            margin-bottom: 0;
         }
 
         #next-button {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 5px;
+            margin-top: 30px;
+            padding: 20px 40px;
+            border-radius: 15px;
+            border: 0;
+            margin-right: 10px;
+            font-size: 22px;
+            background-color: #99c252;
+            transition-duration: 0.3s;
             cursor: pointer;
-            transition: background-color 0.3s;
+        }
+
+        /* Displaying media */
+        #media-container {
+            width: 100%;
+            height: 400px;
             margin-top: 20px;
-            display: none;
+            overflow: hidden;
         }
 
-        #next-button:hover {
-            background-color: #27ae60;
+        #media-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+
+        /* options */
+        #options {
+            width: 100%;
+            padding: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
         }
 
+        #options button {
+            all: unset;
+            width: 45%;
+            padding: 20px 40px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            font-size: 20px;
+            text-align: center;
+            cursor: pointer;
+            display: block;
+            transition-duration: 0.3s;
+        }
+
+        #options button:nth-child(1) {
+            background-color: #d00000 !important;
+        }
+
+        #options button:nth-child(2) {
+            background-color: #FF4B3E !important;
+        }
+
+        #options button:nth-child(3) {
+            background-color: #FFB20F !important;
+        }
+
+        #options button:nth-child(4) {
+            background-color: #99c252 !important;
+        }
+
+        /* answer count */
         #answerCounts {
             margin-top: 20px;
-            text-align: left;
+            width: fit-content;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
         }
 
         #answerCounts div {
-            background-color: #f1f1f1;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
+            padding: 10px 20px;
+            border-radius: 10px;
         }
 
-        #timer {
-            font-size: 20px;
-            margin-top: 20px;
-            color: #e74c3c;
+        #answerCounts div:nth-child(2),
+        #answerCounts div:nth-child(4n + 2) {
+            background-color: #d00000 !important;
         }
+
+        #answerCounts div:nth-child(3),
+        #answerCounts div:nth-child(4n + 3) {
+            background-color: #FF4B3E !important;
+        }
+
+        #answerCounts div:nth-child(4),
+        #answerCounts div:nth-child(4n + 4) {
+            background-color: #FFB20F !important;
+        }
+
+        #answerCounts div:nth-child(5),
+        #answerCounts div:nth-child(4n + 5) {
+            background-color: #99c252 !important;
+        }
+        
     </style>
 </head>
 
@@ -96,43 +125,77 @@
         <form action="home">
             <button class="homeBtn" type="Submit">Home</button>
         </form>
-
     </header>
-    <div id="question-container">
-        <p id="question"></p>
-        <div id="options"></div>
-    </div>
 
-    <div id="answerCounts"></div>
-    <p id="role" style="display: none;">
-        <%=request.getAttribute("role")%>
-    </p>
-    <p id="userName" style="display: none;">
-        <%=request.getAttribute("userName")%>
-    </p>
-    <button id="next-button">Next Question</button>
-    <div class="wrap" style="display: none;">
-
-        <div class="questions" style="display: none;">
-            <%=request.getAttribute("questionsHtml")%>
+    <div class="wrap">
+        <div id="question-container">
+            <p id="question" class="title"></p>
+            <div id="options"></div>
         </div>
 
+        <div id="answerCounts"></div>
 
-        <div id="timer" style="display:none;">Time left: 60 seconds</div>
+        <p id="role" style="display: none;">
+            <%=request.getAttribute("role")%>
+        </p>
+        <p id="userName" style="display: none;">
+            <%=request.getAttribute("userName")%>
+        </p>
 
-        <form id="questionForm" method="post" style="display: hidden;"></form>
+        <button id="next-button">Next Question</button>
+        <div style="display: none;">
+
+            <div class="questions" style="display: none;">
+                <%=request.getAttribute("questionsHtml")%>
+            </div>
+
+            <form id="questionForm" method="post" style="display: hidden;"></form>
+        </div>
     </div>
 
-
-
-
-
     <script type="text/javascript">
+
+        function setHeight() {
+            // Get all buttons inside the div with class "answersOption"
+            var buttons = document.querySelectorAll('#options button');
+            
+            var maxHeight = 0;
+            
+            // Loop through each button to determine the maximum height
+            buttons.forEach(function(button) {
+                var buttonHeight = button.offsetHeight;  // Get the height of the current button
+                if (buttonHeight > maxHeight) {
+                    maxHeight = buttonHeight;  // Update the maxHeight if current button's height is greater
+                }
+            });
+            
+            // Set all buttons to the maximum height
+            buttons.forEach(function(button) {
+                button.style.height = maxHeight + "px";
+            });
+        }
+
+        // Making all answer options have the same height value
+        window.onload = function() {
+            setHeight();
+        };
        
         let role = document.getElementById("role").textContent.trim();
-        console.log("Rolee: ", role);
+        console.log("Role: ", role);
 
-        let webSocket = new WebSocket('ws://localhost:8081/project1/questionsws');
+        const currentPath = window.location.pathname;
+        const pathSegments = currentPath.split('/');
+        // Extract the base path dynamically (remove last segment if it's quiz-related)
+        console.log(pathSegments);
+        pathSegments.pop();         
+        console.log(pathSegments);
+        console.log(pathSegments.join('/'));
+
+        // Construct the new path dynamically
+        const newPath = pathSegments.join('/') + `/questionsws`;
+
+
+        let webSocket = new WebSocket('ws://localhost:8081/'+ newPath);
         let questions = [];
         let answers = [];
         let images = [];
@@ -205,6 +268,7 @@
             let response = JSON.parse(message.data);
             questionIndex = response.questionIndex;
 
+            console.log(response);
             if(response.type === "end"){
                 webSocket.onclose = function () {
             console.log("Connection closed ...");
@@ -247,6 +311,7 @@
                     console.log("Sending answer:", answer);  // Log the selected answer
                     webSocket.send(JSON.stringify({ type: "answer", answer: answer }));
                 });
+                setHeight();
             });
 
             // Clear previous media before displaying new media
@@ -270,7 +335,6 @@
                     }
                     imgElement.src = imageSrc;
                     imgElement.alt = "Question Image";
-                    imgElement.style.width = "100%"; // Adjust image size
                     mediaDiv.appendChild(imgElement);
                 });
             }
@@ -300,8 +364,7 @@
         if (role !== "a") {
             document.getElementById("next-button").style.display = "none";
             document.getElementById("answerCounts").style.display = "none";
-            document.getElementById("question").style.display = "none";
-           
+            document.getElementById("question").style.display = "none"; 
         } 
         // Handle "Next Question" button click
         document.getElementById("next-button").addEventListener("click", function () {
@@ -383,9 +446,9 @@
                 document.querySelector("audio").currentTime = parseInt(document.getElementById("videoStart").value);
             }
         }
+
+
     </script>
 
-
 </body>
-
 </html>

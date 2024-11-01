@@ -1,10 +1,15 @@
 import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
-import java.sql.*;
+
 import java.util.ArrayList;
 
+import org.json.JSONObject;
+
 public class EditQuestionsServlet extends HttpServlet {
+
+    private final IRepository repository = new Repository();
+
 
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
@@ -14,7 +19,9 @@ public class EditQuestionsServlet extends HttpServlet {
         }
 
         String username = (String) session.getAttribute("USER_ID");
-        String role = getUserRoleFromDatabase(username);
+        String role = (String) session.getAttribute("USER_ROLE");
+        
+        // getUserRoleFromDatabase(username);
 
         if (!"a".equals(role)) {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
@@ -24,16 +31,17 @@ public class EditQuestionsServlet extends HttpServlet {
             return;
         }
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        // Connection con = null;
+        // PreparedStatement ps = null;
+        // ResultSet rs = null;
         StringBuilder questionsHtml = new StringBuilder();
-        ArrayList<InputStream> qIDs = new ArrayList<>();
+        ArrayList<AClass> questions;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+            // Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+            repository.init("com.mysql.cj.jdbc.Driver");
             // DATABASE CONNECTION LINE
-            con = DatabaseUtil.getConnection();
+            // con = DatabaseUtil.getConnection();
             // Get quiz name from request parameters
             String quizName = req.getParameter("quizName");
             if (quizName == null || quizName.isEmpty()) {
@@ -43,19 +51,20 @@ public class EditQuestionsServlet extends HttpServlet {
 
             // Query the database for questions related to the quiz
             String questionsSql = "SELECT id, question_text FROM questions WHERE quiz_name = ?";
-            ps = con.prepareStatement(questionsSql);
-            ps.setString(1, quizName);
-            rs = ps.executeQuery();
+            questions = repository.select("question", "quiz_name=\"" + quizName + "\"");
+            // ps = con.prepareStatement(questionsSql);
+            // ps.setString(1, quizName);
+            // rs = ps.executeQuery();
 
             // Generate HTML for questions
             boolean hasQuestions = false;
             int numOfQs = 0;
-            while (rs.next()) {
+            for(AClass question: questions) {
+                JSONObject questionJSON = question.serialize();
                 hasQuestions = true;
                 // InputStream questionId = rs.getBinaryStream("id");
-                String questionText = rs.getString("question_text");
-                InputStream questionId = rs.getBinaryStream("id");
-                qIDs.add(questionId);
+                String questionText = questionJSON.getString("question_text");
+                
                 questionsHtml.append("<div class='question'>")
                         .append("<p class='questionTitle'>").append(questionText).append("</p>")
                         .append("<a class='deleteBtn' href='deleteQuestion?id=").append(numOfQs++).append("&quizName=").append(quizName).append("'>Delete Question</a>")
@@ -69,50 +78,51 @@ public class EditQuestionsServlet extends HttpServlet {
             
             // Set quiz name and questions HTML as request attributes
             req.setAttribute("quizName", quizName);
-            System.out.println(qIDs);
-            session.setAttribute("questions", qIDs);
+
+            session.setAttribute("questions", questions);
             req.setAttribute("questionsHtml", questionsHtml.toString());
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
-        }
+        } 
+        // finally {
+        //     try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+        //     try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+        //     try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+        // }
 
         // Forward to JSP
         RequestDispatcher view = req.getRequestDispatcher("/views/editQuestions.jsp");
         view.forward(req, res);
     }
-    private String getUserRoleFromDatabase(String username) {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        String role = null;
+    // private String getUserRoleFromDatabase(String username) {
+    //     Connection con = null;
+    //     PreparedStatement ps = null;
+    //     ResultSet rs = null;
+    //     String role = null;
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
-            // Database connection
-            con = DatabaseUtil.getConnection();
+    //     try {
+    //         Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
+    //         // Database connection
+    //         con = DatabaseUtil.getConnection();
 
-            // Query to get the user's role
-            String sql = "SELECT role FROM users WHERE username = ?";
-            ps = con.prepareStatement(sql);
-            ps.setString(1, username);
-            rs = ps.executeQuery();
+    //         // Query to get the user's role
+    //         String sql = "SELECT role FROM users WHERE username = ?";
+    //         ps = con.prepareStatement(sql);
+    //         ps.setString(1, username);
+    //         rs = ps.executeQuery();
 
-            if (rs.next()) {
-                role = rs.getString("role");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-            try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
-        }
+    //         if (rs.next()) {
+    //             role = rs.getString("role");
+    //         }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     } finally {
+    //         try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //         try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //         try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //     }
 
-        return role;
-    }
+    //     return role;
+    // }
 }

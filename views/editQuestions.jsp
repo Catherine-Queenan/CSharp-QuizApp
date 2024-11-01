@@ -84,14 +84,24 @@
     <div class="wrap">
         <div class="title cherry-cream-soda">
             Questions for <%= request.getAttribute("quizName") %>
+            <!-- Questions for quizName -->
         </div>
 
         <div class="questionsWrap">
             <%= request.getAttribute("questionsHtml") %>
+            <!-- <div class="question">
+                <p class="questionTitle">Question 1</p>
+                <a class="deleteBtn" href="deleteQuestion?id=0&amp;quizName=QuizName">Delete Question</a>
+            </div>
+            <div class="question">
+                <p class="questionTitle">Question 1</p>
+                <a class="deleteBtn" href="deleteQuestion?id=1&amp;quizName=QuizName">Delete Question</a>
+            </div> -->
         </div>
 
         <!-- Add Question button -->
         <a href="addQuestion?quizName=<%= request.getAttribute("quizName") %>" class="addQuestionBtn">Add Question</a>
+        <!-- <a href="addQuestion?quizName=quizName" class="addQuestionBtn">Add Question</a> -->
     </div>
 
 </body>

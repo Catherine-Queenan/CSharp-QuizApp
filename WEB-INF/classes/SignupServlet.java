@@ -82,7 +82,7 @@ public class SignupServlet extends HttpServlet {
                 // Session created
                 HttpSession session = req.getSession(true);
                 session.setAttribute("USER_ID", username);
-
+                session.setAttribute("USER_ROLE", "g");
 
                 //Generating a token
                 String token = UUID.randomUUID().toString();

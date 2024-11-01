@@ -24,14 +24,21 @@
   </servlet-mapping>
 
   <servlet>
-    <servlet-name>home</servlet-name>
-    <servlet-class>MainServlet</servlet-class>
+  <servlet-name>HomeJson</servlet-name>
+  <servlet-class>MainServlet</servlet-class>
   </servlet>
-
   <servlet-mapping>
-    <servlet-name>home</servlet-name>
+    <servlet-name>Home</servlet-name>
     <url-pattern>/home</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>HomeJson</servlet-name>
+    <url-pattern>/home-json</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>Home</servlet-name>
+    <jsp-file>/views/main.jsp</jsp-file>
+  </servlet>
 
   <servlet>
     <servlet-name>LogoutServlet</servlet-name>
@@ -79,13 +86,21 @@
 
 
 <servlet>
-  <servlet-name>QuizServlet</servlet-name>
-  <servlet-class>QuizServlet</servlet-class>
+    <servlet-name>QuizServletJson</servlet-name>
+    <servlet-class>QuizServlet</servlet-class>
 </servlet>
 <servlet-mapping>
-  <servlet-name>QuizServlet</servlet-name>
-  <url-pattern>/quizzes</url-pattern>
+    <servlet-name>QuizServletJson</servlet-name>
+    <url-pattern>/quizzes-json/*</url-pattern>
 </servlet-mapping>
+<servlet-mapping>
+  <servlet-name>QuizServlet</servlet-name>
+  <url-pattern>/quizzes/*</url-pattern>
+</servlet-mapping>
+<servlet>
+  <servlet-name>QuizServlet</servlet-name>
+  <jsp-file>/views/quiz.jsp</jsp-file>
+</servlet>
 
 <servlet>
   <servlet-name>QuestionsServlet</servlet-name>
@@ -103,15 +118,6 @@
 <servlet-mapping>
   <servlet-name>QuizEndServlet</servlet-name>
   <url-pattern>/end</url-pattern>
-</servlet-mapping>
-
-<servlet>
-  <servlet-name>MainServlet</servlet-name>
-  <servlet-class>MainServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-  <servlet-name>MainServlet</servlet-name>
-  <url-pattern>/main</url-pattern>
 </servlet-mapping>
 
 <servlet>
@@ -139,15 +145,23 @@
   <servlet-name>ModerateModeServlet</servlet-name>
   <url-pattern>/moderateMode</url-pattern>
 </servlet-mapping>
-
-<servlet>
+  <servlet>
     <servlet-name>CreateQuizServlet</servlet-name>
     <servlet-class>CreateQuizServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
+  </servlet>
+  <servlet-mapping>
     <servlet-name>CreateQuizServlet</servlet-name>
+    <url-pattern>/createQuiz-json</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>CreateQuiz</servlet-name>
+    <jsp-file>/views/createQuiz.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CreateQuiz</servlet-name>
     <url-pattern>/createQuiz</url-pattern>
-    </servlet-mapping>
+  </servlet-mapping>
 
     <servlet>
     <servlet-name>DeleteQuizServlet</servlet-name>
@@ -155,7 +169,7 @@
     </servlet>
     <servlet-mapping>
     <servlet-name>DeleteQuizServlet</servlet-name>
-    <url-pattern>/deleteQuiz</url-pattern>
+    <url-pattern>/quizzes/deleteQuiz-json/*</url-pattern>
     </servlet-mapping>
 
 </web-app>

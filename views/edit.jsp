@@ -95,6 +95,25 @@
     <div class="wrap">
         <%-- Render the form generated in the servlet --%>
         <%= request.getAttribute("editFormHtml") %>    
+        
+        <!-- <div class="title cherry-cream-soda">
+            Edit Quiz: quizName
+        </div>
+        <form class="eidtQuizForm" method="post" action="edit">
+            <label for="title">Quiz Title:</label>
+            <input type="text" id="title" name="title" value="quizName">
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description">l</textarea>
+            
+            <input type="hidden" name="quizName" value="quizName">
+
+            <div class="button-container">
+                <a href="editQuestions?quizName=quizName" class="button-link">Go to List of Questions</a>
+                <button class="saveBtn" type="submit">Save Changes</button>
+            </div>
+        </form> -->
+
     </div>
 
 </body>

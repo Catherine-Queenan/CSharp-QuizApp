@@ -150,11 +150,13 @@
 
     <div class="wrap">
         <div class="title cherry-cream-soda">
+            <!-- Add Question to <%= request.getAttribute("quizName") %> -->
             Add Question to <%= request.getAttribute("quizName") %>
         </div>
 
         <form class="newQuestionForm" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="quizName" id="quizName" value="<%= request.getAttribute(" quizName") %>">
+            <!-- <input type="hidden" name="quizName" id="quizName" value="<%= request.getAttribute(" quizName") %>"> -->
+            <input type="hidden" name="quizName" id="quizName" value="QuizName">
             <label for="questionText">Question Text:</label>
             <input type="text" id="questionTextQ1" name="questionText" required>
 
