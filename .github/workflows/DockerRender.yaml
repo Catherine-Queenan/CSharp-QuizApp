@@ -25,6 +25,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '17'
+        distribution: oracle
         
     - name: Build Docker Images
       run: docker compose build
