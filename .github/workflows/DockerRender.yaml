@@ -18,6 +18,14 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        
     - name: Build Docker Images
       run: docker compose build
 
@@ -32,6 +40,7 @@ jobs:
     - name: Login to Render
       env:
         RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }} 
+        RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
       run: |
         curl -X POST https://api.render.com/deploys \
         -H "Content-Type: application/json" \
