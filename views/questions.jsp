@@ -145,7 +145,16 @@
             margin: 20px 0;
         }
 
-        .videoWrap {
+        #questionMedia {
+            width: 100%;
+            height: 100%;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #mediaAnswer {
             width: 100%;
             height: 100%;
             margin-top: 20px;
@@ -294,7 +303,17 @@
 
     function nextQuestion() {
         if(answerMedia != null) {
-            answerMedia.style.display = "flex";
+
+            let mediaQuestion = document.getElementById("questionMedia");
+            if(mediaQuestion) {
+                mediaQuestion.style.display = "none";
+            }
+
+            let mediaAnswer = document.getElementById("mediaAnswer");
+            if(mediaAnswer) {
+                mediaAnswer.style.display = "flex";
+            }
+
             let audioAnswer = document.getElementById("audio-answer");
             let audioQuestion = document.getElementById("audio-question");
             
