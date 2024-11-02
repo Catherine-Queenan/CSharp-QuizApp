@@ -10,9 +10,9 @@ import org.json.JSONObject;
 
 public class Repository implements IRepository {
 
-    private static final String URL = System.getenv("DB_URL");
-    private static final String USER = System.getenv("DB_USER");
-    private static final String PASSWORD = System.getenv("DB_PASSWORD");
+    private static final String URL =  "jdbc:mysql://db:3306/quizapp";
+    private static final String USER = "root";
+    private static final String PASSWORD = "root";
     private Connection con = null;   
 
     private void insertCategory(JSONObject entry) {
