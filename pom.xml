@@ -57,7 +57,7 @@
                 <configuration>
                     <source>17</source>
                     <target>17</target>
-                    <sourceDirectory>./WEB-INF/classes</sourceDirectory> <!-- Specify your source directory -->
+                    <sourceDirectory>./</sourceDirectory> <!-- Specify your source directory -->
                 </configuration>
             </plugin>
             <plugin>
