@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutButton.addEventListener('click', () => {
             fetch('/QuizApp/logout', {
                 method: 'GET', // or 'POST' if you change your servlet
-                credentials: 'include' // Include cookies in the request
             })
             .then(response => {
                 if (response.ok) {
