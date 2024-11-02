@@ -86,7 +86,7 @@
                             <include>public/**</include>
                             <include>scripts/**</include>
                             <include>views/**</include>
-                            <include>WEB-INF/*.class</include>
+                            <include>WEB-INF/**</include>
                         </includes>
                     </resource>
                 </webResources>
