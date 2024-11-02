@@ -1,5 +1,5 @@
 # Use the official Tomcat image as the base image
-FROM tomcat:latest
+FROM tomcat:6.0
 
 # Copy the WAR file to the Tomcat webapps directory
 COPY target/app.war /usr/local/tomcat/webapps/
