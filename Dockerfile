@@ -2,7 +2,7 @@
 FROM tomcat:latest
 
 # Copy the WAR file to the Tomcat webapps directory
-COPY quizapp.war /usr/local/tomcat/webapps/
+COPY target/quizapp.war /usr/local/tomcat/webapps/
 COPY ./WEB-INF/lib/mysql-connector-j-9.0.0.jar /usr/local/tomcat/lib/
 
 # Expose Tomcat’s default port
