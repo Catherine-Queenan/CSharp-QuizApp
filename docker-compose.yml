@@ -12,11 +12,7 @@ services:
       - quizapp-network
     depends_on:
       - db
-    command: >
-      sh -c "until mysql -h db -P 3306 -u root -proot -e 'SELECT 1'; do
-        echo waiting for db;
-        sleep 2;
-      done;
+    command: ["/bin/bash", "-c", "./wait-for-db.sh catalina.sh run"]
   
   db:
     image: mysql:5.7
