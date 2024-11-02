@@ -30,6 +30,7 @@
                 <configuration>
                 <webResources>
                     <resource>
+                        <directory>./</directory>
                         <includes>
                             <include>public/**</include>
                             <include>scripts/**</include>

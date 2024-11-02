@@ -55,14 +55,11 @@ jobs:
         # Define the source directory, update if necessary
         SOURCE_DIR="WEB-INF/classes"  # Use your correct source directory here
 
-        # Create build directory
-        mkdir -p build
-
         # Determine classpath separator based on OS
         CP="jakarta.servlet-api-5.0.0.jar:json-20230227.jar:aspectjrt-1.9.19.jar:jakarta.websocket-api-2.0.0.jar"
 
         # Compile using javac with the appropriate classpath
-        find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp "$CP" -d build
+        find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp "$CP" -d WEB-INF/classes
       shell: bash  # Use bash for all platforms
         
     - name: Build with Maven
