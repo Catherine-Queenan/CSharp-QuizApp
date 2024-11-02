@@ -59,12 +59,12 @@ jobs:
     - name: Login to Render
       env:
         RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }} 
-        RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+        RENDER_SERVICE_ID: srv-csikovggph6c73a7jle0
       run: |
         curl -X POST https://api.render.com/deploys \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $RENDER_API_KEY" \
         -d '{
-              "serviceId": "${{ secrets.RENDER_SERVICE_ID }}",  # Replace with your Render service ID
+              "serviceId": "srv-csikovggph6c73a7jle0",  # Replace with your Render service ID
               "branch": "main"  
             }'
