@@ -65,6 +65,6 @@ jobs:
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $RENDER_API_KEY" \
         -d '{
-              "serviceId": "csikovggph6c73a7jle0",  # Replace with your Render service ID
+              "serviceId": "csikovggph6c73a7jle0",  
               "branch": "main"  
             }'
