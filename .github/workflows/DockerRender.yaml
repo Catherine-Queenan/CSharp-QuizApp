@@ -62,10 +62,10 @@ jobs:
         RENDER_SERVICE_ID: srv-csis79dsvqrc73ej0htg
       run: |
        curl --request GET \
-       --url 'https://api.render.com/v1/services?limit=3' \
-        --header "Content-Type: application/json" \
-        --header "Authorization: Bearer $.RENDER_API_KEY" \
-        -d '{
-              "serviceId": "$RENDER_SERVICE_ID",  
-              "branch": "main"  
-            }'
+            --url https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys \
+            --header "Content-Type: application/json" \
+            --header "Authorization: Bearer $.RENDER_API_KEY" \
+            -data '{
+                "serviceId": "$RENDER_SERVICE_ID",  
+                "branch": "main"  
+              }'
