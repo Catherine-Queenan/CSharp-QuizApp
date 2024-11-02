@@ -29,6 +29,26 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
         distribution: oracle
+
+    # Step to download jakarta.servlet-api.jar
+    - name: Download Servlet API
+      run: |
+        curl -O https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/5.0.0/jakarta.servlet-api-5.0.0.jar
+
+   # Step to download org.json library
+    - name: Download JSON Library
+      run: |
+        curl -O https://repo1.maven.org/maven2/org/json/json/20230227/json-20230227.jar
+
+    # Step to download AspectJ
+    - name: Download AspectJ Library
+      run: |
+        curl -O https://repo1.maven.org/maven2/org/aspectj/aspectjrt/1.9.19/aspectjrt-1.9.19.jar
+
+    # Step to download Jakarta WebSocket API
+    - name: Download Jakarta WebSocket API
+      run: |
+        curl -O https://repo1.maven.org/maven2/jakarta/websocket/jakarta.websocket-api/2.0.0/jakarta.websocket-api-2.0.0.jar
     # Compile Project Step with all libraries in Classpath
     - name: Compile Project
       run: |
