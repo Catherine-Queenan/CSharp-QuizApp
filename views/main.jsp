@@ -191,6 +191,31 @@
 <script>
 
     document.addEventListener('DOMContentLoaded', function() {
+    //     // Function to check session status
+    // function checkSession() {
+    //     return fetch('/QuizApp/home/session-status', {
+    //         method: 'GET',
+    //     })
+    //     .then(response => {
+    //         if (!response.ok) {
+    //             throw new Error('Failed to check session status');
+    //         }
+    //         return response.json();
+    //     })
+    //     .then(data => {
+    //         if (!data.loggedIn) {
+    //             // User is not logged in, redirect to login page
+    //             window.location.href = '/QuizApp/login'; 
+    //             return false; // User is not logged in
+    //         }
+    //         return true; // User is logged in
+    //     })
+    //     .catch(error => {
+    //         console.error('Error checking session status:', error);
+    //         return false; // Assume not logged in on error
+    //     });
+    // }
+        
         const categories = document.getElementById('categories');
         const prevBtn = document.querySelector('.prev');
         const nextBtn = document.querySelector('.next');
@@ -202,6 +227,11 @@
         pathSegments.pop();
         let newPath = pathSegments.join('/') + '/home-json';
         console.log(newPath)
+
+        // checkSession().then(isLoggedIn => {
+        //     if (!isLoggedIn) {
+        //     } else 
+ 
 
         // Fetch categories and render them dynamically
         fetch(newPath, {
@@ -316,5 +346,8 @@
             document.getElementById('categories').innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
         });
     });
+//});
+
+
 </script>
 </html>

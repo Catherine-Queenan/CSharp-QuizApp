@@ -12,7 +12,7 @@
     <servlet-name>login</servlet-name>
     <url-pattern>/login</url-pattern>
   </servlet-mapping>
-
+<!-- 
    <servlet>
     <servlet-name>sessionStatus</servlet-name>
     <servlet-class>SessionStatusServlet</servlet-class>
@@ -21,7 +21,7 @@
   <servlet-mapping>
     <servlet-name>sessionStatus</servlet-name>
     <url-pattern>/session-status</url-pattern>
-  </servlet-mapping>
+  </servlet-mapping> -->
 
   <servlet>
     <servlet-name>signup</servlet-name>

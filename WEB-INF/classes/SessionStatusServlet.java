@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+@WebServlet("/QuizApp/home/session-status")
 public class SessionStatusServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false); // Get current session, do not create if it doesn't exist
