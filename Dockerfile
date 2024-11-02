@@ -3,12 +3,8 @@ FROM tomcat:latest
 
 # Copy the WAR file to the Tomcat webapps directory
 COPY target/app.war /usr/local/tomcat/webapps/
-COPY ./WEB-INF/lib/mysql-connector-j-9.0.0.jar /usr/local/tomcat/lib/
-COPY ./WEB-INF/lib/jakarta.websocket-api-2.0.0.jar /usr/local/tomcat/lib/
-COPY ./WEB-INF/lib/jakarta.json-api-2.0.0.jar /usr/local/tomcat/lib/
-COPY ./WEB-INF/lib/json-20240303.jar /usr/local/tomcat/lib/
-COPY ./WEB-INF/lib/servlet-api.jar /usr/local/tomcat/lib/
-COPY ./WEB-INF/lib/websocket-api.jar /usr/local/tomcat/lib/
+COPY ./WEB-INF/lib/*.jar /usr/local/tomcat/lib/
+
 
 # Expose Tomcat’s default port
 EXPOSE 8080
