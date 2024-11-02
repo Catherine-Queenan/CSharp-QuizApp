@@ -43,6 +43,8 @@ public class SignupServlet extends HttpServlet {
             sb.append(line);
         }
 
+        System.out.println(sb.toString());
+
         // JSON request for username and password values
         JSONObject jsonRequest = new JSONObject(sb.toString());
         String username = jsonRequest.getString("username");
