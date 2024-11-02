@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   app:
     build:
@@ -24,6 +23,8 @@ services:
     volumes:
       - db_data:/var/lib/mysql  # Persist MySQL data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Mount the initialization script
+    networks:
+      - quizapp-network
 
 volumes:
   db_data: 
