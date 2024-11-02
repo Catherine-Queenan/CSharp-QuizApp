@@ -1,6 +1,4 @@
-<!DOCTYPE web-app
-    PUBLIC "-//Java Community Process//DTD Web Application 3.1//EN"
-    "http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
 
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
