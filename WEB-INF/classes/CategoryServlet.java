@@ -8,7 +8,7 @@ import java.sql.*;
 public class CategoryServlet extends HttpServlet {
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {        
         res.setContentType("text/html");
         PrintWriter out = res.getWriter();
         Connection con = null;

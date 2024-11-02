@@ -88,12 +88,12 @@ public class LoginServlet extends HttpServlet {
             //Generating a token
             String token = UUID.randomUUID().toString();
 
-            // Cookie to store token
-            Cookie tokenCookie = new Cookie("token", token);
-            tokenCookie.setHttpOnly(true);
-            tokenCookie.setSecure(true);
-            tokenCookie.setMaxAge(60 * 60 * 24); // 1 day
-            res.addCookie(tokenCookie);
+            // // Cookie to store token
+            // Cookie tokenCookie = new Cookie("token", token);
+            // tokenCookie.setHttpOnly(true);
+            // tokenCookie.setSecure(true);
+            // tokenCookie.setMaxAge(60 * 60 * 24); // 1 day
+            // res.addCookie(tokenCookie);
 
             //Set JSON response for authorized access
             jsonResponse.put("status", "success");
