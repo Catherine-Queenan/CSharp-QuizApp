@@ -50,30 +50,16 @@
     <build>
         <finalName>app</finalName>
         <plugins>
-     
+            <plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
-                <executions>
-                        <execution>
-                            <id>compile-specified</id>
-                            <phase>compile</phase>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                            <configuration>
-                                <includes>
-                                    <include>**/*.java</include>
-                                </includes>
-                                <source>17</source>
-                                <target>17</target>
-                            </configuration>
-                        </execution>
-                    </executions>
+                <configuration>
+                    <source>17</source>  <!-- or your Java version -->
+                    <target>17</target>  <!-- or your Java version -->
+                </configuration>
             </plugin>
-
-                   <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.1</version>
