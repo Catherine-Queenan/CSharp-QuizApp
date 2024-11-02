@@ -50,7 +50,7 @@
     <build>
         <finalName>app</finalName>
         <plugins>
-            <plugin>
+     
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -72,6 +72,8 @@
                         </execution>
                     </executions>
             </plugin>
+
+                   <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.1</version>
