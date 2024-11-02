@@ -37,7 +37,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: quizapp
-        path: target/quizapp-1.0-SNAPSHOT.war
+        path: target/app.war
         
     - name: Build Docker Images
       run: docker compose build
