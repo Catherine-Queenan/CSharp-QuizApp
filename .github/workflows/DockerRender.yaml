@@ -59,10 +59,10 @@ jobs:
     - name: Login to Render
       env:
         RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }} 
-        RENDER_SERVICE_ID: srv-csis79dsvqrc73ej0htg
+        RENDER_SERVICE_ID: srv-csish3tsvqrc73ej5lig
       run: |
        curl --request POST \
-            --url https://api.render.com/v1/services/srv-csis79dsvqrc73ej0htg/deploys \
+            --url https://api.render.com/v1/services/srv-csish3tsvqrc73ej5lig/deploys \
             --header 'accept: application/json' \
             --header 'authorization: Bearer rnd_K3nRXmT5B3wKY4bY63zSTtDNNIsd' \
             --header 'content-type: application/json' \
