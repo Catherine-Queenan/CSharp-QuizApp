@@ -49,6 +49,14 @@ jobs:
     - name: Download Jakarta WebSocket API
       run: |
         curl -O https://repo1.maven.org/maven2/jakarta/websocket/jakarta.websocket-api/2.0.0/jakarta.websocket-api-2.0.0.jar
+
+    # Step to download MySQL Connector/J
+    - name: Download MySQL Connector/J
+      run: |
+        curl -O https://repo1.maven.org/maven2/mysql/mysql-connector-java/9.0.0/mysql-connector-java-9.0.0.jar
+
+
+
     # Compile Project Step with all libraries in Classpath
     - name: Compile Project
       run: |
@@ -56,7 +64,8 @@ jobs:
         SOURCE_DIR="WEB-INF/classes"  # Use your correct source directory here
 
         # Determine classpath separator based on OS
-        CP="jakarta.servlet-api-5.0.0.jar:json-20230227.jar:aspectjrt-1.9.19.jar:jakarta.websocket-api-2.0.0.jar"
+        CP="jakarta.servlet-api-5.0.0.jar:json-20230227.jar:aspectjrt-1.9.19.jar:jakarta.websocket-api-2.0.0.jar:mysql-connector-j-9.0.0.jar"
+
 
         # Compile using javac with the appropriate classpath
         find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp "$CP" -d WEB-INF/classes
