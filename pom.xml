@@ -51,7 +51,6 @@
         <finalName>app</finalName>
         <plugins>
             <plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
@@ -60,6 +59,7 @@
                     <target>17</target>  <!-- or your Java version -->
                 </configuration>
             </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.1</version>
