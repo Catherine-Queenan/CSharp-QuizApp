@@ -316,7 +316,5 @@
             document.getElementById('categories').innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
         });
     });
-
-
 </script>
 </html>
