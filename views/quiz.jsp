@@ -249,7 +249,8 @@
             <button class="btn next"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
-
+</body>
+<script src="..\scripts\logout.js"></script>
     <script>
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -267,7 +268,7 @@
 
             // Extract the base path dynamically (remove last segment if it's quiz-related)
             pathSegments.pop(); 
-            pathSegments.pop();            
+            pathSegments.pop();
 
             // Construct the new path dynamically
             const newPath = pathSegments.join('/') + `/quizzes-json/?categoryName=${categoryName}`;
@@ -431,6 +432,4 @@
         });
 
     </script>
-</body>
-<script src="scripts\logout.js"></script>
 </html>
