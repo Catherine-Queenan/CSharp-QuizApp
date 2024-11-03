@@ -3,6 +3,7 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
+
  <servlet>
     <servlet-name>login</servlet-name>
     <servlet-class>LoginServlet</servlet-class>
@@ -58,14 +59,25 @@
     <servlet-name>LogoutServlet</servlet-name>
     <url-pattern>/logout</url-pattern>
 </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Edit</servlet-name>
+    <jsp-file>/views/edit.jsp</jsp-file>
+  </servlet>
+<servlet-mapping>
+    <servlet-name>Edit</servlet-name>
+    <url-pattern>/edit/*</url-pattern>
+</servlet-mapping>
+
 <servlet>
-    <servlet-name>EditServlet</servlet-name>
+    <servlet-name>EditJSON</servlet-name>
     <servlet-class>EditServlet</servlet-class>
 </servlet>
 <servlet-mapping>
-    <servlet-name>EditServlet</servlet-name>
-    <url-pattern>/edit</url-pattern>
+    <servlet-name>EditJSON</servlet-name>
+    <url-pattern>/edit-json/*</url-pattern>
 </servlet-mapping>
+
 <!-- EditQuestionsServlet Mapping -->
     <servlet>
         <servlet-name>EditQuestionsServlet</servlet-name>

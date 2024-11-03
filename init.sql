@@ -1,4 +1,4 @@
-MySQL:
+-- MySQL:
 CREATE TABLE users (
     id BINARY(16), 
     username VARCHAR (20), 

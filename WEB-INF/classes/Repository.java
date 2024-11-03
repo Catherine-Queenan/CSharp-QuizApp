@@ -12,7 +12,7 @@ public class Repository implements IRepository {
 
     public static final String URL = "jdbc:mysql://localhost:3306/QuizApp";
     public static final String USER = "root";
-    public static final String PASSWORD = "";
+    public static final String PASSWORD = "mySQL20@$CHANGE";
     private Connection con = null;   
 
     private void insertCategory(JSONObject entry) {
@@ -49,7 +49,6 @@ public class Repository implements IRepository {
             ps.setString(2, entry.getString("category_name"));
             ps.setString(3, entry.getString("description"));
             ps.executeUpdate();
-            System.out.println(entry);
 
             if (!entry.isNull("media_id")) {
                 // Associate quiz with respective media
@@ -169,13 +168,32 @@ public class Repository implements IRepository {
             query.deleteCharAt(query.length() - 1);
             query.append(" WHERE name = ?");
             PreparedStatement ps = con.prepareStatement(query.toString());
-            for (int i = 1; i < values.length + 1; i++) {
+            for (int i = 1; i <= values.length; i++) {
                 ps.setString(i, updatedEntry.getString(values[i - 1]));
             }
             ps.setString(values.length + 1, pKey);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            throw new RuntimeException("Error updating entry in the \"category\" table", ex);
+            throw new RuntimeException("Error updating entry in the \"quizzes\" table", ex);
+        }
+    }
+
+    private void updateMedia(JSONObject updatedEntry, String pKey, String[] values){
+        try {
+            StringBuilder query = new StringBuilder("UPDATE media SET ");
+            for (String col : values) {
+                query.append(col).append("= ?,");
+            }
+            query.deleteCharAt(query.length() - 1);
+            query.append(" WHERE id = ?");
+            PreparedStatement ps = con.prepareStatement(query.toString());
+            for (int i = 1; i <= values.length; i++) {
+                ps.setString(i, updatedEntry.getString(values[i - 1]));
+            }
+            ps.setBytes(values.length + 1, pKey.getBytes());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error updating entry in the \"media\" table", ex);
         }
     }
 
@@ -300,6 +318,9 @@ public class Repository implements IRepository {
             case "quiz":
                 updateQuiz(updatedEntry, pKey, changeColumns);
                 break;
+            case "media":
+                updateMedia(updatedEntry, pKey, changeColumns);
+                break;
             default:
                 throw new RuntimeException("Error updating the database");
         }
@@ -320,7 +341,6 @@ public class Repository implements IRepository {
                     update = "DELETE FROM quizzes WHERE " + criteria;
                     break;
                 case "question":
-                System.out.println("HERE HERE  " + criteria);
                     id = criteria.getBytes();
                     update = "DELETE FROM questions WHERE id = ? ";
                     break;
@@ -374,7 +394,6 @@ public class Repository implements IRepository {
                     id = criteria.split(",")[0].getBytes();
                     break;
                 case "media":
-                    System.out.println(criteria);
                     id = criteria.getBytes();
                     query = "SELECT * FROM media WHERE id = ?";
                     break;
@@ -388,13 +407,9 @@ public class Repository implements IRepository {
             }
 
             ResultSet rs = selectStatement.executeQuery();
-            System.out.println(rs.getMetaData());
             while (rs.next()) {
-                System.out.println(rs);
                 String parameters = createConstructorParameters(rs, tableType);
-                System.out.println(parameters);
                 AClass cat = factory.createAClass(tableType, parameters);
-                System.out.println(cat.serialize());
                 selectedEntries.add(cat);
             }
 
