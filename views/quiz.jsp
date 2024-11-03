@@ -325,7 +325,7 @@
                         if (data.role === "admin") {
                             quizDiv.innerHTML += `
                                 <div class="adminBtnWrap">    
-                                    <button type="button" onclick="window.location.href='${pathSegments.join('/')}/edit?quizName=${quiz.name}'">Edit Quiz</button>
+                                    <button type="button" onclick="window.location.href='${pathSegments.join('/')}/edit/${quiz.name}'">Edit Quiz</button>
                                     <button type="button" class="deleteButton">Delete Quiz</button>
                                 </div>
                             `;

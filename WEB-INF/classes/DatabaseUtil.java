@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public class DatabaseUtil {
 
-    public static final String URL = "jdbc:mysql://localhost:3307/QuizApp";
+    public static final String URL = "jdbc:mysql://localhost:3306/QuizApp";
     public static final String USER = "root";
     public static final String PASSWORD = "mySQL20@$CHANGE";
 
