@@ -7,9 +7,6 @@
     <title>Creating a New Quiz</title>
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
-        .title {
-            font-size: 40px;
-        }
 
         .wrap {
             padding: 60px 0;
@@ -47,6 +44,14 @@
             border-radius: 10px;
             padding: 15px 20px;
             font-size: 18px;
+        }
+
+        #imageUploadQuiz {
+            display: flex;
+        }
+
+        #quizMediaFile {
+            width: 100%;
         }
 
         .createQuizBtn {
@@ -266,7 +271,7 @@
     let quizMediaFile = document.getElementById("imageUploadQuiz");
     quizImage.addEventListener('change', () => {
         if (quizImage.checked) {
-            quizMediaFile.style.display = "block";
+            quizMediaFile.style.display = "flex";
         } else {
             quizMediaFile.style.display = "none";
         }

@@ -157,6 +157,12 @@ textarea {
     .editQuizForm .saveBtn {
         padding: 15px 20px;
     }
+
+    /* Create quiz page */
+    .newQuizForm {
+        width: 90% !important;
+        padding: 30px !important;
+    }
 }
 
 @media screen and (max-width: 500px) {
