@@ -146,6 +146,12 @@ textarea {
     .newQuestionForm {
         width: 80% !important;
     }
+
+    /* Moderated mode */
+    #options .answer {
+        padding: 20px;
+        font-size: 16px;
+    }
 }
 
 @media screen and (max-width: 650px) {
@@ -162,6 +168,19 @@ textarea {
     .newQuizForm {
         width: 90% !important;
         padding: 30px !important;
+    }
+
+    /* Moderated mode */
+    #question-container {
+        width: 90%;
+    }
+
+    #question {
+        padding: 10px !important;
+    }
+
+    #options {
+        padding: 0 !important;
     }
 }
 
@@ -236,6 +255,11 @@ textarea {
         padding: 35px !important;
     }
 
+    /* Moderated mode */
+    #question {
+        font-size: 25px !important;
+    }
+
 }
 
 @media screen and (max-width: 450px) {
@@ -243,5 +267,12 @@ textarea {
     .editQuizForm .button-container a,
     .editQuizForm .saveBtn {
         font-size: 18px;
+    }
+
+    /* Moderated mode */
+    #next-button {
+        padding: 15px 25px !important;
+        font-size: 18px !important;
+        border-radius: 12px !important;
     }
 }

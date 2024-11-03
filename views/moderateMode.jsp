@@ -7,7 +7,19 @@
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
 
+        #wrap {
+            padding: 80px 0;
+            justify-content: unset;
+            overflow-y: scroll;
+            -ms-overflow-style: none;
+            /* Internet Explorer 10+ */
+            scrollbar-width: none;
+            /* Firefox */
+            -webkit-scrollbar: none;
+        }
+
         .title {
+            width: 100%;
             padding: 10px 100px;
             text-align: center;
             font-size: 30px;
@@ -15,13 +27,12 @@
         }
 
         #next-button {
-            margin-top: 30px;
+            margin-top: 20px;
             padding: 20px 40px;
             border-radius: 15px;
             border: 0;
-            margin-right: 10px;
-            font-size: 22px;
-            background-color: #99c252;
+            font-size: 20px;
+            background-color: #6e6ba6;
             transition-duration: 0.3s;
             cursor: pointer;
         }
@@ -29,18 +40,18 @@
         /* Displaying media */
         #media-container {
             width: 100%;
-            height: 400px;
+            max-height: 400px;
             margin-top: 20px;
             overflow: hidden;
         }
 
         #media-container img {
             width: 100%;
+            max-height: 400px;
             height: 100%;
             object-fit: contain;
         }
         
-
         /* options */
         #options {
             width: 100%;
@@ -83,7 +94,6 @@
 
         /* answer count */
         #answerCounts {
-            margin-top: 20px;
             width: fit-content;
             display: flex;
             flex-direction: column;
@@ -127,7 +137,7 @@
         </form>
     </header>
 
-    <div class="wrap">
+    <div class="wrap" id="wrap">
         <div id="question-container">
             <p id="question" class="title"></p>
             <div id="options"></div>
