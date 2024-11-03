@@ -175,14 +175,17 @@ textarea {
         font-size: 35px !important;
     }
     
-    /* Login page */
-    .login {
+    /* Login & Signup page */
+    .login,
+    .signup {
         padding: 50px 10px !important;
         gap: 20px !important;
     }
 
     .login .id, 
-    .login .pw {
+    .login .pw,
+    .signup .id, 
+    .signup .pw {
         width: 85%;
         height: 30px;
         font-size: 18px;
@@ -190,12 +193,14 @@ textarea {
         border-radius: 13px;
     }
 
-    .login .btn {
+    .login .btn,
+    .signup .btn {
         width: 85%;
         height: 50px;
     }
 
-    .login .desc {
+    .login .desc,
+    .signup .desc {
         width: 85%;
         text-align: center;
     }
