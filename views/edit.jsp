@@ -225,6 +225,7 @@
                 let path = URL.createObjectURL(imageFile);
 
                 //update the image display
+                quizImage.style.display = "block";
                 quizImage.src = path;
             });
         }); 
