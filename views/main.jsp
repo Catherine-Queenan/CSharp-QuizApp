@@ -170,6 +170,13 @@
     </header>
 
     <div class="wrap">
+         <!-- New Div for Moderated Sessions -->
+         <div class="moderatedSessions" id="moderatedSessionsContainer">
+            <h2>Moderated Sessions</h2>
+            <div id="modSessionsCont">
+                <!-- Moderated sessions will be injected here by JavaScript -->
+            </div>
+        </div>
         <div class="title cherry-cream-soda">
             Categories
         </div>
@@ -214,8 +221,55 @@
     //         console.error('Error checking session status:', error);
     //         return false; // Assume not logged in on error
     //     });
-    // }
-        
+    // } 
+
+        // Fetch current moderated sessions
+        fetch('/QuizApp/getModeratedSessions?action=getModeratedSessions', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            // Check if the response is okay and convert to JSON
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const modSessionsContainer = document.getElementById('modSessionsCont');
+            modSessionsContainer.innerHTML = ''; // Clear previous content
+
+            // Check if there are any moderated sessions
+            if (!data.modSessions || data.modSessions.length === 0) {
+                // If no sessions, display a message
+                modSessionsContainer.innerHTML = '<div>No moderated sessions available.</div>';
+            } else {
+                // If there are sessions, display them
+                data.modSessions.forEach(modSession => {
+                    const modSessionDiv = document.createElement('div');
+                    modSessionDiv.className = 'modSession';
+                    modSessionDiv.innerHTML = `
+                        <div>Session ID: ${modSession.id}</div>
+                        <div>Moderator: ${modSession.moderator}</div>
+                        <button onclick="joinSession('${modSession.id}')">Join Session</button>
+                    `;
+                    modSessionsContainer.appendChild(modSessionDiv);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching moderated sessions:', error);
+            const modSessionsContainer = document.getElementById('modSessionsCont');
+            modSessionsContainer.innerHTML = '<div>Error fetching moderated sessions. Please try again later.</div>';
+        });
+
+        // Function to join a session
+        function joinSession(modSessionId) {
+            window.location.href = `/QuizApp/websocketView?sessionId=${modSessionId}`;
+        }
+
         const categories = document.getElementById('categories');
         const prevBtn = document.querySelector('.prev');
         const nextBtn = document.querySelector('.next');

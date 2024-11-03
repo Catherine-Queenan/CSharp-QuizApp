@@ -35,6 +35,20 @@ public class ModerateModeServlet extends HttpServlet {
         req.setAttribute("role", role);
         req.setAttribute("userName", username);
 
+        String moderatorId = (String) session.getAttribute("USER_ID");
+        System.out.println("Moderator ID: " + moderatorId);
+        String modSessionId = ModerationSessionManager.startModeratedSession(moderatorId);
+        System.out.println("Moderation Session ID: " + modSessionId);
+        if (modSessionId != null) {
+            session.setAttribute("modSessionId", modSessionId);
+        } else {
+            // Handle case where session creation failed
+            req.setAttribute("errorMessage", "Failed to start moderation session.");
+        }
+
+        // Forward to JSP
+        req.getRequestDispatcher("/views/moderateMode.jsp").forward(req, res);
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
             con = DatabaseUtil.getConnection();
@@ -171,6 +185,15 @@ public class ModerateModeServlet extends HttpServlet {
         RequestDispatcher view = req.getRequestDispatcher("/views/moderateMode.jsp");
         view.forward(req, res);
     }
+
+    // Handle request to end Moderation session
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String modSessionId = req.getParameter("modSessionId");
+        if (modSessionId != null) {
+            ModerationSessionManager.endModeratedSession(modSessionId); // Remove the session by ID
+        }
+    }
+
 
     // Media handler for both question and answer media
     public String insertMedia(Connection con, String id, String table) {

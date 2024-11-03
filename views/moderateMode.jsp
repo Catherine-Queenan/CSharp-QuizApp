@@ -123,7 +123,7 @@
 
     <header>
         <form action="home">
-            <button class="homeBtn" type="Submit">Home</button>
+            <button id="endModerationBtn" onclick="endModeration('<%= request.getAttribute("modSessionId") %>')">End Moderation</button>
         </form>
     </header>
 
@@ -154,6 +154,31 @@
     </div>
 
     <script type="text/javascript">
+
+        function endModeration(modSessionId) {
+            // Send an AJAX request to the servlet to end the moderation session
+            fetch('/QuizApp/getModeratedSessions?action=getModeratedSessions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `modSessionId=${encodeURIComponent(modSessionId)}`
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("Moderation session ended.");
+                    // Redirect or update the UI as needed
+                    window.location.href = '/home'; // Example: Redirect to the home page
+                } else {
+                    console.log(modSessionId);
+                    alert("Failed to end moderation session.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while trying to end the moderation session.");
+            });
+        }
 
         function setHeight() {
             // Get all buttons inside the div with class "answersOption"
