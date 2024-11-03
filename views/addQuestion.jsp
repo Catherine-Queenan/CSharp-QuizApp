@@ -301,6 +301,7 @@
             const postPath = pathSegments.join('/') + `/addQuestion-json`;
             const homePath = pathSegments.join('/') + `/home`;
             const successPath = pathSegments.join('/') + `/editQuestions/${quizName}`;
+            console.log(homePath)
 
             fetch(newPath, {
                 method: 'GET',
@@ -315,7 +316,7 @@
                 return response.json(); // Change this temporarily to text() instead of json()
             }).then(data => {
                 console.log(data)
-                homeButtonForm.action = homePath;
+                document.querySelector(".homeBtn").parentElement.action = homePath;
             }).catch(error => {
                 console.error('Error fetching categories:', error);
                 document.getElementById('categories').innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
