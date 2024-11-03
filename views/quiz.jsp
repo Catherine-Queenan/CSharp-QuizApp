@@ -111,6 +111,7 @@
 
         .quiz-description {
             width: 100%;
+            padding: 0 10px;
             padding-top: 10px;
             font-size: 20px;
             display: flex;
@@ -124,8 +125,6 @@
             max-width: 90%;
             width: 100%;
             max-height: 200px;
-            height: 100%;
-            width: 100%;
             height: 100%;
             border-radius: 10px;
             object-fit: cover;

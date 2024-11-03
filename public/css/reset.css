@@ -59,6 +59,7 @@ header button:hover {
 }
 
 .title {
+    width: 80%;
     text-align: center;
     font-size: 50px;
     margin-bottom: 20px;
@@ -135,6 +136,24 @@ textarea {
     }
 }
 
+@media screen and (max-width: 900px) {
+    /* Edit Quiz page */
+    .editQuizForm {
+        width: 80% !important;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    /* Edit Quiz page */
+    .editQuizForm {
+        width: 90% !important;
+    }
+    .editQuizForm .button-container a,
+    .editQuizForm .saveBtn {
+        padding: 15px 20px;
+    }
+}
+
 @media screen and (max-width: 500px) {
     .wrap {
         height: calc(100vh - 73.6px);
@@ -182,4 +201,17 @@ textarea {
 
     /* Main page */
 
+    /* Edit Quiz page */
+    .editQuizForm {
+        padding: 30px !important;
+    }
+
+}
+
+@media screen and (max-width: 450px) {
+    /* Edit Quiz page */
+    .editQuizForm .button-container a,
+    .editQuizForm .saveBtn {
+        font-size: 18px;
+    }
 }
