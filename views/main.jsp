@@ -36,6 +36,12 @@
             transition: transform 0.4s ease-in-out;
         }
 
+        .emptyMsg {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         .category {
             width: 30%; /* Shows 3 categories at a time */
             padding: 20px;
@@ -125,6 +131,7 @@
             border: none;
             cursor: pointer;
             transition-duration: 0.2s;
+            display: none;
         }
 
         .btn:hover {
@@ -135,6 +142,10 @@
         .adminWrap {
             margin-top: 60px;
             transform: scale(0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .admin {
@@ -215,12 +226,6 @@
     //         return false; // Assume not logged in on error
     //     });
     // }
-        
-        const categories = document.getElementById('categories');
-        const prevBtn = document.querySelector('.prev');
-        const nextBtn = document.querySelector('.next');
-        const visibleCategories = 3; // Display 3 at a time
-        let index = 0;
 
         const currentPath = window.location.pathname;
         const pathSegments = currentPath.split('/');
@@ -267,7 +272,8 @@
 
             // Render categories dynamically
             if (data.categories.length === 0) {
-                categoriesContainer.innerHTML = '<p>No categories available</p>';
+                document.querySelector(".categoryBtnWrap").innerHTML = '<p class="emptyMsg">No categories available</p>';
+                document.getElementById("categories").style.width = "100%";
                 return;
             }
 
@@ -295,59 +301,103 @@
             });
 
             // Set up the sliding mechanism
-            const totalCategories = categories.children.length;
-
-            categories.style.width = `${(totalCategories / visibleCategories) * 100}%`;
-
-            // Function to slide categories
-            function updateCategories() {
-                const offset = -index * (document.getElementById("categoryWrap").clientWidth / visibleCategories); // Calculate the offset
-                categories.style.transform = `translateX(${offset}px)`;
-            }
-
-            // Event listener for next button
-            nextBtn.addEventListener('click', () => {
-                if (index < totalCategories - visibleCategories) {
-                    index++;
-                } else {
-                    index = 0; // Loop back to the first page
-                }
-                updateCategories();
-            });
-
-            // Event listener for previous button
-            prevBtn.addEventListener('click', () => {
-                if (index > 0) {
-                    index--;
-                } else {
-                    index = totalCategories - visibleCategories; // Loop back to the last page
-                }
-                updateCategories();
-            });
-
-            // Disable buttons if there are not enough categories
-            if (totalCategories <= visibleCategories) {
-                nextBtn.style.display = 'none';
-                prevBtn.style.display = 'none';
-            }
-
-            // Adjust for fewer categories on load
-            if (totalCategories < 3) {
-                categories.style.display = "flex";
-                categories.style.justifyContent = "center"
-                categories.style.width = `100%`;
-                document.querySelectorAll(".category").forEach(function(category) {
-                    category.style.width = `40%`;
-                });
+            if (window.innerWidth < 650 || errorFetching) {
+                displayCategories(1);
+            } else if (window.innerWidth < 1000) {
+                displayCategories(2);
+            } else {
+                displayCategories(3);
             }
         })
         .catch(error => {
             console.error('Error fetching categories:', error);
-            document.getElementById('categories').innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
+            document.getElementById('categories').innerHTML = '<p class="emptyMsg">There was an error loading the categories. Please try again later.</p>';
+            document.getElementById("categories").style.width = "100%";
         });
     });
-//});
 
+    function displayCategories(maxVisible) {
+        const categories = document.getElementById('categories');
+        const prevBtn = document.querySelector('.prev');
+        const nextBtn = document.querySelector('.next');
+        const visibleCategories = maxVisible; 
+        let index = 0;
+
+        // Adjust width dynamically based on the number of quizzes
+        const totalCategories = categories.children.length;
+        categories.style.width = `${(totalCategories / visibleCategories) * 100}%`;
+
+        // For responsive
+        if (visibleCategories == 1) {
+            categories.style.gap = "0";
+            document.querySelectorAll(".category").forEach(function(category) {
+                category.style.width = `70%`;
+                category.style.margin = "0 20px";
+            });
+        }
+
+        var categoryLinkMaxHeight = 0;
+        document.querySelectorAll(".categoryLink").forEach(function(categoryLink) {
+            var categoryLinkHeight = categoryLink.offsetHeight;  // Get the height of the current button
+            if (categoryLinkHeight > categoryLinkMaxHeight) {
+                categoryLinkMaxHeight = categoryLinkHeight;  // Update the maxHeight if current button's height is greater
+            }
+        });
+        document.querySelectorAll(".categoryLink .img").forEach(function(categoryLink) {
+            if (categoryLink.innerHTML == "") {
+                categoryLink.parentElement.style.height = "80%";
+            }
+        });
+
+        // Function to slide categories
+        function updateCategories() {
+            const offset = -index * (document.getElementById("categoryWrap").clientWidth / visibleCategories); // Calculate the offset
+            categories.style.transform = `translateX(${offset}px)`;
+        }
+
+        // Event listener for next button
+        nextBtn.addEventListener('click', () => {
+            if (index < totalCategories - visibleCategories) {
+                index++;
+            } else {
+                index = 0; // Loop back to the first page
+            }
+            updateCategories();
+        });
+
+        // Event listener for previous button
+        prevBtn.addEventListener('click', () => {
+            if (index > 0) {
+                index--;
+            } else {
+                index = totalCategories - visibleCategories; // Loop back to the last page
+            }
+            updateCategories();
+        });
+
+        // Disable buttons if there are not enough quizzes
+        if (totalCategories > visibleCategories) {
+            nextBtn.style.display = 'block';
+            prevBtn.style.display = 'block';
+        }
+
+        if (totalCategories == 1) {
+            categories.style.display = "flex";
+            categories.style.justifyContent = "center"
+            categories.style.width = `100%`;
+            document.querySelectorAll(".category").forEach(function(category) {
+                category.style.width = `60%`;
+            });
+        } else if (totalCategories < 3 && visibleCategories > 2) {
+            categories.style.display = "flex";
+            categories.style.justifyContent = "center"
+            categories.style.width = `100%`;
+            document.querySelectorAll(".category").forEach(function(category) {
+                category.style.width = `45%`;
+            });
+        }
+    }
+//});
 
 </script>
 </html>
