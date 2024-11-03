@@ -75,7 +75,7 @@ jobs:
       run: mvn clean package
 
     - name: Commit and Push WAR file
-       run: |
+      run: |
         git config --local user.email "eugenie.kim@outlook.com"
         git config --local user.name "EugenieVK"
         git add target/app.war  
