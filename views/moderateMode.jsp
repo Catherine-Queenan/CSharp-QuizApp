@@ -12,7 +12,6 @@
             justify-content: center;
             align-items: center;
             padding: 80px 0;
-            justify-content: unset;
             overflow-y: scroll;
             -ms-overflow-style: none;
             /* Internet Explorer 10+ */
@@ -288,14 +287,16 @@
             console.log(response);
             if(response.type === "end"){
                 webSocket.onclose = function () {
-            console.log("Connection closed ...");
-             globalThis.end = true;
-            window.location.href = "end";
-        };
+                    console.log("Connection closed ...");
+                    globalThis.end = true;
+                    window.location.href = "end";
+                };
             }
             if (response.question && response.answers) {
                 displayQuestion(response.question, response.answers, response.images, response.videos);
             } else if (response.type === "answerCounts") {
+                console.log("EHILSGHD")
+                console.log(response);
                 displayAnswerCounts(response.counts);
             } else {
                 console.log("Invalid message received from server:", response);
@@ -395,6 +396,7 @@
        
         // Display answer counts
         function displayAnswerCounts(counts) {
+            console.log(counts)
             let totalElement = document.getElementById("answerCounts");
             totalElement.innerHTML = "<h3>Answer Counts:</h3>";
 
