@@ -79,24 +79,45 @@
 </servlet-mapping>
 
 <!-- EditQuestionsServlet Mapping -->
+
     <servlet>
-        <servlet-name>EditQuestionsServlet</servlet-name>
+        <servlet-name>EditQuestions</servlet-name>
+        <jsp-file>/views/editQuestions.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditQuestions</servlet-name>
+        <url-pattern>/editQuestions/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EditQuestionJSON</servlet-name>
         <servlet-class>EditQuestionsServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>EditQuestionsServlet</servlet-name>
-        <url-pattern>/editQuestions</url-pattern>
+        <servlet-name>EditQuestionJSON</servlet-name>
+        <url-pattern>/editQuestions-json/*</url-pattern>
     </servlet-mapping>
 
     <!-- AddQuestionServlet Mapping -->
     <servlet>
-        <servlet-name>AddQuestionServlet</servlet-name>
+        <servlet-name>AddQuestion</servlet-name>
+        <jsp-file>/views/addQuestion.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddQuestion</servlet-name>
+        <url-pattern>/addQuestion/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AddQuestionJSON</servlet-name>
         <servlet-class>AddQuestionServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>AddQuestionServlet</servlet-name>
-        <url-pattern>/addQuestion</url-pattern>
+        <servlet-name>AddQuestionJSON</servlet-name>
+        <url-pattern>/addQuestion-json/*</url-pattern>
     </servlet-mapping>
+
+
 <servlet>
     <servlet-name>DeleteQuestionServlet</servlet-name>
     <servlet-class>DeleteQuestionServlet</servlet-class>

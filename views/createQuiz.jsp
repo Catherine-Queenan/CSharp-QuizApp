@@ -114,7 +114,7 @@
             <select name="categoryName" id="categories">
 
 
-                
+
             </select>
             <div id="newCatDiv" style="display:none;">
                 <label for="newCategory">Other Category:</label>
@@ -182,9 +182,9 @@
                     return;
                 }
                 if (data.categories.length === 0) {
-                        let newCatDiv = document.getElementById("newCatDiv");
-                        newCatDiv.style.display = "block";
-                        newCatInput.required = true;
+                    let newCatDiv = document.getElementById("newCatDiv");
+                    newCatDiv.style.display = "block";
+                    newCatInput.required = true;
                 }
 
                 data.categories.forEach(category => {
@@ -209,14 +209,14 @@
 
             const formData = new FormData(form); // Create a FormData object to handle the file uploads
             let category = document.getElementById("categories").value;
-            if(category === "ADDANOTHERCATEGORY"){
+            if (category === "ADDANOTHERCATEGORY") {
                 category = document.getElementById("newCategory").value;
             }
-        const currentPath = window.location.pathname;
-        const pathSegments = currentPath.split('/');
-        pathSegments.pop();
-        let newPath = pathSegments.join('/') + '/createQuiz-json';
-        let successPath = pathSegments.join('/') + '/quizzes/' + category;
+            const currentPath = window.location.pathname;
+            const pathSegments = currentPath.split('/');
+            pathSegments.pop();
+            let newPath = pathSegments.join('/') + '/createQuiz-json';
+            let successPath = pathSegments.join('/') + '/quizzes/' + category;
 
             fetch(newPath, { // Replace with your servlet URL
                 method: "POST",
@@ -224,23 +224,20 @@
                 headers: {
                     "Accept": "application/json" // Expect a JSON response
                 }
-            })
-                .then(response => {
-                    return response.json().then(data => {
-                if (response.ok) {
-                    pathSegments.pop();
-                    window.location.href = successPath;
-                
-                } else {
-                    throw new Error(data.message || 'An error occurred');
-                }
-            })
+            }).then(response => {
+                return response.json().then(data => {
+                    if (response.ok) {
+                        window.location.href = successPath;
+
+                    } else {
+                        throw new Error(data.message || 'An error occurred');
+                    }
                 })
-                .catch(error => {
+            }).catch(error => {
                     // Handle any errors that occurred during the fetch
                     console.error("Error:", error.message);
                     alert("An error occurred: " + error.message);
-                });
+            });
         });
 
     });

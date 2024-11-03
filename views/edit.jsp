@@ -115,7 +115,7 @@
                 <input type="file" id="mediaUpload" name="quizMedia">
             </form>
             <div class="button-container">
-                <a href="editQuestions?quizName=quizName" class="button-link">Go to List of Questions</a>
+                <a id="seeQuestionsLink" class="button-link">Go to List of Questions</a>
                 <button id="saveButton" class="saveBtn">Save Changes</button>
             </div>
 
@@ -125,11 +125,6 @@
     </body>
     <script src="scripts\logout.js"></script>
     <script>
-
-
-
-
-
         document.addEventListener('DOMContentLoaded', function () {
             const quizTitleName = document.getElementById('quizNameTitle');
             const quizDescription = document.getElementById('description');
@@ -137,6 +132,8 @@
             const hiddenQuizName = document.getElementById('originalName');
 
             const quizImage = document.getElementById('quizMedia');
+
+            const seeQuestions = document.getElementById('seeQuestionsLink');
 
             const currentPath = window.location.pathname;
             const pathSegments = currentPath.split('/');
@@ -153,6 +150,7 @@
             const newPath = pathSegments.join('/') + `/edit-json/?quizName=${quizName}`;
             const postPath = pathSegments.join('/') + `/edit-json`;
             const homePath = pathSegments.join('/') + `/home`;
+            const questionsPath = pathSegments.join('/') + "/editQuestions/";
 
             console.log(newPath)
             fetch(newPath, {
@@ -178,6 +176,8 @@
                     quizNameInput.value = data.quiz.name;
                     hiddenQuizName.value = data.quiz.name;
 
+                    seeQuestions.href = questionsPath + data.quiz.name;
+
                     if (data.quiz.media != null) {
                         quizImage.src = data.quiz.media.media_file_path;
                         quizImage.style.display = "block";
@@ -202,7 +202,7 @@
 
                     if (response.ok) {
                         pathSegments.pop();
-                        window.location.href = currentPath;
+                        window.location.reload();
 
                     } else {
                         throw new Error(data.message || 'An error occurred');
