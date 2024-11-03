@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Questions</title>
     <link rel="stylesheet" href="public/css/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
 
         body {
             overflow-x: hidden;
         }
         
-        .wrap {
-            padding: 60px 0;
+        #wrap {
+            height: fit-content !important;
+            position: relative;
+            top: 80px;
             overflow-y: scroll;
             -ms-overflow-style: none;  /* Internet Explorer 10+ */
             scrollbar-width: none;  /* Firefox */
@@ -121,7 +124,8 @@
         /* Displaying media */
         .question>.imgWrap {
             width: 100%;
-            height: 400px;
+            max-height: 400px;
+            height: 50vh;
             margin-top: 20px;
             overflow: hidden;
         }
@@ -190,11 +194,11 @@
         }
 
         /* Error Message */
-
         .errorMsg {
             padding: 30px;
             font-size: 25px;
         }
+
         .errorHome {
             margin: 0 auto;
             padding: 20px 50px;
@@ -267,12 +271,16 @@
             button.style.height = maxHeight + "px";
         });
 
-
         // Changing the display depending on how long the content is
         if (document.querySelector(".questions").offsetHeight > 700) {
             document.getElementById("wrap").style.height = `fit-content`;
         } else {
             document.getElementById("wrap").style.height = `${100}vh`;
+        }
+
+        if (window.innerWidth < 400) {
+            document.querySelector(".homeBtn").innerHTML = `<i class="fa-solid fa-house"></i>`;
+            document.querySelector(".restartBtn").innerHTML = `<i class="fa-solid fa-arrow-rotate-left"></i>`;
         }
     };
 
