@@ -178,6 +178,25 @@ public class Repository implements IRepository {
         }
     }
 
+    private void updateMedia(JSONObject updatedEntry, String pKey, String[] values){
+        try {
+            StringBuilder query = new StringBuilder("UPDATE media SET ");
+            for (String col : values) {
+                query.append(col).append("= ?,");
+            }
+            query.deleteCharAt(query.length() - 1);
+            query.append(" WHERE id = ?");
+            PreparedStatement ps = con.prepareStatement(query.toString());
+            for (int i = 1; i <= values.length; i++) {
+                ps.setString(i, updatedEntry.getString(values[i - 1]));
+            }
+            ps.setBytes(values.length + 1, pKey.getBytes());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error updating entry in the \"media\" table", ex);
+        }
+    }
+
     private String createConstructorParameters(ResultSet rs, String tableType) {
         StringBuilder parameters = new StringBuilder();
         try {
@@ -298,6 +317,9 @@ public class Repository implements IRepository {
         switch (table) {
             case "quiz":
                 updateQuiz(updatedEntry, pKey, changeColumns);
+                break;
+            case "media":
+                updateMedia(updatedEntry, pKey, changeColumns);
                 break;
             default:
                 throw new RuntimeException("Error updating the database");

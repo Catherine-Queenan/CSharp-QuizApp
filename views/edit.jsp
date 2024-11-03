@@ -96,33 +96,47 @@
             <!-- <%-- Render the form generated in the servlet --%>
         <%= request.getAttribute("editFormHtml") %>     -->
 
+
+
             <div class="title cherry-cream-soda">
-                Edit Quiz:  <span id="quizNameTitle"></span>
+                Edit Quiz: <span id="quizNameTitle"></span>
             </div>
+            <img id="quizMedia" src="" style="display:none">
+
             <form id="editQuizForm" class="editQuizForm" method="post">
                 <label for="title">Quiz Title:</label>
                 <input type="text" id="quizNameInput" name="title" value="quizName">
-                
+
                 <input id="originalName" type="hidden" name="quizName" value="">
                 <label for="description">Description:</label>
                 <textarea id="description" name="description"></textarea>
+
+                <label for="quizMedia">Quiz Image (optional):</label>
+                <input type="file" id="mediaUpload" name="quizMedia">
             </form>
-                <div class="button-container">
-                    <a href="editQuestions?quizName=quizName" class="button-link">Go to List of Questions</a>
-                    <button id="saveButton" class="saveBtn">Save Changes</button>
-                </div>
-           
+            <div class="button-container">
+                <a href="editQuestions?quizName=quizName" class="button-link">Go to List of Questions</a>
+                <button id="saveButton" class="saveBtn">Save Changes</button>
+            </div>
+
 
         </div>
 
     </body>
     <script src="scripts\logout.js"></script>
     <script>
+
+
+
+
+
         document.addEventListener('DOMContentLoaded', function () {
             const quizTitleName = document.getElementById('quizNameTitle');
             const quizDescription = document.getElementById('description');
             const quizNameInput = document.getElementById('quizNameInput');
             const hiddenQuizName = document.getElementById('originalName');
+
+            const quizImage = document.getElementById('quizMedia');
 
             const currentPath = window.location.pathname;
             const pathSegments = currentPath.split('/');
@@ -163,6 +177,11 @@
                     quizDescription.innerHTML = data.quiz.description;
                     quizNameInput.value = data.quiz.name;
                     hiddenQuizName.value = data.quiz.name;
+
+                    if (data.quiz.media != null) {
+                        quizImage.src = data.quiz.media.media_file_path;
+                        quizImage.style.display = "block";
+                    }
                 }
             });
 
@@ -171,24 +190,24 @@
                 const form = document.getElementById("editQuizForm");
                 const formData = new FormData(form);
                 for (var pair of formData.entries()) {
-                    console.log(pair[0]+ ', ' + pair[1]); 
+                    console.log(pair[0] + ', ' + pair[1]);
                 }
-                
+
                 fetch(postPath, {
                     method: 'POST',
                     body: formData,
 
                 }).then(response => {
                     console.log(response);
-                    
-                        if (response.ok) {
-                            pathSegments.pop();
-                            window.location.href = currentPath;
 
-                        } else {
-                            throw new Error(data.message || 'An error occurred');
-                        }
-                    
+                    if (response.ok) {
+                        pathSegments.pop();
+                        window.location.href = currentPath;
+
+                    } else {
+                        throw new Error(data.message || 'An error occurred');
+                    }
+
                 })
                     .catch(error => {
                         // Handle any errors that occurred during the fetch
@@ -196,6 +215,17 @@
                         alert("An error occurred: " + error.message);
                     });
 
+            });
+
+            const mediaUpload = document.getElementById("mediaUpload");
+            mediaUpload.addEventListener('input', (event) => {
+
+                //get the image, its url and the element to display it in
+                let imageFile = event.target.files[0]
+                let path = URL.createObjectURL(imageFile);
+
+                //update the image display
+                quizImage.src = path;
             });
         }); 
     </script>

@@ -63,6 +63,13 @@ public class EditServlet extends HttpServlet {
 
             AClass quiz = repository.select("quiz", "name=\"" + quizName +"\"").get(0);
             JSONObject quizJSON = quiz.serialize();
+
+            if(!quizJSON.isNull("media_id")){
+                AClass quizMedia = repository.select("media", quizJSON.getString("media_id")).get(0);
+                // String mediaFilePath = categoryMedia.serialize().getString("media_file_path");
+                //         mediaHtml.append("<img src=\"").append(mediaFilePath).append("\" alt=\"").append(categoryName).append("\" class=\"categoryImg\">");
+                quizJSON.put("media", quizMedia.serialize());
+            }
             jsonResponse.put("quiz", quizJSON);
                 // String quizTitle = quizJSON.getString("name");
                 // String quizDescription = quizJSON.getString("description");
@@ -130,6 +137,23 @@ public class EditServlet extends HttpServlet {
             AClass updateQuiz = factory.createAClass("quiz", parameters);
             repository.update(updateQuiz, quizName, "description,name");
 
+
+            Part quizMedia = req.getPart("quizMedia");
+            String fileName = quizMedia.getSubmittedFileName();
+
+            if(fileName != null && !fileName.isEmpty()){
+                File saveFile = new File(getServletContext().getRealPath("/public/media"));
+                File file = new File(saveFile, fileName);
+                quizMedia.write(file.getAbsolutePath());
+                String mediaUrl = "../public/media/" + fileName;
+
+                String mediaParams = "media_file_path:==" + mediaUrl + ",,,media_filename:==" + fileName;
+                AClass updateMedia = factory.createAClass("media", mediaParams);
+
+                ArrayList<AClass> quiz = repository.select("quiz", "name=\"" + quizName + "\"");
+                JSONObject quizJSON = quiz.get(0).serialize();
+                repository.update(updateMedia, quizJSON.getString("media_id"), "media_file_path,media_filename");
+            }
             // Redirect back to home after successful update
             res.setStatus(200); 
             res.getWriter().write("{\"message\": \"Quiz edited successfully!\", \"quizName\": \"" + title + "\"}");
