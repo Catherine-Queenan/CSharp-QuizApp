@@ -1,0 +1,106 @@
+name: DockerPushTest
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        isMain:
+          - ${{ contains(github.ref, 'main') }}
+        java: [17]
+    name: JDK${{ matrix.java }} ubuntu-latest
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Git Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ matrix.java }}
+        distribution: oracle
+
+    # Step to download jakarta.servlet-api.jar
+    - name: Download Servlet API
+      run: |
+        curl -O https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/5.0.0/jakarta.servlet-api-5.0.0.jar
+
+   # Step to download org.json library
+    - name: Download JSON Library
+      run: |
+        curl -O https://repo1.maven.org/maven2/org/json/json/20230227/json-20230227.jar
+
+    # Step to download AspectJ
+    - name: Download AspectJ Library
+      run: |
+        curl -O https://repo1.maven.org/maven2/org/aspectj/aspectjrt/1.9.19/aspectjrt-1.9.19.jar
+
+    # Step to download Jakarta WebSocket API
+    - name: Download Jakarta WebSocket API
+      run: |
+        curl -O https://repo1.maven.org/maven2/jakarta/websocket/jakarta.websocket-api/2.0.0/jakarta.websocket-api-2.0.0.jar
+
+    # Step to download MySQL Connector/J
+    - name: Download MySQL Connector/J
+      run: |
+        curl -O https://repo1.maven.org/maven2/mysql/mysql-connector-java/9.0.0/mysql-connector-java-9.0.0.jar
+
+
+
+    # Compile Project Step with all libraries in Classpath
+    - name: Compile Project
+      run: |
+        # Define the source directory, update if necessary
+        SOURCE_DIR="WEB-INF/classes"  # Use your correct source directory here
+
+        # Determine classpath separator based on OS
+        CP="jakarta.servlet-api-5.0.0.jar:json-20230227.jar:aspectjrt-1.9.19.jar:jakarta.websocket-api-2.0.0.jar:mysql-connector-j-9.0.0.jar"
+
+
+        # Compile using javac with the appropriate classpath
+        find $SOURCE_DIR -name "*.java" -print0 | xargs -0 javac -cp "$CP" -d WEB-INF/classes
+      shell: bash  # Use bash for all platforms
+        
+    - name: Build with Maven
+      run: mvn clean package
+
+    - name: Upload WAR file
+      uses: actions/upload-artifact@v4
+      with:
+        name: quizapp
+        path: target/app.war
+
+    # - name: Commit and Push WAR file
+    #    run: |
+    #     git config --local user.email "eugenie.kim@outlook.com"
+    #     git config --local user.name "EugenieVK"
+    #     git add target/app.war  
+    #     git commit -m "Add .war file from CI build" || echo "No changes to commit"
+    #     git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/Catherine-Queenan/CS-QuizGame.git
+        
+    - name: Build Docker Images
+      run: docker compose build
+
+    - name: Run Tests
+      run: |
+        docker compose up -d
+        sleep 10  # Adjust time as necessary
+        docker compose logs  # View logs if needed
+        # Add additional commands to verify container health
+        docker compose down
+
+    - name: Push Docker Images
+      run: | 
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        docker tag docker.io/library/cs-quizgame-app "${{ secrets.DOCKER_USERNAME }}/cs-quizgame:latest"
+        docker push "${{ secrets.DOCKER_USERNAME }}/cs-quizgame:latest"

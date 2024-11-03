@@ -275,7 +275,6 @@ public class AddQuestionServlet extends HttpServlet {
             newQuestion.append(",,,media_id:==").append(new String(uuidToBytes(mediaIds[0]),
             StandardCharsets.UTF_8));
             }
-
             repository.insert(factory.createAClass("question", newQuestion.toString()));
 
             int indexOfCorrect =0;
@@ -339,7 +338,6 @@ public class AddQuestionServlet extends HttpServlet {
 
                 repository.insert(factory.createAClass("answer", newAnswer.toString()));
             }
-
 
 
             JSONArray jsonArray = new JSONArray(answerTexts);

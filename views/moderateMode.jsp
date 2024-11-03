@@ -269,7 +269,6 @@
             questionIndex = response.questionIndex;
 
             console.log(response);
-
             if(response.type === "end"){
                 webSocket.onclose = function () {
             console.log("Connection closed ...");
@@ -336,7 +335,6 @@
                     }
                     imgElement.src = imageSrc;
                     imgElement.alt = "Question Image";
-                    // imgElement.style.width = "50%"; // Adjust image size
                     mediaDiv.appendChild(imgElement);
                 });
             }
@@ -368,7 +366,6 @@
             document.getElementById("answerCounts").style.display = "none";
             document.getElementById("question").style.display = "none"; 
         } 
-
         // Handle "Next Question" button click
         document.getElementById("next-button").addEventListener("click", function () {
             //clear answer counts
@@ -442,7 +439,6 @@
                 }, 100);
             }
         }
-        
         //---------------AUDIO PLAYING---------------\\
         //makes audio loop
         function audio() {
@@ -450,6 +446,7 @@
                 document.querySelector("audio").currentTime = parseInt(document.getElementById("videoStart").value);
             }
         }
+
 
     </script>
 

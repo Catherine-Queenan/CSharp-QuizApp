@@ -1,4 +1,4 @@
-MySQL:
+-- MySQL:
 CREATE TABLE users (
     id BINARY(16), 
     username VARCHAR (20), 
@@ -60,7 +60,9 @@ CREATE TABLE media (
     description TEXT,
     media_type TEXT,
     media_file_path TEXT,
-    media_filename TEXT
+    media_filename TEXT,
+    media_start TEXT,
+    media_end TEXT
 );
 
 CREATE TABLE question_media (

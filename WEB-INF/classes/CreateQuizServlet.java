@@ -122,7 +122,7 @@ public class CreateQuizServlet extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("USER_ID") == null) {
-            res.sendRedirect("addQuestion");
+            res.sendRedirect("login");
             return;
         }
 

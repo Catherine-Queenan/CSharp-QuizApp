@@ -106,6 +106,7 @@ public class SignupServlet extends HttpServlet {
             System.out.println("SQL Exception:" + ex.getMessage());
             jsonResponse.put("status", "error");
             jsonResponse.put("message", "An error occurred while connecting to the database.");
+            jsonResponse.put("sqlMessage", ex.getMessage().toString());
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } finally {
             PrintWriter out = res.getWriter();
@@ -163,6 +164,7 @@ public class SignupServlet extends HttpServlet {
         //     //Session creation
         //     HttpSession session = req.getSession(true);
         //     session.setAttribute("USER_ID", username);
+        //     session.setAttribute("ROLE", "g");
         //     res.setStatus(302);
 
         //     res.sendRedirect("home");
