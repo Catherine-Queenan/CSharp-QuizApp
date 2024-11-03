@@ -5,14 +5,13 @@ services:
       dockerfile: Dockerfile
     container_name: quizapp-app
     environment:
-      DB_URL: jdbc:mysql://db:3306/quizapp  # Use host.docker.internal to access localhost
+      DB_URL: jdbc:mysql://db:3307/quizapp  # Use host.docker.internal to access localhost
       DB_USER: root
       DB_PASSWORD: root
     networks:
       - quizapp-network
     depends_on:
       - db
-    command: ["/bin/bash", "-c", "./wait-for-db.sh catalina.sh run"]
   
   db:
     image: mysql:5.7
