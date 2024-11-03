@@ -8,6 +8,9 @@
     <style>
 
         #wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 80px 0;
             justify-content: unset;
             overflow-y: scroll;
@@ -96,12 +99,16 @@
         #answerCounts {
             width: fit-content;
             display: flex;
+            flex-wrap: wrap;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
             gap: 10px;
         }
 
         #answerCounts div {
+            max-width: 500px;
+            width: 70%;
             padding: 10px 20px;
             border-radius: 10px;
         }

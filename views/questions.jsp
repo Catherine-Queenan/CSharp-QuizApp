@@ -42,12 +42,6 @@
             color: #DCEED1;
         }
 
-        .title {
-            text-align: center;
-            font-size: 40px;
-            margin-bottom: 0;
-        }
-
         .questions {
             width: 80%;
             transform: scale(0.9);
@@ -217,6 +211,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 450px) {
+            .title {
+                font-size: 30px !important;
+            }
         }
 
     </style>
