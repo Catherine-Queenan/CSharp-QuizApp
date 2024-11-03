@@ -75,12 +75,12 @@ jobs:
       run: mvn clean package
 
     - name: Commit and Push WAR file
-      run: |
+       run: |
         git config --local user.email "eugenie.kim@outlook.com"
         git config --local user.name "EugenieVK"
-        git add /app.war
+        git add target/app.war  
         git commit -m "Add .war file from CI build" || echo "No changes to commit"
-        git push origin main  # Push to the same branch that triggered the workflow
+        git push origin main  
         
     - name: Build Docker Images
       run: docker compose build
