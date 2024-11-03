@@ -1,4 +1,4 @@
-name: DockerRender
+name: DockerPushTest
 
 on:
   push:
