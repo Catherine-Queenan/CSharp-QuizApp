@@ -123,7 +123,7 @@
 
     <header>
         <form action="home">
-            <button id="endModerationBtn" onclick="endModeration('<%= request.getAttribute("modSessionId") %>')">End Moderation</button>
+            <div id="modSessionsCont"></div>
         </form>
     </header>
 
@@ -155,30 +155,97 @@
 
     <script type="text/javascript">
 
+        document.addEventListener("DOMContentLoaded", () => {
+            const modSessionsContainer = document.getElementById('modSessionsCont');
+            modSessionsContainer.innerHTML = ''; // Clear previous content
+
+            // Retrieve the current session ID from the backend (embedded in JSP)
+            const params = new URLSearchParams(window.location.search);
+            const modSessionId = params.get(modSessionId); // Assuming modSessionId is available globally
+            const quizName = params.get(quizName); // Assuming quizName is available globally
+            // Define the fetch path for the specific moderation session
+            const currentSessionPath = window.location.pathname;
+            const pathSegments = currentSessionPath.split('/');
+            pathSegments.pop();
+            const fetchSessionPath = pathSegments.join('/') + `/getActiveSessions?action=getModeratedSession&sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
+
+            // Fetch current moderation session data for the specific session
+            fetch(fetchSessionPath, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch the moderated session');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Check if the session exists
+                if (!data.session) {
+                    modSessionsContainer.innerHTML = '<div>No active moderated session available.</div>';
+                } else {
+                    // Create a div to display session details
+                    const sessionDiv = document.createElement('div');
+                    sessionDiv.className = 'modSession';
+                    sessionDiv.innerHTML = `<div>Moderator: ${data.session.moderator}</div>`;
+
+                    // Create a single "End Moderation" button
+                    const endButton = document.createElement('button');
+                    endButton.innerHTML = "End Moderation";
+                    endButton.onclick = function() {
+                        endModeration(modSessionId);
+                    };
+
+                    // Append the button and session div to the container
+                    sessionDiv.appendChild(endButton);
+                    modSessionsContainer.appendChild(sessionDiv);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching moderated session:', error);
+                modSessionsContainer.innerHTML = '<div>Error fetching moderated session. Please try again later.</div>';
+            });
+        });
+
+        // Function to end the current moderation session
         function endModeration(modSessionId) {
-            // Send an AJAX request to the servlet to end the moderation session
-            fetch('/QuizApp/getModeratedSessions?action=getModeratedSessions', {
+            const currentSessionPath = window.location.pathname;
+            const pathSegments = currentSessionPath.split('/');
+            pathSegments.pop();
+            const endSessionPath = pathSegments.join('/') + '/getModeratedSessions?action=endModeratedSession';
+
+            fetch(endSessionPath, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'
                 },
                 body: `modSessionId=${encodeURIComponent(modSessionId)}`
             })
             .then(response => {
-                if (response.ok) {
-                    alert("Moderation session ended.");
-                    // Redirect or update the UI as needed
-                    window.location.href = '/home'; // Example: Redirect to the home page
+                if (!response.ok) {
+                    throw new Error('Failed to end moderation session');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert("Moderation session ended successfully.");
+                    window.location.href = pathSegments.join('/') + '/home'; // Example redirect to home
                 } else {
-                    console.log(modSessionId);
-                    alert("Failed to end moderation session.");
+                    alert("Moderation session could not be ended.");
                 }
             })
             .catch(error => {
                 console.error("Error:", error);
-                alert("An error occurred while trying to end the moderation session.");
+                const modSessionsContainer = document.getElementById('modSessionsCont');
+                modSessionsContainer.innerHTML = '<div>Error ending moderation session. Please try again later.</div>';
             });
         }
+
 
         function setHeight() {
             // Get all buttons inside the div with class "answersOption"

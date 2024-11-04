@@ -1,4 +1,3 @@
-MySQL:
 CREATE TABLE users (
     id BINARY(16), 
     username VARCHAR (20), 
@@ -120,6 +119,7 @@ CREATE TABLE moderated_sessions (
     session_status ENUM('active', 'ended') NOT NULL DEFAULT 'active',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    quiz_name VARCHAR(100) NOT NULL,
     FOREIGN KEY (moderator_id) REFERENCES users(username) ON DELETE CASCADE
 );
 

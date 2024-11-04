@@ -223,8 +223,13 @@
     //     });
     // } 
 
+        const currentSessionPath = window.location.pathname;
+        const pathSessionSegments = currentSessionPath.split('/');
+        pathSessionSegments.pop();
+        let sessionPath = pathSessionSegments.join('/') + '/getActiveSessions?action=getActiveSessions';
+
         // Fetch current moderated sessions
-        fetch('/QuizApp/getModeratedSessions?action=getModeratedSessions', {
+        fetch(sessionPath, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json'
@@ -242,20 +247,24 @@
             modSessionsContainer.innerHTML = ''; // Clear previous content
 
             // Check if there are any moderated sessions
-            if (!data.modSessions || data.modSessions.length === 0) {
+            if (!data.sessions || data.sessions.length === 0) {
                 // If no sessions, display a message
                 modSessionsContainer.innerHTML = '<div>No moderated sessions available.</div>';
             } else {
                 // If there are sessions, display them
-                data.modSessions.forEach(modSession => {
+                data.sessions.forEach(modSession => {
                     const modSessionDiv = document.createElement('div');
                     modSessionDiv.className = 'modSession';
                     modSessionDiv.innerHTML = `
-                        <div>Session ID: ${modSession.id}</div>
                         <div>Moderator: ${modSession.moderator}</div>
-                        <button onclick="joinSession('${modSession.id}')">Join Session</button>
                     `;
                     modSessionsContainer.appendChild(modSessionDiv);
+                    let joinBtn = document.createElement('button');
+                    joinBtn.innerHTML = "Join Session";
+                    joinBtn.onclick = function() {
+                        joinSession(modSession.sessionId, modSession.quizName);
+                    };
+                    modSessionDiv.appendChild(joinBtn);
                 });
             }
         })
@@ -266,9 +275,16 @@
         });
 
         // Function to join a session
-        function joinSession(modSessionId) {
-            window.location.href = `/QuizApp/websocketView?sessionId=${modSessionId}`;
+        function joinSession(modSessionId, quizName) {
+            const currentSessPath = window.location.pathname;
+            const pathSessSegments = currentSessPath.split('/');
+            pathSessSegments.pop();
+            let sessSessionPath = pathSessSegments.join('/') + `/moderateMode?sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
+            window.location.href = sessSessionPath;
+
+            const ws = new WebSocket(`ws://${window.location.host}/QuizApp/moderateMode/${modSessionId}`);
         }
+
 
         const categories = document.getElementById('categories');
         const prevBtn = document.querySelector('.prev');

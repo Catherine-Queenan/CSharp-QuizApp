@@ -153,7 +153,15 @@
 </servlet>
 <servlet-mapping>
   <servlet-name>ModerateModeServlet</servlet-name>
-  <url-pattern>/moderateMode</url-pattern>
+  <url-pattern>/moderateMode/*</url-pattern>
+</servlet-mapping>
+<servlet>
+  <servlet-name>ModeratedSessionServlet</servlet-name>
+  <servlet-class>ModeratedSessionServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>ModeratedSessionServlet</servlet-name>
+  <url-pattern>/getActiveSessions/*</url-pattern>
 </servlet-mapping>
   <servlet>
     <servlet-name>CreateQuizServlet</servlet-name>

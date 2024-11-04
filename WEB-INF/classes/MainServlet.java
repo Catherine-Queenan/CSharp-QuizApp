@@ -51,35 +51,35 @@ public class MainServlet extends HttpServlet {
             session.removeAttribute("currQuestion");
         }
 
-        try {
-            // Attempt to retrieve the active sessions, which can throw SQLException
-            List<ModerationSession> availableSessions = ModerationSessionManager.getActiveSessions();
-            req.setAttribute("availableSessions", availableSessions);
+        // try {
+        //     // Attempt to retrieve the active sessions, which can throw SQLException
+        //     List<ModerationSession> availableSessions = ModerationSessionManager.getActiveSessions();
+        //     req.setAttribute("availableSessions", availableSessions);
         
-            // Create a JSON array to hold the session data
-            JSONArray jsonArray = new JSONArray();
+        //     // Create a JSON array to hold the session data
+        //     JSONArray jsonArray = new JSONArray();
             
-            for (ModerationSession modSession : availableSessions) {
-                // Create a JSON object for each session
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("sessionId", modSession.getSessionId());
-                jsonObject.put("moderator", modSession.getModerator());
-                jsonObject.put("createdTime", modSession.getCreatedTime().toString()); // Convert to string if necessary
+        //     for (ModerationSession modSession : availableSessions) {
+        //         // Create a JSON object for each session
+        //         JSONObject jsonObject = new JSONObject();
+        //         jsonObject.put("sessionId", modSession.getSessionId());
+        //         jsonObject.put("moderator", modSession.getModerator());
+        //         jsonObject.put("createdTime", modSession.getCreatedTime().toString()); // Convert to string if necessary
         
-                // Add the JSON object to the JSON array
-                jsonArray.put(jsonObject);
-            }
+        //         // Add the JSON object to the JSON array
+        //         jsonArray.put(jsonObject);
+        //     }
         
-            // Set the response type and send the JSON array
-            res.setContentType("application/json");
-            res.setCharacterEncoding("UTF-8");
-            res.getWriter().write(jsonArray.toString()); // Write the JSON array as a response
+        //     // Set the response type and send the JSON array
+        //     res.setContentType("application/json");
+        //     res.setCharacterEncoding("UTF-8");
+        //     res.getWriter().write(jsonArray.toString()); // Write the JSON array as a response
         
-            System.out.println("Available sessions: " + jsonArray.toString()); // For logging purposes
-        } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception
-            // You might want to return an error response here as well
-        }        
+        //     System.out.println("Available sessions: " + jsonArray.toString()); // For logging purposes
+        // } catch (SQLException e) {
+        //     e.printStackTrace(); // Handle the exception
+        //     // You might want to return an error response here as well
+        // }        
 
         JSONArray categoriesArray = new JSONArray();
 

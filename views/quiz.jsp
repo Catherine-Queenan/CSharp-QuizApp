@@ -315,33 +315,23 @@
                             </form>
                         `;
 
-
-                            // <a class="quizLink" href="${quiz.name}">
-                            //     <div class="quizName">${quiz.name}</div>
-                            //     <p class="quiz-description">${quiz.description}</p>
-                            //     <div class="img">${mediaHtml}</div>
-                            // </a>
-                            
                         if (data.role === "admin") {
                             quizDiv.innerHTML += `
                                 <div class="adminBtnWrap">    
                                     <button type="button" onclick="window.location.href='${pathSegments.join('/')}/edit?quizName=${quiz.name}'">Edit Quiz</button>
                                     <button type="button" class="deleteButton">Delete Quiz</button>
+                                    <button type="button" class="moderateMode" onclick="startModeration('${quiz.name}', event)">
+                                        Moderated Mode
+                                    </button>
                                 </div>
                             `;
                         }
-
-                        quizDiv.innerHTML += `
-                            <a href="${pathSegments.join('/')}/moderateMode?quizName=${quiz.name}" class="moderateMode">
-                                Moderated Mode
-                            </a>
-                        `;
     
                         // Append category div to the container
                         quizzesContainer.appendChild(quizDiv);
                     });
                 }
-                
+
                 // ----- Set up the sliding mechanism ----- \\
 
                 // Adjust width dynamically based on the number of quizzes
@@ -431,5 +421,45 @@
             
         });
 
+                function startModeration(quizName, event) {
+                    event.preventDefault();
+
+                    const currentSessionPath = window.location.pathname;
+                    const pathSegments = currentSessionPath.split('/');
+                    pathSegments.pop(); // Remove current page from path
+                    pathSegments.pop(); // Remove the last segment (quiz name) from path
+                    const startSessionPath = pathSegments.join('/') + `/getActiveSessions?action=startModeratedSession&quizName=${encodeURIComponent(quizName)}`;
+                    console.log('Session Path:', startSessionPath);
+
+                    // Send a request to create the modSessionId
+                    fetch(startSessionPath, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json'
+                        },
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to start moderation session');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === "success" && data.sessionId) {
+                            // Redirect to moderated mode with the new modSessionId
+                            window.location.href = `${pathSegments.join('/')}/moderateMode?modSessionId=${data.sessionId}&quizName=${quizName}`;
+                        } else {
+                            alert("Failed to create moderation session.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error starting moderation session:', error);
+                        alert("Error starting moderation session. Please try again.");
+                    });
+                }
+
+                function connectWebSocket() {
+
+                }
     </script>
 </html>

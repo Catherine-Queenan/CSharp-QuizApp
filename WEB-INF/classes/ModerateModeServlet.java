@@ -37,17 +37,18 @@ public class ModerateModeServlet extends HttpServlet {
 
         String moderatorId = (String) session.getAttribute("USER_ID");
         System.out.println("Moderator ID: " + moderatorId);
-        String modSessionId = ModerationSessionManager.startModeratedSession(moderatorId);
+        String modSessionId = ModerationSessionManager.startModeratedSession(moderatorId, quizName);
         System.out.println("Moderation Session ID: " + modSessionId);
         if (modSessionId != null) {
             session.setAttribute("modSessionId", modSessionId);
+            req.setAttribute("modSessionId", modSessionId);
         } else {
             // Handle case where session creation failed
             req.setAttribute("errorMessage", "Failed to start moderation session.");
         }
 
         // Forward to JSP
-        req.getRequestDispatcher("/views/moderateMode.jsp").forward(req, res);
+        req.getRequestDispatcher("/views/quiz.jsp").forward(req, res);
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
