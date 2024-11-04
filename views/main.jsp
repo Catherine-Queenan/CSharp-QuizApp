@@ -301,7 +301,7 @@
             });
 
             // Set up the sliding mechanism
-            if (window.innerWidth < 650 || errorFetching) {
+            if (window.innerWidth < 650) {
                 displayCategories(1);
             } else if (window.innerWidth < 1000) {
                 displayCategories(2);

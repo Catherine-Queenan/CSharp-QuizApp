@@ -131,11 +131,11 @@
         pathSegments.pop();
 
         // Construct the new path dynamically
-        const newPath = pathSegments.join('/') + `/editQuestions-json/?quizName=${quizName}`;
+        const newPath = pathSegments.join('/') + `/editQuestions-json?quizName=${quizName}`;
         const postPath = pathSegments.join('/') + `/editQuestions-json`;
         const homePath = pathSegments.join('/') + `/home`;
         const addQuestionPath = pathSegments.join('/') + `/addQuestion/${quizName}`;
-
+        const editQuestionPathSeg = pathSegments.join('/') + `/editQuestion/${quizName}/`;
         console.log(newPath)
 
         fetch(newPath, {
@@ -161,12 +161,13 @@
 
             data.questions.forEach(question => {
                 const questionDiv = document.createElement('div');
-                const questionText = document.createElement('p');
+                const questionText = document.createElement('a');
                 const deleteButton = document.createElement('a');
 
                 questionDiv.className = 'question';
                 questionText.className = 'questionTitle';
                 questionText.innerHTML = question.question_text;
+                questionText.href = editQuestionPathSeg + question.questionNum;
                 deleteButton.className = 'deleteBtn';
                 deleteButton.innerHTML = "Delete Question";
                 deleteButton.addEventListener('click', function () {

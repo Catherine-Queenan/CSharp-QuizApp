@@ -44,7 +44,7 @@ public class EditQuestionsServlet extends HttpServlet {
         // Connection con = null;
         // PreparedStatement ps = null;
         // ResultSet rs = null;
-        StringBuilder questionsHtml = new StringBuilder();
+        // StringBuilder questionsHtml = new StringBuilder();
         ArrayList<AClass> questions;
 
         try {
