@@ -135,7 +135,15 @@
         <servlet-name>EditQuestionJSON</servlet-name>
         <url-pattern>/editQuestion-json/*</url-pattern>
     </servlet-mapping>
-
+<!-- EditAnswersServlet Mapping -->
+    <servlet>
+        <servlet-name>EditAnswers</servlet-name>
+        <servlet-class>EditAnswersServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditAnswers</servlet-name>
+        <url-pattern>/editAnswer/*</url-pattern>
+    </servlet-mapping>
 
 <servlet>
     <servlet-name>DeleteQuestionServlet</servlet-name>

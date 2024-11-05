@@ -127,22 +127,23 @@
         </style>
         <script>
 
-            let answerCount = 2;
+            let answerCount = 0;
             function addAnswer() {
                 console.log("added")
-                if (answerCount == 3) {
-                    document.getElementById('addAnswerBtn').classList.add('hidden');
-                }
+                document.getElementById('addAnswerBtn').classList.add('hidden');
+
                 answerCount++;
-                const answerDiv = document.createElement('div');
-                answerDiv.classList.add(`answer`);
-                answerDiv.id = `answer`;
-                answerDiv.innerHTML = `
+                const newAnswerForm = document.createElement('div');
+                newAnswerForm.classList.add(`answer`);
+                newAnswerForm.method = `post`;
+                newAnswerForm.enctype = "multipart/form-data";
+                newAnswerForm.innerHTML = `
             <input type="text" name="answerText" placeholder="Answer ${answerCount}" required>
-            <input type="radio" name="correctAnswer" value="${answerCount}"> Correct
+            <input type="checkbox" name="correctAnswer" value="1"> Correct
             <jsp:include page="/views/answerMediaUpload.jsp"/>
+            <button type="submit">Save New Answer</button>
         `;
-                document.getElementById('answersContainer').appendChild(answerDiv);
+                document.getElementById('newAnswerForm').appendChild(newAnswerForm);
             }
 
         </script>
@@ -168,8 +169,8 @@
                 <label for="questionText">Question Text:</label>
                 <input type="text" id="questionText" name="questionText" required>
 
-                <img id="questionImgDisplay" style="display:none">
-                <audio id="questionAudio"  style="display:none" preload controls ontimeupdate="Audio()">
+                <img id="questionImgDisplay" style="display:none; width:300px">
+                <audio id="questionAudio" style="display:none" preload controls ontimeupdate="Audio()">
                     <source id="questionAudioSrc" type="audio/mp3">
                 </audio>
 
@@ -219,50 +220,34 @@
                 <button class="saveBtn" type="submit">Save</button>
             </form>
 
-            <form id="answerForm" class="editForm" method="post" enctype="multipart/form-data">
-
-                <audio id="answerAudio" preload controls>
-                    <source id="answerAudioSrc" type="audio/mp3">
-                </audio>
+            <div id="answerForm" class="editForm">
 
                 <div id="answersContainer">
-                    <label for="answerType">Answer Media Type:</label>
-                    <select class="mediaType" id="answerType" name="answerType">
-                        <option value="TEXT">None</option>
-                        <option value="VID">Video</option>
-                        <option value="IMG">Image</option>
-                        <option value="AUD">Audio</option>
-                        <!-- Add other question types as needed -->
-                    </select>
-
+                    <p>Answer Media Type: <span id="answerType"></span></p>
                     <div id="videoUrlAnswer" style="display: none;">
                         <div>
-                            <label for="videoUrl">YouTube Video URL:</label>
-                            <input type="text" class="videoUrlAnswer" name="videoUrl">
+                            <a class="videoUrlAnswer" id="videoUrlAnswerIn"></a>
                         </div>
                         <div>
-                            <label for="videoStart">Clip Start (seconds):</label>
-                            <input type="number" class="videoStartAnswer" name="videoStart" value="0" />
+                            <p class="videoStartAnswer" id="videoStartAnswer"></p>
                         </div>
                         <div>
-                            <label for="videoEnd">Clip End (seconds):</label>
-                            <input type="number" class="videoEndAnswer" name="videoEnd" value="0" />
+                            <p class="videoEndAnswer" id="videoEndAnswer"></p>
                         </div>
                     </div>
 
                     <div id="audioUploadAnswer" style="display: none;">
-                        <div>
-                            <label for="mediaFile">File:</label>
-                            <input type="file" class="mediaFileAnswer" name="mediaFile" accept="audio/*,image/*" />
-                        </div>
+                        <audio id="answerAudio" preload controls>
+                            <source id="answerAudioSrc" type="audio/mp3">
+                        </audio>
+
                         <div class="audioStartEndAnswer">
                             <div>
-                                <label for="audioStart">Audio Start (seconds):</label>
-                                <input type="number" class="audioStartAnswer" name="audioStart" value="0" />
+                                <p id="audioStartAnswer" class="audioStartAnswer">Audio Start:</p>
+
                             </div>
                             <div>
-                                <label for="audioEnd">Audio End (seconds):</label>
-                                <input type="number" class="audioEndAnswer" name="audioEnd" value="0" />
+                                <p id="audioEndAnswer" class="audioEndAnswer">Audio End:</p>
                             </div>
                         </div>
                     </div>
@@ -270,18 +255,85 @@
                     <!-- <button class="addAnotherAnswerBtn" type="button" onclick="addAnswer()">Add Another Answer</button> -->
                 </div>
 
+
+
                 <!-- Add more answers dynamically if needed -->
                 <button class="addAnswerBtn" id="addAnswerBtn" type="button" onclick="addAnswer()">Add Another
                     Answer</button>
                 <div id="questionsContainer"></div>
+            </div>
 
+            <form id="newAnswerForm" method="post" enctype="multipart/form-data">
 
-                <button class="saveBtn" type="submit">Save</button>
             </form>
         </div>
         <script src="scripts\logout.js"></script>
         <script>
 
+            let answerMedia = document.getElementById('answerType');
+            let answerImgUploads = document.getElementsByClassName(`imageUploadAnswer`);
+            let answerAudUpload = document.getElementById(`audioUploadAnswer`);
+            let answerVidUpload = document.getElementById(`videoUrlAnswer`);
+
+            let displayAnswerMedia = function (type) {
+                console.log("AAAAAAAAAA");
+                if (type === 'IMG') {
+                    for (let i = 0; i < answerImgUploads.length; i++) {
+                        answerImgUploads[i].style.display = 'flex';
+                    }
+
+                    answerVidUpload.style.display = 'none';
+                    answerAudUpload.style.display = 'none';
+
+                } else if (type === 'AUD') {
+                    for (let i = 0; i < answerImgUploads.length; i++) {
+                        answerImgUploads[i].style.display = 'none';
+                    }
+
+                    answerVidUpload.style.display = 'none';
+                    answerAudUpload.style.display = 'flex';
+
+                } else if (type === 'VID') {
+                    for (let i = 0; i < answerImgUploads.length; i++) {
+                        answerImgUploads[i].style.display = 'none';
+                    }
+
+                    answerVidUpload.style.display = 'flex';
+                    answerAudUpload.style.display = 'none';
+
+                } else {
+                    for (let i = 0; i < answerImgUploads.length; i++) {
+                        answerImgUploads[i].style.display = 'none';
+                    }
+
+                    answerVidUpload.style.display = 'none';
+                    answerAudUpload.style.display = 'none';
+
+                }
+            }
+
+            let translateMediaType = function (type) {
+                switch (type) {
+                    case "AUD":
+                        return "Audio";
+                    case "VID":
+                        return "Video";
+                    case "IMG":
+                        return "Images";
+                    default:
+                        return "Text"
+                }
+            }
+
+            function controlAnswerDeletes() {
+                let buttons = document.querySelectorAll(".deleteAnswerBtn");
+                console.log(buttons);
+                if (buttons.length < 3) {
+                    buttons.forEach(button => {
+                        button.disabled = true;
+                    });
+                }
+            }
 
             document.addEventListener('DOMContentLoaded', function () {
                 const questionEditForm = document.getElementById('questionForm');
@@ -303,9 +355,12 @@
                 const getFetchPath = pathSegments.join('/') + `/editQuestion-json/?id=${questionNum}`;
                 const updateQuestionListPath = pathSegments.join('/') + `/editQuestions/${quizName}`;
                 const postPath = pathSegments.join('/') + `/editQuestion-json`;
+                const editAnswerPath = pathSegments.join('/') + `/editAnswer/`;
 
                 const homePath = pathSegments.join('/') + `/home`;
                 document.getElementById("homeForm").action = homePath;
+
+                var answerType = "TEXT";
 
                 fetch(getFetchPath, {
                     method: 'GET',
@@ -321,61 +376,148 @@
                 }).then(data => {
                     console.log(data)
                     document.getElementById('questionText').value = data.question.question_text;
-                    let questionType = data.question.question_type;
-                    document.getElementById('questionType').value = questionType;
-
+                    document.getElementById('questionType').value = data.question.question_type;
 
                     let questionImgDisplay = document.getElementById('questionImgDisplay');
                     let questionAudio = document.getElementById('questionAudio');
 
-                    let mediaFilePath = data.question.media.media_file_path;
-                    let mediaStart = data.question.media.media_start;
-                    let mediaEnd = data.question.media.media_end;
-                    console.log(mediaStart);
-                    console.log(mediaEnd);
+                    if (data.question.media != null) {
+                        let mediaFilePath = data.question.media.media_file_path;
+                        let mediaStart = data.question.media.media_start;
+                        let mediaEnd = data.question.media.media_end;
 
-                    document.getElementById('oldMediaFilePath').value = mediaFilePath;
+                        console.log(mediaStart);
+                        console.log(mediaEnd);
+                        document.getElementById('oldMediaFilePath').value = mediaFilePath;
 
-                    switch (questionType) {
-                        case "AUD":
-                            questionImgDisplay.style.display = "none";
-                            questionAudio.style.display = "block";
+                        switch (data.question.question_type) {
+                            case "AUD":
+                                questionImgDisplay.style.display = "none";
+                                questionAudio.style.display = "block";
 
-                            document.getElementById('questionAudioSrc').src = mediaFilePath + "#t=" + mediaStart;
-                            document.getElementById('audioStart').value = mediaStart;
-                            document.getElementById('audioEnd').value = mediaEnd;
+                                document.getElementById('questionAudioSrc').src = mediaFilePath + "#t=" + mediaStart;
+                                document.getElementById('audioStart').inner = mediaStart;
+                                document.getElementById('audioEnd').value = mediaEnd;
 
-                            document.getElementById(`imageAudioUploadQuestion`).style.display = 'flex';
-                            document.getElementById(`videoUrlQuestion`).style.display = 'none';
-                            if (questionMedia.value === 'AUD') {
-                                document.getElementById("audioStartEnd").style.display = 'flex';
-                            }
-                            break;
-                        case "VID":
-                            questionImgDisplay.style.display = "none";
-                            questionAudio.style.display = "none";
+                                document.getElementById(`imageAudioUploadQuestion`).style.display = 'flex';
+                                document.getElementById(`videoUrlQuestion`).style.display = 'none';
+                                if (questionMedia.value === 'AUD') {
+                                    document.getElementById("audioStartEnd").style.display = 'flex';
+                                }
+                                break;
+                            case "VID":
+                                questionImgDisplay.style.display = "none";
+                                questionAudio.style.display = "none";
 
-                            document.getElementById('videoUrl').value = mediaFilePath;
-                            document.getElementById('videoStart').value = mediaStart;
-                            document.getElementById('videoEnd').value = mediaEnd;
+                                document.getElementById('videoUrl').value = mediaFilePath;
+                                document.getElementById('videoStart').value = mediaStart;
+                                document.getElementById('videoEnd').value = mediaEnd;
 
-                            document.getElementById(`imageAudioUploadQuestion`).style.display = 'none';
-                            document.getElementById(`videoUrlQuestion`).style.display = 'flex';
-                            document.getElementById("audioStartEnd").style.display = 'none';
-                            break;
-                        case "IMG":
-                            questionImgDisplay.style.display = "block";
-                            questionAudio.style.display = "none";
+                                document.getElementById(`imageAudioUploadQuestion`).style.display = 'none';
+                                document.getElementById(`videoUrlQuestion`).style.display = 'flex';
+                                document.getElementById("audioStartEnd").style.display = 'none';
+                                break;
+                            case "IMG":
+                                questionImgDisplay.style.display = "block";
+                                questionAudio.style.display = "none";
 
-                            questionImgDisplay.src = "../../" + mediaFilePath;
-                            break;
-                        default:
-                            questionImgDisplay.style.display = "none";
-                            questionAudio.style.display = "none";
+                                questionImgDisplay.src = "../../" + mediaFilePath;
+                                break;
+                            default:
+                                questionImgDisplay.style.display = "none";
+                                questionAudio.style.display = "none";
+                        }
                     }
+
+
+                    //Handle questions
+                    let answers = data.answers;
+                    answers.forEach(answer => {
+                        console.log("ANSWER COUNT:" + answerCount);
+                        if (answerCount == 3) {
+                            document.getElementById('addAnswerBtn').classList.add('hidden');
+                        }
+
+                        answerCount++;
+
+                        const answerDiv = document.createElement('div');
+                        answerDiv.classList.add(`answer`);
+                        answerDiv.id = `answer`;
+                        let answerText = document.createElement('p');
+                        answerText.innerHTML = answer.answer_text + ((answer.is_correct == 1) ? " (CORRECT)" : "");
+                        answerDiv.appendChild(answerText);
+
+                        let answerBool = document.createElement('input');
+                        answerBool.type = "radio";
+                        answerBool.name = "correctAnswer";
+                        answerBool.value = answerCount;
+                        if (answer.is_correct == 1) {
+                            answerBool.checked = true;
+                        }
+
+                        if (answer.answer_type == "IMG") {
+                            let answerImg = document.createElement('img');
+                            answerImg.src = "../../" + answer.media.media_file_path;
+                            answerImg.style.width = "300px";
+                            answerDiv.appendChild(answerImg);
+                        } else if (answer.is_correct == 1) {
+                            switch (answer.answer_type) {
+                                case "AUD":
+                                    document.getElementById("answerAudio").style.display = "block";
+                                    document.getElementById("answerAudioSrc").src = answer.media.media_file_path + "#t=" + answer.media.media_start;
+                                    document.getElementById('audioStartAnswer').innerHTML = answer.media.media_start;
+                                    document.getElementById('audioEndAnswer').innerHTML = answer.media.media_end;
+                                    break;
+                                case "VID":
+                                    document.getElementById("answerAudio").style.display = "none";
+                                    document.getElementById('videoUrlAnswerIn').innerHTML = answer.media.media_file_path;
+                                    document.getElementById('videoUrlAnswerIn').href = answer.media.media_file_path;
+
+                                    document.getElementById('videoStartAnswer').innerHTML = "Clip Start (seconds): " + answer.media.media_start;
+                                    document.getElementById('videoEndAnswer').innerHTML = "Clip End (seconds): " + answer.media.media_end;
+                                    break;
+                            }
+                        }
+
+                        let deleteBtn = document.createElement("button");
+                        deleteBtn.type = "button";
+                        deleteBtn.innerHTML = "Delete Answer";
+                        deleteBtn.classList.add("deleteAnswerBtn");
+
+                        deleteBtn.addEventListener("click", () => {
+                            fetch(editAnswerPath + "?id=" + answer.answer_num, {
+                                method: "DELETE",
+                                headers: {
+                                    "Accept": "application/json" // Expect a JSON response
+                                }
+                            }).then(response => {
+                                return response.json().then(data => {
+                                    if (response.ok) {
+                                        window.location.reload();
+
+                                    } else {
+                                        throw new Error(data.message || 'An error occurred');
+                                    }
+                                })
+                            }).catch(error => {
+                                // Handle any errors that occurred during the fetch
+                                console.error("Error:", error.message);
+                                alert("An error occurred: " + error.message);
+                            });
+                        })
+                        answerDiv.appendChild(deleteBtn);
+
+                        document.getElementById('answersContainer').appendChild(answerDiv);
+                        answerType = answer.answer_type;
+                    });
+
+
+                    document.getElementById('answerType').innerHTML = translateMediaType(answerType);
+
+                    displayAnswerMedia(answerType);
+                    controlAnswerDeletes();
                 }).catch(error => {
                     console.error('Error fetching categories:', error);
-                    document.getElementById('categories').innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
                 });
 
                 document.querySelectorAll('.editForm').forEach(form => {
@@ -391,7 +533,6 @@
                         } else {
                             formData.append("edit", "answer");
                         }
-
 
                         fetch(postPath, { // Replace with your servlet URL
                             method: "POST",
@@ -414,77 +555,69 @@
                             alert("An error occurred: " + error.message);
                         });
                     });
-                })
+
+                    
+
+                });
+
                 let questionMedia = document.getElementById('questionType');
-            questionMedia.addEventListener('change', function () {
-                
-                if (questionMedia.value === 'IMG' || questionMedia.value === 'AUD') {
-                    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                    document.getElementById(`imageAudioUploadQuestion`).style.display = 'flex';
-                    document.getElementById(`videoUrlQuestion`).style.display = 'none';
-                    if (questionMedia.value === 'AUD') {
-                        document.getElementById("audioStartEnd").style.display = 'flex';
-                    } else {
-                        document.getElementById("audioStartEnd").style.display = 'none';
-                    }
-                } else if (questionMedia.value === 'VID') {
-                    document.getElementById(`imageAudioUploadQuestion`).style.display = 'none';
-                    document.getElementById(`videoUrlQuestion`).style.display = 'flex';
-                    document.getElementById("audioStartEnd").style.display = 'none';
-                } else {
-                    document.getElementById(`imageAudioUploadQuestion`).style.display = 'none';
-                    document.getElementById(`videoUrlQuestion`).style.display = 'none';
-                    document.getElementById("audioStartEnd").style.display = 'none';
-                }
+                    questionMedia.addEventListener('change', function () {
+                        if (questionMedia.value === 'IMG' || questionMedia.value === 'AUD') {
+                            console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                            document.getElementById(`imageAudioUploadQuestion`).style.display = 'flex';
+                            document.getElementById(`videoUrlQuestion`).style.display = 'none';
+                            if (questionMedia.value === 'AUD') {
+                                document.getElementById("audioStartEnd").style.display = 'flex';
+                            } else {
+                                document.getElementById("audioStartEnd").style.display = 'none';
+                            }
+                        } else if (questionMedia.value === 'VID') {
+                            document.getElementById(`imageAudioUploadQuestion`).style.display = 'none';
+                            document.getElementById(`videoUrlQuestion`).style.display = 'flex';
+                            document.getElementById("audioStartEnd").style.display = 'none';
+                        } else {
+                            document.getElementById(`imageAudioUploadQuestion`).style.display = 'none';
+                            document.getElementById(`videoUrlQuestion`).style.display = 'none';
+                            document.getElementById("audioStartEnd").style.display = 'none';
+                        }
+                    });
+
+
+                    let answerForm = document.getElementById("newAnswerForm");
+                    console.log(answerForm);
+                    answerForm.addEventListener("submit", (event) => {
+                        event.preventDefault(); // Prevent the default form submission
+
+                        const formData = new FormData(answerForm);
+                        formData.append("answerType", answerType);
+                        for (var pair of formData.entries()) {
+                            console.log(pair[0] + ', ' + pair[1]);
+                        }
+                        fetch(editAnswerPath, { // Replace with your servlet URL
+                            method: "POST",
+                            body: formData,
+                            headers: {
+                                "Accept": "application/json" // Expect a JSON response
+                            }
+                        }).then(response => {
+                            console.log("AAAAAAAAAa");
+                            return response.json().then(data => {
+                                if (response.ok) {
+                                    window.location.reload();
+                                } else {
+                                    throw new Error(data.message || 'An error occurred');
+                                }
+                            })
+                        }).catch(error => {
+                            // Handle any errors that occurred during the fetch
+                            console.error("Error:", error.message);
+                            alert("An error occurred: " + error.message);
+                        });
+                    });
             });
 
-            });
-           
 
-            let answerMedia = document.getElementById('answerType');
-            let answerImgUploads = document.getElementsByClassName(`imageUploadAnswer`);
-            let answerAudUpload = document.getElementById(`audioUploadAnswer`);
-            let answerVidUpload = document.getElementById(`videoUrlAnswer`);
 
-            let displayAnswerMedia = function () {
-                console.log("AAAAAAAAAA");
-                if (answerMedia.value === 'IMG') {
-                    for (let i = 0; i < answerImgUploads.length; i++) {
-                        answerImgUploads[i].style.display = 'flex';
-                    }
-
-                    answerVidUpload.style.display = 'none';
-                    answerAudUpload.style.display = 'none';
-
-                } else if (answerMedia.value === 'AUD') {
-                    for (let i = 0; i < answerImgUploads.length; i++) {
-                        answerImgUploads[i].style.display = 'none';
-                    }
-
-                    answerVidUpload.style.display = 'none';
-                    answerAudUpload.style.display = 'flex';
-
-                } else if (answerMedia.value === 'VID') {
-                    for (let i = 0; i < answerImgUploads.length; i++) {
-                        answerImgUploads[i].style.display = 'none';
-                    }
-
-                    answerVidUpload.style.display = 'flex';
-                    answerAudUpload.style.display = 'none';
-
-                } else {
-                    for (let i = 0; i < answerImgUploads.length; i++) {
-                        answerImgUploads[i].style.display = 'none';
-                    }
-
-                    answerVidUpload.style.display = 'none';
-                    answerAudUpload.style.display = 'none';
-
-                }
-            }
-
-            answerMedia.addEventListener('change', displayAnswerMedia);
-            document.getElementById("addAnswerBtn").addEventListener('click', displayAnswerMedia);
 
         </script>
     </body>

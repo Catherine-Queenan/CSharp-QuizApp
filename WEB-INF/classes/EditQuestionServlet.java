@@ -81,9 +81,11 @@ public class EditQuestionServlet extends HttpServlet {
 
             jsonResponse.put("question", editQuestion);
             answers = repository.select("answer", editQuestion.getString("id"));
+            int answerNum = 0;
             for (AClass answer : answers) {
                 JSONObject answerJSON = answer.serialize();
-                System.out.println(answer.serialize().toString());
+                answerJSON.put("answer_num", answerNum++);
+
 
                 if (!answerJSON.isNull("media_id")) {
                     AClass answerMedia = repository.select("media", answerJSON.getString("media_id")).get(0);
@@ -95,7 +97,10 @@ public class EditQuestionServlet extends HttpServlet {
                 }
 
                 answersArray.put(answerJSON);
+
             }
+
+            session.setAttribute("answers", answers);
 
             jsonResponse.put("answers", answersArray);
         } catch (Exception e) {

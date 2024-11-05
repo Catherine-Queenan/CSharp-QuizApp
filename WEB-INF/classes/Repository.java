@@ -95,6 +95,7 @@ public class Repository implements IRepository {
     private void insertAnswer(JSONObject entry) {
         try {
             // Insert Answer
+            System.out.println("NEW ANSWER:" + entry.toString());
             String query = "INSERT INTO answers (id, question_id, answer_text, is_correct, answer_type) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = con.prepareStatement(query);
 
@@ -236,6 +237,59 @@ public class Repository implements IRepository {
             System.out.println("QUESTION UPDATED");
         } catch (SQLException ex) {
             throw new RuntimeException("Error updating entry in the \"question\" table", ex);
+        }
+    }
+
+    private void updateAnswer(JSONObject updatedEntry, String pKey, String[] values){
+        try {
+            StringBuilder query = new StringBuilder("UPDATE answers SET ");
+            for (String col : values) {
+                if(!col.equalsIgnoreCase("media_id")){
+                    query.append(col).append("= ?,");
+                }
+            }
+
+            System.out.println("UPDATED ENTRY:" + updatedEntry.toString());
+
+            int keyPos = 0;
+            query.deleteCharAt(query.length() - 1);
+            query.append(" WHERE id = ?");
+            PreparedStatement ps = con.prepareStatement(query.toString());
+            for (int i = 1; i <= values.length; i++) {
+                System.out.println("VALUE" + values[i - 1]);
+                if(values[i - 1].equalsIgnoreCase("media_id")){
+                    //Delete previous record if there is one
+                    String deleteOldPair = "DELETE FROM answer_media WHERE media_id = ?";
+                    PreparedStatement deleteMediaPs = con.prepareStatement(deleteOldPair);
+                    deleteMediaPs.setBytes(1, updatedEntry.getString("media_id").getBytes());
+                    deleteMediaPs.executeUpdate();
+                    
+                    System.out.println("INSERTING INTO ANSWER_MEDIA");
+                    // Associate answer with respective media
+                String mediaQuery = "INSERT INTO answer_media (answer_id, media_id) VALUES (?, ?)";
+                PreparedStatement mediaPs = con.prepareStatement(mediaQuery);
+
+                    mediaPs.setBytes(1, pKey.getBytes());
+                    mediaPs.setBytes(2, updatedEntry.getString("media_id").getBytes());
+                    mediaPs.executeUpdate();
+                } else {
+
+                    if(values[i - 1].equalsIgnoreCase("is_correct")){
+                        ps.setInt(i, updatedEntry.getInt(values[i - 1]));
+                    } else {
+                        ps.setString(i, updatedEntry.getString(values[i - 1]));
+                    }
+                    
+                    keyPos++;
+                }
+                
+            }
+            ps.setBytes(keyPos + 1, pKey.getBytes());
+            ps.executeUpdate();
+
+            System.out.println("ANSWER UPDATED");
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error updating entry in the \"answer\" table", ex);
         }
     }
 
@@ -394,6 +448,10 @@ public class Repository implements IRepository {
             case "question":
                 updateQuestion(updatedEntry, pKey, changeColumns);
                 break;
+            case "answer":
+            System.out.println("UPDATEING ANSWER");
+                updateAnswer(updatedEntry, pKey, changeColumns);
+                break;
             default:
                 throw new RuntimeException("Error updating the database");
         }
@@ -408,10 +466,10 @@ public class Repository implements IRepository {
             byte[] id = null;
             switch (tableType) {
                 case "category":
-                    AClass cat = select("category", "name=" + criteria).get(0);
+                    AClass cat = select("category", "name=\"" + criteria + "\"").get(0);
                     JSONObject catJSON = cat.serialize();
                     if(!catJSON.isNull("media_id")){
-                        PreparedStatement  deleteCatMedia= con.prepareStatement("DELETE FROM category_media WHERE category_name =" + criteria);
+                        PreparedStatement  deleteCatMedia= con.prepareStatement("DELETE FROM category_media WHERE category_name =\"" + criteria + "\"");
                         deleteCatMedia.executeUpdate();
                     }
                     update = "DELETE FROM categories WHERE name=\"" + criteria + "\"";
