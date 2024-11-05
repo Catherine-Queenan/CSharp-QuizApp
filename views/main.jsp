@@ -283,7 +283,6 @@
             window.location.href = sessSessionPath;
         }
 
-
         const categories = document.getElementById('categories');
         const prevBtn = document.querySelector('.prev');
         const nextBtn = document.querySelector('.next');

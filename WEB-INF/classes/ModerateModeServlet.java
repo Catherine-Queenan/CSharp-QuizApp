@@ -31,24 +31,35 @@ public class ModerateModeServlet extends HttpServlet {
         StringBuilder questionsHtml = new StringBuilder();
 
         String username = (String) session.getAttribute("USER_ID");
+        String sessionId = req.getParameter("sessionId");
         String role = getUserRoleFromDatabase(username);
         req.setAttribute("role", role);
         req.setAttribute("userName", username);
 
-        String moderatorId = (String) session.getAttribute("USER_ID");
-        System.out.println("Moderator ID: " + moderatorId);
-        String modSessionId = ModerationSessionManager.startModeratedSession(moderatorId, quizName);
-        System.out.println("Moderation Session ID: " + modSessionId);
-        if (modSessionId != null) {
-            session.setAttribute("modSessionId", modSessionId);
-            req.setAttribute("modSessionId", modSessionId);
+        if (sessionId != null) {
+            try {
+                // Use sessionId to retrieve the moderation session
+                ModerationSession modSession = ModerationSessionManager.getModeratedSession(sessionId, quizName);
+        
+                // Check if modSession was retrieved successfully
+                if (modSession != null) {
+                    String modSessionId = modSession.getSessionId(); // Assuming getSessionId() returns the integer ID
+                    System.out.println("Moderation Session ID: " + modSessionId);
+        
+                    // Set modSessionId in request and session attributes for later use
+                    session.setAttribute("modSessionId", modSessionId);
+                    req.setAttribute("modSessionId", modSessionId);
+                } else {
+                    // Handle the case where no session is found for the given ID
+                    req.setAttribute("errorMessage", "Failed to start moderation session.");
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid sessionId format in URL");
+                req.setAttribute("errorMessage", "Invalid session ID.");
+            }
         } else {
-            // Handle case where session creation failed
-            req.setAttribute("errorMessage", "Failed to start moderation session.");
+            req.setAttribute("errorMessage", "Session ID not provided in the URL.");
         }
-
-        // Forward to JSP
-        req.getRequestDispatcher("/views/moderateMode.jsp").forward(req, res);
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
@@ -62,10 +73,9 @@ public class ModerateModeServlet extends HttpServlet {
                     "LEFT JOIN answers a ON q.id = a.question_id " +
                     "LEFT JOIN question_media qm ON q.id = qm.question_id " +
                     "LEFT JOIN answer_media am ON a.id = am.answer_id " +
-                    "WHERE q.quiz_name = ? AND ";
+                    "WHERE q.quiz_name = ?";
             stmntQuestion = con.prepareStatement(sql);
             stmntQuestion.setString(1, quizName);
-            stmntQuestion.setString(2, modSessionId);
             rsQuestion = stmntQuestion.executeQuery();
 
             // Generate HTML for each question and answer

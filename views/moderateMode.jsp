@@ -122,10 +122,11 @@
 <body>
 
     <header>
-            <div id="modSessionsCont"></div>
+            
     </header>
 
     <div class="wrap">
+        <div id="modSessionsCont"></div>
         <div id="question-container">
             <p id="question" class="title"></p>
             <div id="options"></div>
@@ -234,11 +235,14 @@
                     sessionDiv.innerHTML = `<div>Moderator: ${data.session.moderator}</div>`;
 
                     // Create a single "End Moderation" button
-                    const endButton = document.createElement('button');
+                    if (role == "a") {
+                        const endButton = document.createElement('button');
                     endButton.innerHTML = "End Moderation";
                     endButton.onclick = function() {
                         endModeration(modSessionId);
                     };
+                    }
+                    
 
                     // Append the button and session div to the container
                     sessionDiv.appendChild(endButton);

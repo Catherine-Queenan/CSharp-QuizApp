@@ -6,7 +6,7 @@ public class DatabaseUtil {
 
     private static final String URL = "jdbc:mysql://localhost:3306/QuizApp";
     private static final String USER = "root";
-    private static final String PASSWORD = "Cathgirlh6*";
+    private static final String PASSWORD = "";
 
     static {
         try {
