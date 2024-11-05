@@ -281,8 +281,6 @@
             pathSessSegments.pop();
             let sessSessionPath = pathSessSegments.join('/') + `/moderateMode?sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
             window.location.href = sessSessionPath;
-
-            const ws = new WebSocket(`ws://${window.location.host}/QuizApp/moderateMode/${modSessionId}`);
         }
 
 
