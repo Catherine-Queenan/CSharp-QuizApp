@@ -48,7 +48,7 @@ public class ModerateModeServlet extends HttpServlet {
         }
 
         // Forward to JSP
-        req.getRequestDispatcher("/views/quiz.jsp").forward(req, res);
+        req.getRequestDispatcher("/views/moderateMode.jsp").forward(req, res);
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
@@ -62,9 +62,10 @@ public class ModerateModeServlet extends HttpServlet {
                     "LEFT JOIN answers a ON q.id = a.question_id " +
                     "LEFT JOIN question_media qm ON q.id = qm.question_id " +
                     "LEFT JOIN answer_media am ON a.id = am.answer_id " +
-                    "WHERE q.quiz_name = ?";
+                    "WHERE q.quiz_name = ? AND ";
             stmntQuestion = con.prepareStatement(sql);
             stmntQuestion.setString(1, quizName);
+            stmntQuestion.setString(2, modSessionId);
             rsQuestion = stmntQuestion.executeQuery();
 
             // Generate HTML for each question and answer

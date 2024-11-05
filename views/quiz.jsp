@@ -447,7 +447,7 @@
                     .then(data => {
                         if (data.status === "success" && data.sessionId) {
                             // Redirect to moderated mode with the new modSessionId
-                            window.location.href = `${pathSegments.join('/')}/moderateMode?modSessionId=${data.sessionId}&quizName=${quizName}`;
+                            window.location.href = `${pathSegments.join('/')}/moderateMode?sessionId=${data.sessionId}&quizName=${quizName}`;
                         } else {
                             alert("Failed to create moderation session.");
                         }
