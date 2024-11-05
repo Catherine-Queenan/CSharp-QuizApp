@@ -258,7 +258,7 @@
 
 
                 <!-- Add more answers dynamically if needed -->
-                <button class="addAnswerBtn" id="addAnswerBtn" type="button" onclick="addAnswer()">Add Another
+                <button class="addAnswerBtn" id="addAnswerBtn" type="button">Add Another
                     Answer</button>
                 <div id="questionsContainer"></div>
             </div>
@@ -276,7 +276,6 @@
             let answerVidUpload = document.getElementById(`videoUrlAnswer`);
 
             let displayAnswerMedia = function (type) {
-                console.log("AAAAAAAAAA");
                 if (type === 'IMG') {
                     for (let i = 0; i < answerImgUploads.length; i++) {
                         answerImgUploads[i].style.display = 'flex';
@@ -556,64 +555,69 @@
                         });
                     });
 
-                    
+
 
                 });
 
                 let questionMedia = document.getElementById('questionType');
-                    questionMedia.addEventListener('change', function () {
-                        if (questionMedia.value === 'IMG' || questionMedia.value === 'AUD') {
-                            console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                            document.getElementById(`imageAudioUploadQuestion`).style.display = 'flex';
-                            document.getElementById(`videoUrlQuestion`).style.display = 'none';
-                            if (questionMedia.value === 'AUD') {
-                                document.getElementById("audioStartEnd").style.display = 'flex';
-                            } else {
-                                document.getElementById("audioStartEnd").style.display = 'none';
-                            }
-                        } else if (questionMedia.value === 'VID') {
-                            document.getElementById(`imageAudioUploadQuestion`).style.display = 'none';
-                            document.getElementById(`videoUrlQuestion`).style.display = 'flex';
-                            document.getElementById("audioStartEnd").style.display = 'none';
+                questionMedia.addEventListener('change', function () {
+                    if (questionMedia.value === 'IMG' || questionMedia.value === 'AUD') {
+                        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                        document.getElementById(`imageAudioUploadQuestion`).style.display = 'flex';
+                        document.getElementById(`videoUrlQuestion`).style.display = 'none';
+                        if (questionMedia.value === 'AUD') {
+                            document.getElementById("audioStartEnd").style.display = 'flex';
                         } else {
-                            document.getElementById(`imageAudioUploadQuestion`).style.display = 'none';
-                            document.getElementById(`videoUrlQuestion`).style.display = 'none';
                             document.getElementById("audioStartEnd").style.display = 'none';
                         }
-                    });
+                    } else if (questionMedia.value === 'VID') {
+                        document.getElementById(`imageAudioUploadQuestion`).style.display = 'none';
+                        document.getElementById(`videoUrlQuestion`).style.display = 'flex';
+                        document.getElementById("audioStartEnd").style.display = 'none';
+                    } else {
+                        document.getElementById(`imageAudioUploadQuestion`).style.display = 'none';
+                        document.getElementById(`videoUrlQuestion`).style.display = 'none';
+                        document.getElementById("audioStartEnd").style.display = 'none';
+                    }
+                });
 
 
-                    let answerForm = document.getElementById("newAnswerForm");
-                    console.log(answerForm);
-                    answerForm.addEventListener("submit", (event) => {
-                        event.preventDefault(); // Prevent the default form submission
+                let answerForm = document.getElementById("newAnswerForm");
+                console.log(answerForm);
+                answerForm.addEventListener("submit", (event) => {
+                    event.preventDefault(); // Prevent the default form submission
 
-                        const formData = new FormData(answerForm);
-                        formData.append("answerType", answerType);
-                        for (var pair of formData.entries()) {
-                            console.log(pair[0] + ', ' + pair[1]);
+                    const formData = new FormData(answerForm);
+                    formData.append("answerType", answerType);
+                    for (var pair of formData.entries()) {
+                        console.log(pair[0] + ', ' + pair[1]);
+                    }
+                    fetch(editAnswerPath, { // Replace with your servlet URL
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            "Accept": "application/json" // Expect a JSON response
                         }
-                        fetch(editAnswerPath, { // Replace with your servlet URL
-                            method: "POST",
-                            body: formData,
-                            headers: {
-                                "Accept": "application/json" // Expect a JSON response
+                    }).then(response => {
+                        console.log("AAAAAAAAAa");
+                        return response.json().then(data => {
+                            if (response.ok) {
+                                window.location.reload();
+                            } else {
+                                throw new Error(data.message || 'An error occurred');
                             }
-                        }).then(response => {
-                            console.log("AAAAAAAAAa");
-                            return response.json().then(data => {
-                                if (response.ok) {
-                                    window.location.reload();
-                                } else {
-                                    throw new Error(data.message || 'An error occurred');
-                                }
-                            })
-                        }).catch(error => {
-                            // Handle any errors that occurred during the fetch
-                            console.error("Error:", error.message);
-                            alert("An error occurred: " + error.message);
-                        });
+                        })
+                    }).catch(error => {
+                        // Handle any errors that occurred during the fetch
+                        console.error("Error:", error.message);
+                        alert("An error occurred: " + error.message);
                     });
+                });
+
+                document.getElementById("addAnswerBtn").addEventListener("click", () => {
+                    addAnswer();
+                    displayAnswerMedia(answerType);
+                });
             });
 
 
