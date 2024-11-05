@@ -196,7 +196,7 @@
             font-size: 25px;
         }
 
-        .moderateMode {
+        #moderateMode {
             margin-top: 10px;
             border-radius: 10px;
             padding: 10px 20px;
@@ -212,7 +212,7 @@
             cursor: pointer;
         }
 
-        .moderateMode:hover {
+        #moderateMode:hover {
             transform: scale(1.03);
             box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.3);
         }
@@ -324,7 +324,7 @@
                                 <div class="adminBtnWrap">    
                                     <button type="button" onclick="window.location.href='${pathSegments.join('/')}/edit/${quiz.name}'">Edit Quiz</button>
                                     <button type="button" class="deleteButton">Delete Quiz</button>
-                                    <button type="button" class="moderateMode" onclick="startModeration('${quiz.name}', event)">
+                                    <button type="button" class="moderateMode" id="moderateMode" onclick="startModeration('${quiz.name}', event)">
                                         Moderated Mode
                                     </button>
                                 </div>

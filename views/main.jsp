@@ -9,8 +9,19 @@
     <style>
         * { font-weight: 800; box-sizing: border-box; }
 
-        .wrap {
-            padding: 30px 0;
+        body {
+            overflow-x: hidden;
+        }
+        
+        #wrap {
+            height: unset !important;
+            padding: 80px 0 !important;
+            justify-content: center;
+            position: unset !important;
+            overflow-y: scroll;
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+            -webkit-scrollbar: none;
         }
 
         .categoryBtnWrap {
@@ -38,6 +49,8 @@
 
         .emptyMsg {
             width: 100%;
+            padding: 15px 10% 0 10%;
+            font-size: 18px;
             text-align: center;
             margin-bottom: 20px;
         }
@@ -171,6 +184,22 @@
             box-shadow: 5px 5px 10px rgb(14, 1, 47);
         }
 
+        /* Moderated sessions */
+        .moderatedTitle {
+            width: 80%;
+            font-size: 30px;
+            text-align: center;
+        }
+
+        .moderatedSessions {
+            margin-bottom: 60px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
     </style>
 </head>
 <body>
@@ -180,14 +209,15 @@
         </form>
     </header>
 
-    <div class="wrap">
-         <!-- New Div for Moderated Sessions -->
-         <div class="moderatedSessions" id="moderatedSessionsContainer">
-            <h2>Moderated Sessions</h2>
+    <div class="wrap" id="wrap">
+        <!-- New Div for Moderated Sessions -->
+        <div class="moderatedSessions" id="moderatedSessionsContainer">
+            <h2 class="moderatedTitle cherry-cream-soda">Moderated Sessions</h2>
             <div id="modSessionsCont">
                 <!-- Moderated sessions will be injected here by JavaScript -->
             </div>
         </div>
+        
         <div class="title cherry-cream-soda">
             Categories
         </div>
@@ -260,7 +290,7 @@
             // Check if there are any moderated sessions
             if (!data.sessions || data.sessions.length === 0) {
                 // If no sessions, display a message
-                modSessionsContainer.innerHTML = '<div>No moderated sessions available.</div>';
+                modSessionsContainer.innerHTML = '<div class="emptyMsg">No moderated sessions available.</div>';
             } else {
                 // If there are sessions, display them
                 data.sessions.forEach(modSession => {
@@ -447,9 +477,15 @@
             categories.style.display = "flex";
             categories.style.justifyContent = "center"
             categories.style.width = `100%`;
-            document.querySelectorAll(".category").forEach(function(category) {
-                category.style.width = `60%`;
-            });
+            if (window.innerWidth < 500) {
+                document.querySelectorAll(".category").forEach(function(category) {
+                    category.style.width = `80%`;
+                });
+            } else {
+                document.querySelectorAll(".category").forEach(function(category) {
+                    category.style.width = `60%`;
+                });
+            }
         } else if (totalCategories < 3 && visibleCategories > 2) {
             categories.style.display = "flex";
             categories.style.justifyContent = "center"
