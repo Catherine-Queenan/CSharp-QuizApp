@@ -141,7 +141,7 @@
             
     </header>
 
-    <div class="wrap">
+    <div class="wrap" id="wrap">
         <div id="modSessionsCont"></div>
         <div id="question-container">
             <p id="question" class="title"></p>

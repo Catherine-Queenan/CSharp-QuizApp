@@ -294,23 +294,12 @@
             window.location.href = sessSessionPath;
         }
 
-        const categories = document.getElementById('categories');
-        const prevBtn = document.querySelector('.prev');
-        const nextBtn = document.querySelector('.next');
-        const visibleCategories = 3; // Display 3 at a time
-        let index = 0;
-
         const currentPath = window.location.pathname;
         const pathSegments = currentPath.split('/');
         pathSegments.pop();
         let newPath = pathSegments.join('/') + '/home-json';
         console.log(newPath)
-
-        // checkSession().then(isLoggedIn => {
-        //     if (!isLoggedIn) {
-        //     } else 
- 
-
+        
         // Fetch categories and render them dynamically
         fetch(newPath, {
             method: 'GET',
