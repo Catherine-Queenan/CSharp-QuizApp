@@ -7,7 +7,21 @@
     <link rel="stylesheet" href="public/css/reset.css">
     <style>
 
+        #wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 0;
+            overflow-y: scroll;
+            -ms-overflow-style: none;
+            /* Internet Explorer 10+ */
+            scrollbar-width: none;
+            /* Firefox */
+            -webkit-scrollbar: none;
+        }
+
         .title {
+            width: 100%;
             padding: 10px 100px;
             text-align: center;
             font-size: 30px;
@@ -15,13 +29,12 @@
         }
 
         #next-button {
-            margin-top: 30px;
+            margin-top: 20px;
             padding: 20px 40px;
             border-radius: 15px;
             border: 0;
-            margin-right: 10px;
-            font-size: 22px;
-            background-color: #99c252;
+            font-size: 20px;
+            background-color: #6e6ba6;
             transition-duration: 0.3s;
             cursor: pointer;
         }
@@ -29,18 +42,18 @@
         /* Displaying media */
         #media-container {
             width: 100%;
-            height: 400px;
+            max-height: 400px;
             margin-top: 20px;
             overflow: hidden;
         }
 
         #media-container img {
             width: 100%;
+            max-height: 400px;
             height: 100%;
             object-fit: contain;
         }
         
-
         /* options */
         #options {
             width: 100%;
@@ -83,15 +96,18 @@
 
         /* answer count */
         #answerCounts {
-            margin-top: 20px;
             width: fit-content;
             display: flex;
+            flex-wrap: wrap;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
             gap: 10px;
         }
 
         #answerCounts div {
+            max-width: 500px;
+            width: 70%;
             padding: 10px 20px;
             border-radius: 10px;
         }
@@ -368,14 +384,16 @@
             console.log(response);
             if(response.type === "end"){
                 webSocket.onclose = function () {
-            console.log("Connection closed ...");
-             globalThis.end = true;
-            window.location.href = "end";
-        };
+                    console.log("Connection closed ...");
+                    globalThis.end = true;
+                    window.location.href = "end";
+                };
             }
             if (response.question && response.answers) {
                 displayQuestion(response.question, response.answers, response.images, response.videos);
             } else if (response.type === "answerCounts") {
+                console.log("EHILSGHD")
+                console.log(response);
                 displayAnswerCounts(response.counts);
             } else {
                 console.log("Invalid message received from server:", response);
@@ -475,6 +493,7 @@
        
         // Display answer counts
         function displayAnswerCounts(counts) {
+            console.log(counts)
             let totalElement = document.getElementById("answerCounts");
             totalElement.innerHTML = "<h3>Answer Counts:</h3>";
 

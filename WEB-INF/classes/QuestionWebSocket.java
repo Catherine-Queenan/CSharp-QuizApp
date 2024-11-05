@@ -110,6 +110,7 @@ public class QuestionWebSocket {
     
                 if (jsonMessage.has("type") && jsonMessage.getString("type").equals("answer")) {
                     String answer = jsonMessage.getString("answer");
+                    userData.answerCounts.clear();
                     userData.answerCounts.put(answer, userData.answerCounts.getOrDefault(answer, 0) + 1);
                     broadcastAnswerCounts();
                 } else if (jsonMessage.has("type") && jsonMessage.getString("type").equals("next")) {
@@ -199,6 +200,7 @@ public class QuestionWebSocket {
 
     private Map<String, Integer> getCombinedAnswerCounts() {
         Map<String, Integer> combinedCounts = new HashMap<>();
+        combinedCounts.clear();
         for (UserSessionData userData : userSessions.values()) {
             userData.answerCounts.forEach((key, value) -> {
                 combinedCounts.put(key, combinedCounts.getOrDefault(key, 0) + value);
@@ -210,6 +212,7 @@ public class QuestionWebSocket {
     private void incrementQuestionForAllUsers() {
         for (UserSessionData userData : userSessions.values()) {
             userData.currentQuestionIndex++;
+            userData.answerCounts.clear();
         }
     }
 

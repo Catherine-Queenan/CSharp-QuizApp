@@ -2,3 +2,4 @@ DatabaseUtil.java
 *.class
 .vscode
 Repository.java
+app.war

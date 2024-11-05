@@ -19,7 +19,7 @@
 
         .quizzesBtnWrap {
             margin-top: 20px;
-            width: 85%;
+            width: 90%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -35,6 +35,7 @@
         .quizzes {
             width: max-content; /* Dynamically adjust width */
             display: flex;
+            justify-content: center;
             gap: 30px;
             overflow: hidden;
             transition: transform 0.4s ease-in-out;
@@ -44,8 +45,7 @@
             width: 30%;
             border: 0;
             border-radius: 15px;
-            padding: 10px;
-            padding-bottom: 15px;
+            padding: 0 10px 25px 10px;
             font-size: 25px;
             color: #0C1B33;
             display: flex;
@@ -91,7 +91,6 @@
         .quizLink {
             all: unset;
             width: 100%;
-            height: 100%;
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -102,18 +101,18 @@
 
         .quiz input {
             all: unset;
+            font-size: 30px;
             width: 100%;
-            /* height: 100%; */
             text-align: center;
-            padding: 20px 40px;
+            padding: 20px 0 0 0;
             box-sizing: border-box;
             cursor: pointer;
         }
 
         .quiz-description {
             width: 100%;
-            margin-top: 15px;
-            padding: 10px 20px;
+            padding: 0 10px;
+            padding-top: 10px;
             font-size: 20px;
             display: flex;
             justify-content: center;
@@ -126,8 +125,6 @@
             max-width: 90%;
             width: 100%;
             max-height: 200px;
-            height: 100%;
-            width: 100%;
             height: 100%;
             border-radius: 10px;
             object-fit: cover;
@@ -163,9 +160,7 @@
         }
 
         /* Admin section */
-
         .adminBtnWrap {
-            margin-top: 10px;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -222,6 +217,20 @@
             box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.3);
         }
 
+        /* Responsive */
+        @media screen and (max-width: 800px) {
+            .wrap {
+                padding: 30px;
+            }
+            /* Quizzes page */
+            .quiz input {
+                padding: 10px !important;
+            }
+
+            .quiz-description {
+                margin: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -252,13 +261,8 @@
 </body>
 <script src="..\scripts\logout.js"></script>
     <script>
-
+        
         document.addEventListener('DOMContentLoaded', function() {
-            const quizzes = document.getElementById('quizzes');
-            const prevBtn = document.querySelector('.prev');
-            const nextBtn = document.querySelector('.next');
-            const visibleQuizzes = 3; // Display 3 at a time
-            let index = 0;
 
             const currentPath = window.location.pathname;
             const pathSegments = currentPath.split('/');
@@ -318,7 +322,7 @@
                         if (data.role === "admin") {
                             quizDiv.innerHTML += `
                                 <div class="adminBtnWrap">    
-                                    <button type="button" onclick="window.location.href='${pathSegments.join('/')}/edit?quizName=${quiz.name}'">Edit Quiz</button>
+                                    <button type="button" onclick="window.location.href='${pathSegments.join('/')}/edit/${quiz.name}'">Edit Quiz</button>
                                     <button type="button" class="deleteButton">Delete Quiz</button>
                                     <button type="button" class="moderateMode" onclick="startModeration('${quiz.name}', event)">
                                         Moderated Mode
@@ -333,50 +337,12 @@
                 }
 
                 // ----- Set up the sliding mechanism ----- \\
-
-                // Adjust width dynamically based on the number of quizzes
-                const totalQuizzes = quizzes.children.length;
-                quizzes.style.width = `${(totalQuizzes / visibleQuizzes) * 100}%`;
-        
-                // Function to slide quizzes
-                function updatequizzes() {
-                    const offset = -index * (document.getElementById("quizzesWrap").clientWidth / visibleQuizzes); // Calculate the offset
-                    quizzes.style.transform = `translateX(${offset}px)`;
-                }
-        
-                // Event listener for next button
-                nextBtn.addEventListener('click', () => {
-                    if (index < totalQuizzes - visibleQuizzes) {
-                        index++;
-                    } else {
-                        index = 0; // Loop back to the first page
-                    }
-                    updatequizzes();
-                });
-        
-                // Event listener for previous button
-                prevBtn.addEventListener('click', () => {
-                    if (index > 0) {
-                        index--;
-                    } else {
-                        index = totalQuizzes - visibleQuizzes; // Loop back to the last page
-                    }
-                    updatequizzes();
-                });
-        
-                // Disable buttons if there are not enough quizzes
-                if (totalQuizzes > visibleQuizzes) {
-                    nextBtn.style.display = 'block';
-                    prevBtn.style.display = 'block';
-                }
-
-                if (totalQuizzes < 3) {
-                    quizzes.style.display = "flex";
-                    quizzes.style.justifyContent = "center"
-                    quizzes.style.width = `100%`;
-                    document.querySelectorAll(".quiz").forEach(function(quiz) {
-                        quiz.style.width = `40%`;
-                    });
+                if (window.innerWidth < 650) {
+                    displayQuizzes(1);
+                } else if (window.innerWidth < 1000) {
+                    displayQuizzes(2);
+                } else {
+                    displayQuizzes(3);
                 }
 
                 document.querySelectorAll('.deleteButton').forEach(button => {
@@ -421,45 +387,147 @@
             
         });
 
-                function startModeration(quizName, event) {
-                    event.preventDefault();
+        function startModeration(quizName, event) {
+            event.preventDefault();
 
-                    const currentSessionPath = window.location.pathname;
-                    const pathSegments = currentSessionPath.split('/');
-                    pathSegments.pop(); // Remove current page from path
-                    pathSegments.pop(); // Remove the last segment (quiz name) from path
-                    const startSessionPath = pathSegments.join('/') + `/getActiveSessions?action=startModeratedSession&quizName=${encodeURIComponent(quizName)}`;
-                    console.log('Session Path:', startSessionPath);
+            const currentSessionPath = window.location.pathname;
+            const pathSegments = currentSessionPath.split('/');
+            pathSegments.pop(); // Remove current page from path
+            pathSegments.pop(); // Remove the last segment (quiz name) from path
+            const startSessionPath = pathSegments.join('/') + `/getActiveSessions?action=startModeratedSession&quizName=${encodeURIComponent(quizName)}`;
+            console.log('Session Path:', startSessionPath);
 
-                    // Send a request to create the modSessionId
-                    fetch(startSessionPath, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json'
-                        },
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to start moderation session');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.status === "success" && data.sessionId) {
-                            // Redirect to moderated mode with the new modSessionId
-                            window.location.href = `${pathSegments.join('/')}/moderateMode?sessionId=${data.sessionId}&quizName=${quizName}`;
-                        } else {
-                            alert("Failed to create moderation session.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error starting moderation session:', error);
-                        alert("Error starting moderation session. Please try again.");
+            // Send a request to create the modSessionId
+            fetch(startSessionPath, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to start moderation session');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === "success" && data.sessionId) {
+                    // Redirect to moderated mode with the new modSessionId
+                    window.location.href = `${pathSegments.join('/')}/moderateMode?sessionId=${data.sessionId}&quizName=${quizName}`;
+                } else {
+                    alert("Failed to create moderation session.");
+                }
+            })
+            .catch(error => {
+                console.error('Error starting moderation session:', error);
+                alert("Error starting moderation session. Please try again.");
+            });
+        }
+
+        function connectWebSocket() {
+
+        }
+        
+        function displayQuizzes(maxVisible) {
+            const quizzes = document.getElementById('quizzes');
+            const prevBtn = document.querySelector('.prev');
+            const nextBtn = document.querySelector('.next');
+            const visibleQuizzes = maxVisible; 
+            let index = 0;
+
+            // Adjust width dynamically based on the number of quizzes
+            const totalQuizzes = quizzes.children.length;
+            quizzes.style.width = `${(totalQuizzes / visibleQuizzes) * 100}%`;
+
+            // For responsive
+            if (visibleQuizzes == 1) {
+                quizzes.style.gap = "0";
+                document.querySelectorAll(".quiz").forEach(function(quiz) {
+                    quiz.style.width = `70%`;
+                    quiz.style.margin = "0 20px";
+                });
+            }
+
+            // Checking if quiz description is empty
+            document.querySelectorAll(".quiz-description").forEach(function(description){
+                if (description.innerText== "") {
+                    description.style.display = "none";
+                }
+            });
+
+            var quizLinkMaxHeight = 0;
+            document.querySelectorAll(".quizLink").forEach(function(quizLink) {
+                var quizLinkHeight = quizLink.offsetHeight;  // Get the height of the current button
+                if (quizLinkHeight > quizLinkMaxHeight) {
+                    quizLinkMaxHeight = quizLinkHeight;  // Update the maxHeight if current button's height is greater
+                }
+            });
+            document.querySelectorAll(".quizLink .img").forEach(function(quizLink) {
+                if (quizLink.innerHTML == "") {
+                    quizLink.parentElement.style.height = "80%";
+                }
+            });
+
+            // Function to slide quizzes
+            function updatequizzes() {
+                const offset = -index * (document.getElementById("quizzesWrap").clientWidth / visibleQuizzes); // Calculate the offset
+                quizzes.style.transform = `translateX(${offset}px)`;
+            }
+    
+            // Event listener for next button
+            nextBtn.addEventListener('click', () => {
+                if (index < totalQuizzes - visibleQuizzes) {
+                    index++;
+                } else {
+                    index = 0; // Loop back to the first page
+                }
+                updatequizzes();
+            });
+    
+            // Event listener for previous button
+            prevBtn.addEventListener('click', () => {
+                if (index > 0) {
+                    index--;
+                } else {
+                    index = totalQuizzes - visibleQuizzes; // Loop back to the last page
+                }
+                updatequizzes();
+            });
+    
+            // Disable buttons if there are not enough quizzes
+            if (totalQuizzes > visibleQuizzes) {
+                nextBtn.style.display = 'block';
+                prevBtn.style.display = 'block';
+            }
+
+            if (totalQuizzes == 1) {
+                quizzes.style.display = "flex";
+                quizzes.style.justifyContent = "center"
+                quizzes.style.width = `100%`;
+                document.querySelectorAll(".quiz").forEach(function(quiz) {
+                    quiz.style.width = `60%`;
+                });
+            } else if (totalQuizzes < 3 && visibleQuizzes > 2) {
+                quizzes.style.display = "flex";
+                quizzes.style.justifyContent = "center"
+                quizzes.style.width = `100%`;
+                document.querySelectorAll(".quiz").forEach(function(quiz) {
+                    quiz.style.width = `45%`;
+                });
+            }
+
+            // Changing the admin buttons for responsive 
+            document.querySelectorAll(".quiz").forEach(function(quiz) {
+                if (quiz.offsetWidth < 300) {
+                    document.querySelectorAll(".adminBtnWrap button:nth-child(1)").forEach(function(editButton) {
+                        editButton.innerHTML = `<i class="fa-solid fa-pen"></i>`
+                    });
+                    document.querySelectorAll(".deleteButton").forEach(function(deleteButton) {
+                        deleteButton.innerHTML = `<i class="fa-solid fa-trash"></i>`;
                     });
                 }
+            })
+        }
 
-                function connectWebSocket() {
-
-                }
     </script>
 </html>

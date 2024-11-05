@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.MultipartConfig;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 @MultipartConfig
@@ -40,9 +41,15 @@ public class AddQuestionServlet extends HttpServlet {
             return;
         }
 
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        PrintWriter out = res.getWriter();
+
         String username = (String) session.getAttribute("USER_ID");
         String role = (String) session.getAttribute("USER_ROLE");
         // String role = getUserRoleFromDatabase(username);
+
+        JSONObject jsonResponse = new JSONObject();
 
         if (!"a".equals(role)) {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
@@ -52,13 +59,15 @@ public class AddQuestionServlet extends HttpServlet {
             return;
         }
 
-        String quizName = req.getParameter("quizName");
-        System.out.println(quizName);
-        req.setAttribute("quizName", quizName);
-        RequestDispatcher view = req.getRequestDispatcher("/views/addQuestion.jsp");
-        view.forward(req, res);
+        jsonResponse.put("role", "admin");
+
+       // Write the JSON responses
+       out.write(jsonResponse.toString());
+       out.flush();
+       out.close();
     }
 
+    @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // Connection con = null;
         // PreparedStatement psQuestion = null;
@@ -361,7 +370,8 @@ public class AddQuestionServlet extends HttpServlet {
 
 
             // Redirect back to the quiz creation page or show success message
-            res.sendRedirect("editQuestions?quizName=" + quizName);
+            res.setStatus(200); 
+            res.getWriter().write("{\"message\": \"Quiz edited successfully!\"}");
 
         } catch (Exception e) {
             throw new ServletException("Error processing question addition", e);
