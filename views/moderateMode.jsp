@@ -53,7 +53,7 @@
             height: 100%;
             object-fit: contain;
         }
-        
+
         /* options */
         #options {
             width: 100%;
@@ -131,14 +131,14 @@
         #answerCounts div:nth-child(4n + 5) {
             background-color: #99c252 !important;
         }
-        
+
     </style>
 </head>
 
 <body>
 
     <header>
-            
+
     </header>
 
     <div class="wrap" id="wrap">
@@ -169,34 +169,32 @@
     </div>
 
     <script type="text/javascript">
-           
-
 
         function setHeight() {
             // Get all buttons inside the div with class "answersOption"
             var buttons = document.querySelectorAll('#options button');
-            
+
             var maxHeight = 0;
-            
+
             // Loop through each button to determine the maximum height
-            buttons.forEach(function(button) {
+            buttons.forEach(function (button) {
                 var buttonHeight = button.offsetHeight;  // Get the height of the current button
                 if (buttonHeight > maxHeight) {
                     maxHeight = buttonHeight;  // Update the maxHeight if current button's height is greater
                 }
             });
-            
+
             // Set all buttons to the maximum height
-            buttons.forEach(function(button) {
+            buttons.forEach(function (button) {
                 button.style.height = maxHeight + "px";
             });
         }
 
         // Making all answer options have the same height value
-        window.onload = function() {
+        window.onload = function () {
             setHeight();
         };
-       
+
         let role = document.getElementById("role").textContent.trim();
         console.log("Role: ", role);
 
@@ -204,71 +202,74 @@
         const pathSegments = currentPath.split('/');
         // Extract the base path dynamically (remove last segment if it's quiz-related)
         console.log(pathSegments);
-        pathSegments.pop();         
+        pathSegments.pop();
         console.log(pathSegments);
         console.log(pathSegments.join('/'));
 
         // Construct the new path dynamically
         const newPath = pathSegments.join('/') + `/questionsws`;
 
-
         const modSessionsContainer = document.getElementById('modSessionsCont');
-            modSessionsContainer.innerHTML = ''; // Clear previous content
-            console.log("Hello");
-            // Retrieve the current session ID from the backend (embedded in JSP)
-            const params = new URLSearchParams(window.location.search);
-            const modSessionId = params.get("sessionId"); 
-            const quizName = params.get("quizName"); 
-            console.log("Session ID: ", modSessionId);
-            console.log("Quiz Name: ", quizName);
-            // Define the fetch path for the specific moderation session
-            const currentSessionPath = window.location.pathname;
-            const pathSessionSegments = currentSessionPath.split('/');
-            pathSessionSegments.pop();
-            const fetchSessionPath = pathSessionSegments.join('/') + `/getActiveSessions?action=getModeratedSession&sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
+        modSessionsContainer.innerHTML = ''; // Clear previous content
+        console.log("Hello");
+        
+        // Retrieve the current session ID from the backend (embedded in JSP)
+        const params = new URLSearchParams(window.location.search);
+        const modSessionId = params.get("sessionId");
+        const quizName = params.get("quizName");
+        console.log("Session ID: ", modSessionId);
+        console.log("Quiz Name: ", quizName);
 
-            // Fetch current moderation session data for the specific session
-            fetch(fetchSessionPath, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch the moderated session');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Check if the session exists
-                if (!data.session) {
-                    modSessionsContainer.innerHTML = '<div>No active moderated session available.</div>';
-                } else {
-                    // Create a div to display session details
-                    const sessionDiv = document.createElement('div');
-                    sessionDiv.className = 'modSession';
-                    sessionDiv.innerHTML = `<div>Moderator: ${data.session.moderator}</div>`;
+        // Define the fetch path for the specific moderation session
+        const currentSessionPath = window.location.pathname;
+        const pathSessionSegments = currentSessionPath.split('/');
+        pathSessionSegments.pop();
+        const fetchSessionPath = pathSessionSegments.join('/') + `/getActiveSessions?action=getModeratedSession&sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
 
-                    // Create a single "End Moderation" button
-                    if (role == "a") {
-                        const endButton = document.createElement('button');
+        // Fetch current moderation session data for the specific session
+        fetch(fetchSessionPath, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch the moderated session');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Check if the session exists
+            if (!data.session) {
+                modSessionsContainer.innerHTML = '<div>No active moderated session available.</div>';
+            } else {
+                // Create a div to display session details
+                const sessionDiv = document.createElement('div');
+                sessionDiv.className = 'modSession';
+                sessionDiv.innerHTML = `<div>Moderator: ${data.session.moderator}</div>`;
+
+                // Create a single "End Moderation" button
+                if (role == "a") {
+                    const endButton = document.createElement('button');
                     endButton.innerHTML = "End Moderation";
-                    endButton.onclick = function() {
+                    endButton.onclick = function () {
                         endModeration(modSessionId);
                     };
-                    }
-                    
-
-                    // Append the button and session div to the container
-                    sessionDiv.appendChild(endButton);
-                    modSessionsContainer.appendChild(sessionDiv);
                 }
-            })
-            .catch(error => {
-                console.error('Error fetching moderated session:', error);
-                modSessionsContainer.innerHTML = '<div>Error fetching moderated session. Please try again later.</div>';
-            });
+
+
+                // Append the button and session div to the container
+                sessionDiv.appendChild(endButton);
+                modSessionsContainer.appendChild(sessionDiv);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching moderated session:', error);
+            let newPath = pathSegments.join('/') + '/error?errorMessage=' + encodeURIComponent(error);
+            // modSessionsContainer.innerHTML = '<div>Error fetching moderated session. Please try again later.</div>';
+            window.location.href = newPath;
+        });
 
         // Function to end the current moderation session
         function endModeration(modSessionId) {
@@ -306,7 +307,7 @@
             });
         }
 
-        let webSocket = new WebSocket('ws://localhost:8081/'+ newPath);
+        let webSocket = new WebSocket('ws://localhost:8081/' + newPath);
         let questions = [];
         let answers = [];
         let images = [];
@@ -321,6 +322,7 @@
                 });
             }
         });
+
         document.querySelectorAll("source").forEach((video) => {
             let mediaAttr = video.getAttribute("data-media");
             if (mediaAttr) {
@@ -330,8 +332,10 @@
                 });
             }
         });
+
         console.log("Images: ", images);
         console.log("Videos: ", videos);
+
         // Collect questions and answers from the HTML
         document.querySelectorAll(".questionTitle").forEach((question) => {
             questions.push(question.textContent);
@@ -382,7 +386,7 @@
             questionIndex = response.questionIndex;
 
             console.log(response);
-            if(response.type === "end"){
+            if (response.type === "end") {
                 webSocket.onclose = function () {
                     console.log("Connection closed ...");
                     globalThis.end = true;
@@ -402,7 +406,7 @@
 
         webSocket.onclose = function () {
             console.log("Connection closed ...");
-             globalThis.end = true;
+            globalThis.end = true;
             window.location.href = "end";
         };
         // console.log("End: ", end);
@@ -445,7 +449,7 @@
             if (images && images.length > 0) {
                 images.forEach(imageSrc => {
                     const imgElement = document.createElement("img");
-                    if(role !== "a"){
+                    if (role !== "a") {
                         imgElement.style.display = "none";
                     }
                     imgElement.src = imageSrc;
@@ -458,7 +462,7 @@
             if (videos && videos.length > 0) {
                 videos.forEach(videoUrl => {
                     const videoElement = document.createElement("iframe");
-                    if(role !== "a"){
+                    if (role !== "a") {
                         videoElement.style.display = "none";
                     }
                     videoElement.src = videoUrl.replace("watch?v=", "embed/");
@@ -479,8 +483,8 @@
         if (role !== "a") {
             document.getElementById("next-button").style.display = "none";
             document.getElementById("answerCounts").style.display = "none";
-            document.getElementById("question").style.display = "none"; 
-        } 
+            document.getElementById("question").style.display = "none";
+        }
         // Handle "Next Question" button click
         document.getElementById("next-button").addEventListener("click", function () {
             //clear answer counts
@@ -490,7 +494,7 @@
             webSocket.send(JSON.stringify({ type: "next" }));
         });
 
-       
+
         // Display answer counts
         function displayAnswerCounts(counts) {
             console.log(counts)
@@ -503,7 +507,6 @@
                 totalElement.appendChild(answerCountElement);
             }
         }
-
 
 
         //---------------VIDEO PLAYING---------------\\
@@ -555,6 +558,7 @@
                 }, 100);
             }
         }
+
         //---------------AUDIO PLAYING---------------\\
         //makes audio loop
         function audio() {
@@ -562,7 +566,6 @@
                 document.querySelector("audio").currentTime = parseInt(document.getElementById("videoStart").value);
             }
         }
-
 
     </script>
 
