@@ -412,7 +412,7 @@
         webSocket.onclose = function () {
             console.log("Connection closed ...");
             globalThis.end = true;
-            window.location.href = "end";
+            window.location.href = `endQuiz?sessionId=${encodeURIComponent(modSessionId)}`;
         };
         // console.log("End: ", end);
         // if(end){
