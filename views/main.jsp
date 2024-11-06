@@ -42,6 +42,7 @@
         .categories {
             width: max-content; /* Dynamically adjust width */
             display: flex;
+            justify-content: center;
             gap: 30px;
             overflow: hidden;
             transition: transform 0.4s ease-in-out;
@@ -374,11 +375,10 @@
                 categoryDiv.className = 'category';
 
                 let mediaHtml = '';
-                console.log(category.media.media_file_path)
+                // console.log(category.media.media_file_path)
                 if (category.media && category.media.media_file_path) {
                     console.log(category.media.media_file_path)
                     mediaHtml = `<img src="${category.media.media_file_path}" alt="${category.name}" class="categoryImg">`;
-                    
                 }
 
                 categoryDiv.innerHTML = `
@@ -393,7 +393,7 @@
             });
 
             // Set up the sliding mechanism
-            if (window.innerWidth < 650 || errorFetching) {
+            if (window.innerWidth < 650) {
                 displayCategories(1);
             } else if (window.innerWidth < 1000) {
                 displayCategories(2);
@@ -430,14 +430,8 @@
 
         var categoryLinkMaxHeight = 0;
         document.querySelectorAll(".categoryLink").forEach(function(categoryLink) {
-            var categoryLinkHeight = categoryLink.offsetHeight;  // Get the height of the current button
-            if (categoryLinkHeight > categoryLinkMaxHeight) {
-                categoryLinkMaxHeight = categoryLinkHeight;  // Update the maxHeight if current button's height is greater
-            }
-        });
-        document.querySelectorAll(".categoryLink .img").forEach(function(categoryLink) {
-            if (categoryLink.innerHTML == "") {
-                categoryLink.parentElement.style.height = "80%";
+            if (categoryLink.querySelector(".img").innerHTML == "") {
+                categoryLink.height = "100%";
             }
         });
 
