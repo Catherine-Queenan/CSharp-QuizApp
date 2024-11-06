@@ -504,9 +504,15 @@
                 quizzes.style.display = "flex";
                 quizzes.style.justifyContent = "center"
                 quizzes.style.width = `100%`;
-                document.querySelectorAll(".quiz").forEach(function(quiz) {
-                    quiz.style.width = `60%`;
-                });
+                if (window.innerWidth < 500) {
+                    document.querySelectorAll(".quiz").forEach(function(quiz) {
+                        quiz.style.width = `80%`;
+                    });
+                } else {
+                    document.querySelectorAll(".quiz").forEach(function(quiz) {
+                        quiz.style.width = `60%`;
+                    });
+                }
             } else if (totalQuizzes < 3 && visibleQuizzes > 2) {
                 quizzes.style.display = "flex";
                 quizzes.style.justifyContent = "center"
