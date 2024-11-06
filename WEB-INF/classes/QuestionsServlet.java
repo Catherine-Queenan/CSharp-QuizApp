@@ -175,11 +175,9 @@ public class QuestionsServlet extends HttpServlet {
             return;
         }
         
-
-
         if(++currQuestion >= questions.size()){
             res.setStatus(302);
-            res.sendRedirect("end");
+            res.sendRedirect("endQuiz");
             return;
         }
         session.setAttribute("currQuestion", currQuestion);

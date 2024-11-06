@@ -53,7 +53,7 @@
             height: 100%;
             object-fit: contain;
         }
-        
+
         /* options */
         #options {
             width: 100%;
@@ -131,19 +131,45 @@
         #answerCounts div:nth-child(4n + 5) {
             background-color: #99c252 !important;
         }
+
+        /* Session Button */
+        .modSession {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .moderatorName {
+            background-color: #99c252;
+            pointer-events: none;
+        }
         
+        .endModSessBtn {
+            background-color: #d00000;
+            color: rgb(244, 244, 244);
+        }
+        
+        /* Error message */
+        .emptyMsg {
+            width: 100%;
+            padding: 15px 10% 0 10%;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
     </style>
 </head>
 
 <body>
 
     <header>
-        <form action="home">
-            <button class="homeBtn" type="Submit">Home</button>
-        </form>
+        <div id="modSessionsCont"></div>
     </header>
 
     <div class="wrap" id="wrap">
+        
         <div id="question-container">
             <p id="question" class="title"></p>
             <div id="options"></div>
@@ -170,32 +196,35 @@
     </div>
 
     <script type="text/javascript">
-
+           
         function setHeight() {
             // Get all buttons inside the div with class "answersOption"
             var buttons = document.querySelectorAll('#options button');
-            
+
             var maxHeight = 0;
-            
+
             // Loop through each button to determine the maximum height
-            buttons.forEach(function(button) {
+            buttons.forEach(function (button) {
                 var buttonHeight = button.offsetHeight;  // Get the height of the current button
                 if (buttonHeight > maxHeight) {
                     maxHeight = buttonHeight;  // Update the maxHeight if current button's height is greater
                 }
             });
-            
+
             // Set all buttons to the maximum height
-            buttons.forEach(function(button) {
+            buttons.forEach(function (button) {
                 button.style.height = maxHeight + "px";
             });
         }
 
         // Making all answer options have the same height value
-        window.onload = function() {
+        window.onload = function () {
             setHeight();
         };
-       
+
+        let questionIndex;
+
+        let userName = document.getElementById("userName").textContent.trim();
         let role = document.getElementById("role").textContent.trim();
         console.log("Role: ", role);
 
@@ -203,15 +232,118 @@
         const pathSegments = currentPath.split('/');
         // Extract the base path dynamically (remove last segment if it's quiz-related)
         console.log(pathSegments);
-        pathSegments.pop();         
+        pathSegments.pop();
         console.log(pathSegments);
         console.log(pathSegments.join('/'));
 
         // Construct the new path dynamically
         const newPath = pathSegments.join('/') + `/questionsws`;
 
+        const modSessionsContainer = document.getElementById('modSessionsCont');
+        modSessionsContainer.innerHTML = ''; // Clear previous content
+        // console.log("Hello");
+        
+        // Retrieve the current session ID from the backend (embedded in JSP)
+        const params = new URLSearchParams(window.location.search);
+        const modSessionId = params.get("sessionId");
+        const quizName = params.get("quizName");
+        console.log("Session ID: ", modSessionId);
+        console.log("Quiz Name: ", quizName);
 
-        let webSocket = new WebSocket('ws://localhost:8081/'+ newPath);
+        // Define the fetch path for the specific moderation session
+        const currentSessionPath = window.location.pathname;
+        const pathSessionSegments = currentSessionPath.split('/');
+        pathSessionSegments.pop();
+        const fetchSessionPath = pathSessionSegments.join('/') + `/getActiveSessions?action=getModeratedSession&sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
+
+        // Fetch current moderation session data for the specific session
+        fetch(fetchSessionPath, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch the moderated session');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Check if the session exists
+            if (!data.session) {
+                modSessionsContainer.innerHTML = '<div class="emptyMsg">No active moderated session available.</div>';
+            } else {
+                // Create a div to display session details
+                const sessionDiv = document.createElement('div');
+                sessionDiv.className = 'modSession';
+                
+                // Create a single "End Moderation" button
+                if (role == "a") {
+                    questionIndex = 0;
+                    sessionDiv.innerHTML = `<button class="moderatorName">Moderator: ${userName}</button>`;
+                    const endButton = document.createElement('button');
+                    endButton.classList.add("endModSessBtn")
+                    endButton.innerHTML = "End Moderation";
+                    endButton.onclick = function () {
+                        endModeration(modSessionId);
+                    };
+                    // Append the button and session div to the container
+                    sessionDiv.appendChild(endButton);
+                }
+
+                modSessionsContainer.appendChild(sessionDiv);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching moderated session:', error);
+            let newPath = pathSegments.join('/') + '/error?errorMessage=' + encodeURIComponent(error);
+            modSessionsContainer.innerHTML = '<div>Error fetching moderated session. Please try again later.</div>';
+            // window.location.href = newPath;
+        });
+
+        // Function to end the current moderation session
+        function endModeration(modSessionId) {
+            const currentSessionPath = window.location.pathname;
+            const pathSegments = currentSessionPath.split('/');
+            pathSegments.pop();
+            const endSessionPath = pathSegments.join('/') + `/getActiveSessions?action=endModeratedSession&sessionId=${encodeURIComponent(modSessionId)}`;
+
+            window.location.href = endSessionPath;
+            
+            // fetch(endSessionPath, {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/x-www-form-urlencoded',
+            //         'Accept': 'application/json',
+            //         'Allow' : 'GET',
+            //     },
+            //     body: `modSessionId=${encodeURIComponent(modSessionId)}`
+            // })
+            // .then(response => {
+            //     console.log("EIOHG")
+            //     console.log(response);
+            //     if (!response.ok) {
+            //         throw new Error('Failed to end moderation session');
+            //     }
+            //     return response.json();
+            // })
+            // .then(data => {
+            //     if (data.success) {
+            //         alert("Moderation session ended successfully.");
+            //         window.location.href = pathSegments.join('/') + '/home'; // Example redirect to home
+            //     } else {
+            //         alert("Moderation session could not be ended.");
+            //     }
+            // })
+            // .catch(error => {
+            //     console.error("Error:", error);
+            //     const modSessionsContainer = document.getElementById('modSessionsCont');
+            //     modSessionsContainer.innerHTML = '<div>Error ending moderation session. Please try again later.</div>';
+            // });
+        }
+
+        let webSocket = new WebSocket('ws://localhost:8081/' + newPath);
         let questions = [];
         let answers = [];
         let images = [];
@@ -226,6 +358,7 @@
                 });
             }
         });
+
         document.querySelectorAll("source").forEach((video) => {
             let mediaAttr = video.getAttribute("data-media");
             if (mediaAttr) {
@@ -235,8 +368,10 @@
                 });
             }
         });
-        console.log("Imagesss: ", images);
+
+        console.log("Images: ", images);
         console.log("Videos: ", videos);
+
         // Collect questions and answers from the HTML
         document.querySelectorAll(".questionTitle").forEach((question) => {
             questions.push(question.textContent);
@@ -275,17 +410,17 @@
         webSocket.onopen = function () {
             console.log("Connection established ...");
             console.log("Sending data to server: ", JSON.stringify(questionData));  // Log the sent data
-            webSocket.send(JSON.stringify(questionData));  // Send initial data (questions and answers)
+            console.log("Session ID: ", modSessionId);
+            console.log("Quiz Name: ", quizName);
+            webSocket.send(JSON.stringify(questionData));
         };
-
-        let questionIndex;
+        
         webSocket.onmessage = function (message) {
             console.log("Received message from server:", message.data);  // Log the incoming message
             let response = JSON.parse(message.data);
             questionIndex = response.questionIndex;
-
-            console.log(response);
-            if(response.type === "end"){
+            
+            if (response.type === "end") {
                 webSocket.onclose = function () {
                     console.log("Connection closed ...");
                     globalThis.end = true;
@@ -295,7 +430,6 @@
             if (response.question && response.answers) {
                 displayQuestion(response.question, response.answers, response.images, response.videos);
             } else if (response.type === "answerCounts") {
-                console.log("EHILSGHD")
                 console.log(response);
                 displayAnswerCounts(response.counts);
             } else {
@@ -305,8 +439,8 @@
 
         webSocket.onclose = function () {
             console.log("Connection closed ...");
-             globalThis.end = true;
-            window.location.href = "end";
+            globalThis.end = true;
+            window.location.href = `endQuiz?sessionId=${encodeURIComponent(modSessionId)}`;
         };
         // console.log("End: ", end);
         // if(end){
@@ -348,7 +482,7 @@
             if (images && images.length > 0) {
                 images.forEach(imageSrc => {
                     const imgElement = document.createElement("img");
-                    if(role !== "a"){
+                    if (role !== "a") {
                         imgElement.style.display = "none";
                     }
                     imgElement.src = imageSrc;
@@ -361,7 +495,7 @@
             if (videos && videos.length > 0) {
                 videos.forEach(videoUrl => {
                     const videoElement = document.createElement("iframe");
-                    if(role !== "a"){
+                    if (role !== "a") {
                         videoElement.style.display = "none";
                     }
                     videoElement.src = videoUrl.replace("watch?v=", "embed/");
@@ -382,20 +516,23 @@
         if (role !== "a") {
             document.getElementById("next-button").style.display = "none";
             document.getElementById("answerCounts").style.display = "none";
-            document.getElementById("question").style.display = "none"; 
-        } 
+            document.getElementById("question").style.display = "none";
+        }
+
         // Handle "Next Question" button click
         document.getElementById("next-button").addEventListener("click", function () {
             //clear answer counts
             console.log("Sending next question request");
             console.log("Question index: ", questionIndex);
             console.log("Number of questions: ", numOfQuestions);
+            questionIndex++;
             webSocket.send(JSON.stringify({ type: "next" }));
         });
 
-       
+
         // Display answer counts
         function displayAnswerCounts(counts) {
+            console.log("COUNTS");
             console.log(counts)
             let totalElement = document.getElementById("answerCounts");
             totalElement.innerHTML = "<h3>Answer Counts:</h3>";
@@ -406,7 +543,6 @@
                 totalElement.appendChild(answerCountElement);
             }
         }
-
 
 
         //---------------VIDEO PLAYING---------------\\
@@ -458,6 +594,7 @@
                 }, 100);
             }
         }
+
         //---------------AUDIO PLAYING---------------\\
         //makes audio loop
         function audio() {
@@ -465,7 +602,6 @@
                 document.querySelector("audio").currentTime = parseInt(document.getElementById("videoStart").value);
             }
         }
-
 
     </script>
 

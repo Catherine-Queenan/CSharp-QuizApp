@@ -82,9 +82,7 @@
         <form id="homeForm" action="home">
             <button class="homeBtn" type="Submit">Home</button>
         </form>
-        <form action="logout">
-            <button id="logoutButton" class="logoutBtn" type="Submit">Log Out</button>
-        </form>
+        <button id="logoutButton" class="logoutBtn">Log Out</button>
     </header>
 
     <div class="wrap">
@@ -110,7 +108,7 @@
     </div>
 
 </body>
-<script src="scripts\logout.js"></script>
+<script src="..\scripts\logout.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const questionsContainer = document.getElementById('questionDiv');

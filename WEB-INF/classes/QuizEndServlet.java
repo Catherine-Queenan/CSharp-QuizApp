@@ -11,7 +11,12 @@ public class QuizEndServlet extends HttpServlet{
             res.sendRedirect("login");
             return;
         }
-        RequestDispatcher view = req.getRequestDispatcher("/views/quizEnd.html");
+        String sessionId = req.getParameter("sessionId");
+        if (sessionId != null) {
+            System.out.println("SESSIONLIGJGDSLJ:LIJDSGODLSF " + sessionId);
+            req.setAttribute("sessionToEnd", sessionId);
+        }
+        RequestDispatcher view = req.getRequestDispatcher("/views/quizEnd.jsp");
         view.forward(req, res);
     }
 

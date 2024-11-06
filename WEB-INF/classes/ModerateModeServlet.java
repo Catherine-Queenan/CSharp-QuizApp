@@ -31,9 +31,35 @@ public class ModerateModeServlet extends HttpServlet {
         StringBuilder questionsHtml = new StringBuilder();
 
         String username = (String) session.getAttribute("USER_ID");
+        String sessionId = req.getParameter("sessionId");
         String role = getUserRoleFromDatabase(username);
         req.setAttribute("role", role);
         req.setAttribute("userName", username);
+
+        if (sessionId != null) {
+            try {
+                // Use sessionId to retrieve the moderation session
+                ModerationSession modSession = ModerationSessionManager.getModeratedSession(sessionId, quizName);
+        
+                // Check if modSession was retrieved successfully
+                if (modSession != null) {
+                    String modSessionId = modSession.getSessionId(); // Assuming getSessionId() returns the integer ID
+                    System.out.println("Moderation Session ID: " + modSessionId);
+        
+                    // Set modSessionId in request and session attributes for later use
+                    session.setAttribute("modSessionId", modSessionId);
+                    req.setAttribute("modSessionId", modSessionId);
+                } else {
+                    // Handle the case where no session is found for the given ID
+                    req.setAttribute("errorMessage", "Failed to start moderation session.");
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid sessionId format in URL");
+                req.setAttribute("errorMessage", "Invalid session ID.");
+            }
+        } else {
+            req.setAttribute("errorMessage", "Session ID not provided in the URL.");
+        }
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL Driver
@@ -171,6 +197,15 @@ public class ModerateModeServlet extends HttpServlet {
         RequestDispatcher view = req.getRequestDispatcher("/views/moderateMode.jsp");
         view.forward(req, res);
     }
+
+    // Handle request to end Moderation session
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String modSessionId = req.getParameter("modSessionId");
+        if (modSessionId != null) {
+            ModerationSessionManager.endModeratedSession(modSessionId); // Remove the session by ID
+        }
+    }
+
 
     // Media handler for both question and answer media
     public String insertMedia(Connection con, String id, String table) {

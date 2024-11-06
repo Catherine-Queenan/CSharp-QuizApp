@@ -196,8 +196,7 @@
             font-size: 25px;
         }
 
-        .moderateMode {
-            margin-top: 10px;
+        #moderateMode {
             border-radius: 10px;
             padding: 10px 20px;
             background-color: #45425A;
@@ -212,7 +211,7 @@
             cursor: pointer;
         }
 
-        .moderateMode:hover {
+        #moderateMode:hover {
             transform: scale(1.03);
             box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.3);
         }
@@ -240,9 +239,7 @@
                 Home
             </a>
         </button>
-        <form action="logout">
-            <button id="logoutButton" class="logoutBtn" type="Submit">Log Out</button>
-        </form>
+        <button id="logoutButton" class="logoutBtn">Log Out</button>
     </header>
 
     <div class="wrap">
@@ -319,34 +316,22 @@
                             </form>
                         `;
 
-
-                            // <a class="quizLink" href="${quiz.name}">
-                            //     <div class="quizName">${quiz.name}</div>
-                            //     <p class="quiz-description">${quiz.description}</p>
-                            //     <div class="img">${mediaHtml}</div>
-                            // </a>
-                            
                         if (data.role === "admin") {
                             quizDiv.innerHTML += `
                                 <div class="adminBtnWrap">    
                                     <button type="button" onclick="window.location.href='${pathSegments.join('/')}/edit/${quiz.name}'">Edit Quiz</button>
                                     <button type="button" class="deleteButton">Delete Quiz</button>
+                                    <button type="button" class="moderateMode" id="moderateMode" onclick="startModeration('${quiz.name}', event)">
+                                        Moderated Mode
+                                    </button>
                                 </div>
                             `;
                         }
-
-                        quizDiv.innerHTML += `
-                            <a href="${pathSegments.join('/')}/moderateMode?quizName=${quiz.name}" class="moderateMode">
-                                Moderated Mode
-                            </a>
-                        `;
     
                         // Append category div to the container
                         quizzesContainer.appendChild(quizDiv);
                     });
                 }
-
-                // console.log(window.innerWidth)
 
                 // ----- Set up the sliding mechanism ----- \\
                 if (window.innerWidth < 650) {
@@ -399,6 +384,47 @@
             
         });
 
+        function startModeration(quizName, event) {
+            event.preventDefault();
+
+            const currentSessionPath = window.location.pathname;
+            const pathSegments = currentSessionPath.split('/');
+            pathSegments.pop(); // Remove current page from path
+            pathSegments.pop(); // Remove the last segment (quiz name) from path
+            const startSessionPath = pathSegments.join('/') + `/getActiveSessions?action=startModeratedSession&quizName=${encodeURIComponent(quizName)}`;
+            console.log('Session Path:', startSessionPath);
+
+            // Send a request to create the modSessionId
+            fetch(startSessionPath, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to start moderation session');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === "success" && data.sessionId) {
+                    // Redirect to moderated mode with the new modSessionId
+                    window.location.href = `${pathSegments.join('/')}/moderateMode?sessionId=${data.sessionId}&quizName=${quizName}`;
+                } else {
+                    alert("Failed to create moderation session.");
+                }
+            })
+            .catch(error => {
+                console.error('Error starting moderation session:', error);
+                alert("Error starting moderation session. Please try again.");
+            });
+        }
+
+        function connectWebSocket() {
+
+        }
+        
         function displayQuizzes(maxVisible) {
             const quizzes = document.getElementById('quizzes');
             const prevBtn = document.querySelector('.prev');
@@ -475,9 +501,15 @@
                 quizzes.style.display = "flex";
                 quizzes.style.justifyContent = "center"
                 quizzes.style.width = `100%`;
-                document.querySelectorAll(".quiz").forEach(function(quiz) {
-                    quiz.style.width = `60%`;
-                });
+                if (window.innerWidth < 500) {
+                    document.querySelectorAll(".quiz").forEach(function(quiz) {
+                        quiz.style.width = `80%`;
+                    });
+                } else {
+                    document.querySelectorAll(".quiz").forEach(function(quiz) {
+                        quiz.style.width = `60%`;
+                    });
+                }
             } else if (totalQuizzes < 3 && visibleQuizzes > 2) {
                 quizzes.style.display = "flex";
                 quizzes.style.justifyContent = "center"
