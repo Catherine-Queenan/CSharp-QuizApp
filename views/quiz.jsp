@@ -197,7 +197,6 @@
         }
 
         #moderateMode {
-            margin-top: 10px;
             border-radius: 10px;
             padding: 10px 20px;
             background-color: #45425A;

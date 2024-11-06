@@ -574,7 +574,7 @@
             } else {
                 index = totalModSessions - visibleModSessions; // Loop back to the last page
             }
-            updateCategories();
+            updateModSessions();
         });
 
         // Disable buttons if there are not enough quizzes

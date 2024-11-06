@@ -195,6 +195,7 @@
             setHeight();
         };
 
+        let userName = document.getElementById("userName").textContent.trim();
         let role = document.getElementById("role").textContent.trim();
         console.log("Role: ", role);
 
@@ -244,31 +245,32 @@
             if (!data.session) {
                 modSessionsContainer.innerHTML = '<div>No active moderated session available.</div>';
             } else {
+                console.log("GLHEHDGJSL")
+                console.log(data)
                 // Create a div to display session details
                 const sessionDiv = document.createElement('div');
                 sessionDiv.className = 'modSession';
-                sessionDiv.innerHTML = `<div>Moderator: ${data.session.moderator}</div>`;
-
+                
                 // Create a single "End Moderation" button
                 if (role == "a") {
+                    sessionDiv.innerHTML = `<div>Moderator: ${userName}</div>`;
                     const endButton = document.createElement('button');
                     endButton.innerHTML = "End Moderation";
                     endButton.onclick = function () {
                         endModeration(modSessionId);
                     };
+                    sessionDiv.appendChild(endButton);
                 }
 
-
                 // Append the button and session div to the container
-                sessionDiv.appendChild(endButton);
                 modSessionsContainer.appendChild(sessionDiv);
             }
         })
         .catch(error => {
             console.error('Error fetching moderated session:', error);
             let newPath = pathSegments.join('/') + '/error?errorMessage=' + encodeURIComponent(error);
-            // modSessionsContainer.innerHTML = '<div>Error fetching moderated session. Please try again later.</div>';
-            window.location.href = newPath;
+            modSessionsContainer.innerHTML = '<div>Error fetching moderated session. Please try again later.</div>';
+            // window.location.href = newPath;
         });
 
         // Function to end the current moderation session
