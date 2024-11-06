@@ -13,8 +13,9 @@ public class ModerationSessionManager {
             String sessionId = null;
             String insertSessionSQL = "INSERT INTO moderated_sessions (moderator_id, quiz_name) VALUES (?, ?)";
 
-            try (Connection connection = DatabaseUtil.getConnection();
-                 PreparedStatement preparedStatement = connection.prepareStatement(insertSessionSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            try {
+                Connection connection = DatabaseUtil.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(insertSessionSQL, PreparedStatement.RETURN_GENERATED_KEYS);
                 
                 preparedStatement.setString(1, moderatorId); 
                 preparedStatement.setString(2, quizName);
@@ -44,10 +45,12 @@ public class ModerationSessionManager {
 
     // Method to end a moderated session
     public static void endModeratedSession(String sessionId) {
+        System.out.println("THIS SHIT's BEING CALLEDDD THE DELETE SESSION---------------------");
         String deleteSessionSQL = "DELETE FROM moderated_sessions WHERE session_id = ?";
 
-        try (Connection connection = DatabaseUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSessionSQL)) {
+        try {
+            Connection connection = DatabaseUtil.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(deleteSessionSQL);
             
             preparedStatement.setInt(1, Integer.parseInt(sessionId)); // Assuming session_id is of type INT
             preparedStatement.executeUpdate();
@@ -61,9 +64,11 @@ public class ModerationSessionManager {
         List<ModerationSession> sessions = new ArrayList<>();
         String query = "SELECT * FROM moderated_sessions"; // Adjust this query according to your schema
     
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+        try {
+            Connection conn = DatabaseUtil.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+            
             while (rs.next()) {
                 String moderator = rs.getString("moderator_id");  // Assuming the column name is 'moderator'
                 String sessionId = rs.getString("session_id"); // Assuming the column name is 'session_id'
@@ -72,7 +77,7 @@ public class ModerationSessionManager {
                 ModerationSession session = new ModerationSession(moderator, sessionId, quizName);
                 sessions.add(session);
             }
-        }
+        } catch (Exception e) {}
         return sessions;
     }
 
@@ -80,8 +85,10 @@ public class ModerationSessionManager {
         ModerationSession session = null;
         String query = "SELECT * FROM moderated_sessions WHERE session_id = ? AND quiz_name = ?"; // Adjust this query according to your schema
     
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try {
+            Connection conn = DatabaseUtil.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            
             stmt.setInt(1, Integer.parseInt(sessionId)); // Assuming session_id is of type INT
             stmt.setString(2, quizName);
             try (ResultSet rs = stmt.executeQuery()) {

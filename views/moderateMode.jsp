@@ -169,7 +169,7 @@
     </div>
 
     <script type="text/javascript">
-
+           
         function setHeight() {
             // Get all buttons inside the div with class "answersOption"
             var buttons = document.querySelectorAll('#options button');
@@ -212,7 +212,7 @@
 
         const modSessionsContainer = document.getElementById('modSessionsCont');
         modSessionsContainer.innerHTML = ''; // Clear previous content
-        console.log("Hello");
+        // console.log("Hello");
         
         // Retrieve the current session ID from the backend (embedded in JSP)
         const params = new URLSearchParams(window.location.search);
@@ -227,6 +227,8 @@
         pathSessionSegments.pop();
         const fetchSessionPath = pathSessionSegments.join('/') + `/getActiveSessions?action=getModeratedSession&sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
 
+        console.log("FETCH")
+        console.log(fetchSessionPath)
         // Fetch current moderation session data for the specific session
         fetch(fetchSessionPath, {
             method: 'GET',
@@ -245,8 +247,6 @@
             if (!data.session) {
                 modSessionsContainer.innerHTML = '<div>No active moderated session available.</div>';
             } else {
-                console.log("GLHEHDGJSL")
-                console.log(data)
                 // Create a div to display session details
                 const sessionDiv = document.createElement('div');
                 sessionDiv.className = 'modSession';
@@ -259,10 +259,10 @@
                     endButton.onclick = function () {
                         endModeration(modSessionId);
                     };
+                    // Append the button and session div to the container
                     sessionDiv.appendChild(endButton);
                 }
 
-                // Append the button and session div to the container
                 modSessionsContainer.appendChild(sessionDiv);
             }
         })
@@ -278,35 +278,40 @@
             const currentSessionPath = window.location.pathname;
             const pathSegments = currentSessionPath.split('/');
             pathSegments.pop();
-            const endSessionPath = pathSegments.join('/') + '/getActiveSessions?action=endModeratedSession';
+            const endSessionPath = pathSegments.join('/') + `/getActiveSessions?action=endModeratedSession&sessionId=${encodeURIComponent(modSessionId)}`;
 
-            fetch(endSessionPath, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'
-                },
-                body: `modSessionId=${encodeURIComponent(modSessionId)}`
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to end moderation session');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    alert("Moderation session ended successfully.");
-                    window.location.href = pathSegments.join('/') + '/home'; // Example redirect to home
-                } else {
-                    alert("Moderation session could not be ended.");
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                const modSessionsContainer = document.getElementById('modSessionsCont');
-                modSessionsContainer.innerHTML = '<div>Error ending moderation session. Please try again later.</div>';
-            });
+            window.location.href = endSessionPath;
+            
+            // fetch(endSessionPath, {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/x-www-form-urlencoded',
+            //         'Accept': 'application/json',
+            //         'Allow' : 'GET',
+            //     },
+            //     body: `modSessionId=${encodeURIComponent(modSessionId)}`
+            // })
+            // .then(response => {
+            //     console.log("EIOHG")
+            //     console.log(response);
+            //     if (!response.ok) {
+            //         throw new Error('Failed to end moderation session');
+            //     }
+            //     return response.json();
+            // })
+            // .then(data => {
+            //     if (data.success) {
+            //         alert("Moderation session ended successfully.");
+            //         window.location.href = pathSegments.join('/') + '/home'; // Example redirect to home
+            //     } else {
+            //         alert("Moderation session could not be ended.");
+            //     }
+            // })
+            // .catch(error => {
+            //     console.error("Error:", error);
+            //     const modSessionsContainer = document.getElementById('modSessionsCont');
+            //     modSessionsContainer.innerHTML = '<div>Error ending moderation session. Please try again later.</div>';
+            // });
         }
 
         let webSocket = new WebSocket('ws://localhost:8081/' + newPath);
@@ -487,6 +492,7 @@
             document.getElementById("answerCounts").style.display = "none";
             document.getElementById("question").style.display = "none";
         }
+
         // Handle "Next Question" button click
         document.getElementById("next-button").addEventListener("click", function () {
             //clear answer counts
@@ -499,6 +505,7 @@
 
         // Display answer counts
         function displayAnswerCounts(counts) {
+            console.log("COUNTS");
             console.log(counts)
             let totalElement = document.getElementById("answerCounts");
             totalElement.innerHTML = "<h3>Answer Counts:</h3>";

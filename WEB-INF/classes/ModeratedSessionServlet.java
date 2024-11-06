@@ -44,6 +44,7 @@ public class ModeratedSessionServlet extends HttpServlet {
 
                 jsonResponse.put("status", "success");
                 jsonResponse.put("message", "Session ended successfully.");
+                res.sendRedirect("home");
             } else if ("getActiveSessions".equalsIgnoreCase(action)) {
                 // Get active moderated sessions
                 jsonResponse.put("status", "success");
@@ -54,8 +55,7 @@ public class ModeratedSessionServlet extends HttpServlet {
                 String quizName = req.getParameter("quizName");
                 jsonResponse.put("status", "success");
                 jsonResponse.put("session", moderationSessionManager.getModeratedSession(modSessionId, quizName));
-            
-             }else {
+            } else {
                 jsonResponse.put("status", "error");
                 jsonResponse.put("message", "Invalid action.");
             }
