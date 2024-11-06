@@ -181,6 +181,7 @@ public class AddQuestionServlet extends HttpServlet {
                         .append(",,,media_type:==").append(mediaType)
                         .append(",,,media_file_path:==").append(mediaUrls[i])
                         .append(",,,media_filename:==").append(mediaFileNames[i]);
+                        System.out.println(criteria);
 
                 // String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path,
                 // media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?)";
@@ -189,6 +190,7 @@ public class AddQuestionServlet extends HttpServlet {
                 // psMedia.setString(2, mediaType);
                 // psMedia.setString(3, mediaUrls[i]);
                 // psMedia.setString(4, mediaFileNames[i]);
+                System.out.println("QUESTION ADDITION QUESTION TYPE: " + questionType);
                 if (i == 0 && questionType.equals("VID")) {
                     // psMedia.setInt(5, videoStarts[i]);
                     // psMedia.setInt(6, videoEnds[i]);
@@ -203,12 +205,15 @@ public class AddQuestionServlet extends HttpServlet {
                 } else if (answerType.equals("VID")) {
                     // psMedia.setInt(5, videoStarts[i]);
                     // psMedia.setInt(6, videoEnds[i]);
-                    criteria.append(",,,media_start:==").append(videoStarts[i])
-                            .append(",,,media_end:==").append(videoEnds[i]);
+                    int indexVideoTimes = i == 0 ? 1 : i;
+                    criteria.append(",,,media_start:==").append(videoStarts[indexVideoTimes])
+                            .append(",,,media_end:==").append(videoEnds[indexVideoTimes]);
                 } else {
-                    criteria.append(",,,media_start:==").append(audioStarts[i])
-                            .append(",,,media_end:==").append(audioEnds[i]);
+                    int indexVideoTimes = i == 0 ? 1 : i;
+                    criteria.append(",,,media_start:==").append(audioStarts[indexVideoTimes = i == 0 ? 1 : i])
+                            .append(",,,media_end:==").append(audioEnds[indexVideoTimes = i == 0 ? 1 : i]);
                 }
+                System.out.println(criteria);
                 repository.insert(factory.createAClass("media", criteria.toString()));
                 // psMedia.executeUpdate();
             }
@@ -220,7 +225,7 @@ public class AddQuestionServlet extends HttpServlet {
             // UUID mediaUUID = UUID.randomUUID();
             // byte[] mediaIdBinary = uuidToBytes(mediaUUID);
             // System.out.println("A");
-            // // Insert media information into the `media` table
+            // // Insert media ionformation into the `media` table
             // String mediaUrl = null;
             // if (questionType.equals("VID")) {
             // mediaUrl = videoUrl;

@@ -243,9 +243,11 @@
             }
         });
 
-        document.getElementById("saveButton").addEventListener('click', function () {
+        const form = document.getElementById("editQuizForm");
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
             console.log('Saving Changes');
-            const form = document.getElementById("editQuizForm");
+            
             const formData = new FormData(form);
             for (var pair of formData.entries()) {
                 console.log(pair[0] + ', ' + pair[1]);
@@ -254,6 +256,9 @@
             fetch(postPath, {
                 method: 'POST',
                 body: formData,
+                headers: {
+                'Accept': 'application/json'
+            }
 
             }).then(response => {
                 console.log(response);

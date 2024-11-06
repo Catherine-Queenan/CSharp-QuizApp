@@ -41,8 +41,7 @@ public class DeleteQuizServlet extends HttpServlet {
         try {
             IRepository repository = new Repository();
             repository.init("com.mysql.cj.jdbc.Driver");
-            String condition = "name = \"" + quizName + "\"";
-            repository.delete("quiz", condition);
+            repository.delete("quiz", quizName);
             jsonResponse.put("status", "success");
             jsonResponse.put("message", "Quiz deleted successfully.");
             res.setStatus(HttpServletResponse.SC_OK); // Set status to 200
