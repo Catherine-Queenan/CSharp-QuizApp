@@ -231,9 +231,7 @@
 </head>
 <body>
     <header>
-        <form action="logout">
-            <button id="logoutButton" class="logoutBtn" type="Submit">Log Out</button>
-        </form>
+        <button id="logoutButton" class="logoutBtn">Log Out</button>
     </header>
 
     <div class="wrap" id="wrap">

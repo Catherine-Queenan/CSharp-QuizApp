@@ -160,7 +160,7 @@
 </servlet>
 <servlet-mapping>
   <servlet-name>QuizEndServlet</servlet-name>
-  <url-pattern>/end</url-pattern>
+  <url-pattern>/endQuiz/*</url-pattern>
 </servlet-mapping>
 
 <servlet>
