@@ -195,6 +195,8 @@
             setHeight();
         };
 
+        let questionIndex;
+
         let userName = document.getElementById("userName").textContent.trim();
         let role = document.getElementById("role").textContent.trim();
         console.log("Role: ", role);
@@ -227,8 +229,6 @@
         pathSessionSegments.pop();
         const fetchSessionPath = pathSessionSegments.join('/') + `/getActiveSessions?action=getModeratedSession&sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
 
-        console.log("FETCH")
-        console.log(fetchSessionPath)
         // Fetch current moderation session data for the specific session
         fetch(fetchSessionPath, {
             method: 'GET',
@@ -253,6 +253,7 @@
                 
                 // Create a single "End Moderation" button
                 if (role == "a") {
+                    questionIndex = 0;
                     sessionDiv.innerHTML = `<div>Moderator: ${userName}</div>`;
                     const endButton = document.createElement('button');
                     endButton.innerHTML = "End Moderation";
@@ -383,16 +384,14 @@
             console.log("Sending data to server: ", JSON.stringify(questionData));  // Log the sent data
             console.log("Session ID: ", modSessionId);
             console.log("Quiz Name: ", quizName);
-            webSocket.send(JSON.stringify(questionData));  // Send initial data (questions and answers)
+            webSocket.send(JSON.stringify(questionData));
         };
-
-        let questionIndex;
+        
         webSocket.onmessage = function (message) {
             console.log("Received message from server:", message.data);  // Log the incoming message
             let response = JSON.parse(message.data);
             questionIndex = response.questionIndex;
-
-            console.log(response);
+            
             if (response.type === "end") {
                 webSocket.onclose = function () {
                     console.log("Connection closed ...");
@@ -403,7 +402,6 @@
             if (response.question && response.answers) {
                 displayQuestion(response.question, response.answers, response.images, response.videos);
             } else if (response.type === "answerCounts") {
-                console.log("EHILSGHD")
                 console.log(response);
                 displayAnswerCounts(response.counts);
             } else {
@@ -499,6 +497,7 @@
             console.log("Sending next question request");
             console.log("Question index: ", questionIndex);
             console.log("Number of questions: ", numOfQuestions);
+            questionIndex++;
             webSocket.send(JSON.stringify({ type: "next" }));
         });
 

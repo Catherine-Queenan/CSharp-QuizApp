@@ -13,6 +13,7 @@ public class QuestionWebSocket {
 
     private static Set<Session> sessions = Collections.synchronizedSet(new HashSet<>());
     private static List<WebSocketQuestion> questions = new ArrayList<>();
+    private static int questionIndex = 0;
 
     static class WebSocketQuestion {
         String questionText;
@@ -136,6 +137,9 @@ public class QuestionWebSocket {
 
     private void sendCurrentQuestion(Session session) throws IOException {
         UserSessionData userData = userSessions.get(session);
+        if (userData.currentQuestionIndex != questionIndex) {
+            userData.currentQuestionIndex = questionIndex;
+        }
         if (userData.currentQuestionIndex < userData.questions.size()) {
             WebSocketQuestion currentQuestion = userData.questions.get(userData.currentQuestionIndex);
             
@@ -210,6 +214,7 @@ public class QuestionWebSocket {
     }
 
     private void incrementQuestionForAllUsers() {
+        questionIndex++;
         for (UserSessionData userData : userSessions.values()) {
             userData.currentQuestionIndex++;
             userData.answerCounts.clear();
