@@ -132,13 +132,44 @@
             background-color: #99c252 !important;
         }
 
+        /* Session Button */
+        .modSession {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .moderatorName {
+            background-color: #99c252;
+            pointer-events: none;
+        }
+        
+        .endModSessBtn {
+            background-color: #d00000;
+            color: rgb(244, 244, 244);
+        }
+        
+        /* Error message */
+        .emptyMsg {
+            width: 100%;
+            padding: 15px 10% 0 10%;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
     </style>
 </head>
 
 <body>
 
-    <div class="wrap" id="wrap">
+    <header>
         <div id="modSessionsCont"></div>
+    </header>
+
+    <div class="wrap" id="wrap">
+        
         <div id="question-container">
             <p id="question" class="title"></p>
             <div id="options"></div>
@@ -241,7 +272,7 @@
         .then(data => {
             // Check if the session exists
             if (!data.session) {
-                modSessionsContainer.innerHTML = '<div>No active moderated session available.</div>';
+                modSessionsContainer.innerHTML = '<div class="emptyMsg">No active moderated session available.</div>';
             } else {
                 // Create a div to display session details
                 const sessionDiv = document.createElement('div');
@@ -250,8 +281,9 @@
                 // Create a single "End Moderation" button
                 if (role == "a") {
                     questionIndex = 0;
-                    sessionDiv.innerHTML = `<div>Moderator: ${userName}</div>`;
+                    sessionDiv.innerHTML = `<button class="moderatorName">Moderator: ${userName}</button>`;
                     const endButton = document.createElement('button');
+                    endButton.classList.add("endModSessBtn")
                     endButton.innerHTML = "End Moderation";
                     endButton.onclick = function () {
                         endModeration(modSessionId);
