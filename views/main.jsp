@@ -589,11 +589,11 @@
             modSessions.style.width = `100%`;
             if (window.innerWidth < 500) {
                 document.querySelectorAll(".modSession").forEach(function(modSession) {
-                    modSession.style.width = `80%`;
+                    modSession.style.width = `60%`;
                 });
             } else {
                 document.querySelectorAll(".modSession").forEach(function(modSession) {
-                    modSession.style.width = `60%`;
+                    modSession.style.width = `40%`;
                 });
             }
         } else if (totalModSessions < 3 && visibleModSessions > 2) {
