@@ -152,6 +152,14 @@ textarea {
         padding: 20px;
         font-size: 16px;
     }
+
+    /* Edit Questions page */
+    .questionsWrap {
+        width: 80% !important;
+    }
+    .questionsWrap .question {
+        padding: 30px 30px 20px 30px;
+    }
 }
 
 @media screen and (max-width: 650px) {
@@ -283,5 +291,11 @@ textarea {
         padding: 15px 25px !important;
         font-size: 18px !important;
         border-radius: 12px !important;
+    }
+
+    /* Edit Questions page */
+    .questionsWrap .deleteBtn {
+        padding: 15px 30px;
+        font-size: 16px;
     }
 }

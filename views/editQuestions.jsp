@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Quiz</title>
+    <title>Edit Questions</title>
     <link rel="stylesheet" href="../public/css/reset.css">
     <style>
+
         .wrap {
             padding: 80px 0;
             justify-content: unset;
@@ -16,6 +17,12 @@
             scrollbar-width: none;
             /* Firefox */
             -webkit-scrollbar: none;
+        }
+
+        @media screen and (max-width: 500px) {
+            .wrap {
+                padding: 50px 0;
+            }
         }
 
         .title {
@@ -43,11 +50,19 @@
             background-color: #45425A;
             border-radius: 15px;
             padding: 40px 40px 30px 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question a {
+            text-decoration: none;
+            color: rgb(244, 244, 244);
         }
 
         .addQuestionBtn,
         .deleteBtn {
             all: unset;
+            width: fit-content;;
             display: inline-block;
             margin-top: 20px;
             padding: 15px 40px;
@@ -74,6 +89,15 @@
             transform: scale(1.03);
             box-shadow: 5px 5px 5px rgba(1, 1, 1, 0.4);
         }
+
+        .emptyMsg {
+            width: 100%;
+            padding: 15px 10% 0 10%;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
     </style>
 </head>
 
@@ -160,7 +184,7 @@
             data.questions.forEach(question => {
                 const questionDiv = document.createElement('div');
                 const questionText = document.createElement('a');
-                const deleteButton = document.createElement('a');
+                const deleteButton = document.createElement('button');
 
                 questionDiv.className = 'question';
                 questionText.className = 'questionTitle';
@@ -205,7 +229,7 @@
 
         }).catch(error => {
             console.error('Error fetching categories:', error);
-            document.getElementById('categories').innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
+            document.getElementById('categories').innerHTML = '<p class="emptyMsg">There was an error loading the categories. Please try again later.</p>';
         });
 
     });
