@@ -245,14 +245,23 @@ textarea {
         max-width: 100% !important;
     }
 
-    /* Edit Quiz page */
-    .editQuizForm {
+    /* Edit Quiz page & Add Question page */
+    .editQuizForm,
+    .newQuestionForm {
         padding: 30px !important;
     }
+    .newQuestionForm input,
+    .newQuestionForm select {
+        padding: 10px 15px !important;
+    }
 
-    /* Add Question page */
-    .newQuestionForm {
-        padding: 35px !important;
+    .newQuestionForm .mediaType {
+        margin: 0;
+    }
+    .newQuestionForm .addAnswerBtn,
+    .newQuestionForm .addQuestionBtn {
+        padding: 20px 50px !important;
+        font-size: 18px;
     }
 
     /* Moderated mode */
