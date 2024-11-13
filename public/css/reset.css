@@ -152,6 +152,14 @@ textarea {
         padding: 20px;
         font-size: 16px;
     }
+
+    /* Edit Questions page */
+    .questionsWrap {
+        width: 80% !important;
+    }
+    .questionsWrap .question {
+        padding: 30px 30px 20px 30px;
+    }
 }
 
 @media screen and (max-width: 650px) {
@@ -245,14 +253,23 @@ textarea {
         max-width: 100% !important;
     }
 
-    /* Edit Quiz page */
-    .editQuizForm {
+    /* Edit Quiz page & Add Question page */
+    .editQuizForm,
+    .newQuestionForm {
         padding: 30px !important;
     }
+    .newQuestionForm input,
+    .newQuestionForm select {
+        padding: 10px 15px !important;
+    }
 
-    /* Add Question page */
-    .newQuestionForm {
-        padding: 35px !important;
+    .newQuestionForm .mediaType {
+        margin: 0;
+    }
+    .newQuestionForm .addAnswerBtn,
+    .newQuestionForm .addQuestionBtn {
+        padding: 20px 50px !important;
+        font-size: 18px;
     }
 
     /* Moderated mode */
@@ -274,5 +291,29 @@ textarea {
         padding: 15px 25px !important;
         font-size: 18px !important;
         border-radius: 12px !important;
+    }
+
+    /* Edit Questions page */
+    .questionsWrap .editBtn,
+    .questionsWrap .deleteBtn {
+        padding: 15px 30px;
+        font-size: 16px;
+    }
+
+    /* Edit question & Edit questions page  */
+    .newQuestionForm label,
+    .newQuestionForm input,
+    .newQuestionForm select {
+        font-size: 16px !important;
+    }
+    .newQuestionForm .addAnswerBtn,
+    .newQuestionForm .addQuestionBtn {
+        padding: 20px 30px !important;
+        font-size: 16px;
+    }
+
+    /* Audios */
+    audio {
+        transform: scale(1) !important;
     }
 }

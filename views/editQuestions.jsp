@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Quiz</title>
+    <title>Edit Questions</title>
     <link rel="stylesheet" href="../public/css/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+
         .wrap {
             padding: 80px 0;
             justify-content: unset;
@@ -16,6 +18,12 @@
             scrollbar-width: none;
             /* Firefox */
             -webkit-scrollbar: none;
+        }
+
+        @media screen and (max-width: 500px) {
+            .wrap {
+                padding: 50px 0;
+            }
         }
 
         .title {
@@ -43,11 +51,22 @@
             background-color: #45425A;
             border-radius: 15px;
             padding: 40px 40px 30px 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .buttonWrap {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .addQuestionBtn,
-        .deleteBtn {
+        .deleteBtn,
+        .question a {
             all: unset;
+            width: fit-content;;
             display: inline-block;
             margin-top: 20px;
             padding: 15px 40px;
@@ -66,6 +85,11 @@
             font-size: 20px;
         }
 
+        .question a {
+            background-color: #99c252;
+        }
+
+        .question a:hover,
         .deleteBtn:hover {
             box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.5);
         }
@@ -74,6 +98,15 @@
             transform: scale(1.03);
             box-shadow: 5px 5px 5px rgba(1, 1, 1, 0.4);
         }
+
+        .emptyMsg {
+            width: 100%;
+            padding: 15px 10% 0 10%;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
     </style>
 </head>
 
@@ -110,6 +143,7 @@
 </body>
 <script src="..\scripts\logout.js"></script>
 <script>
+
     document.addEventListener('DOMContentLoaded', function () {
         const questionsContainer = document.getElementById('questionDiv');
         const homeButtonForm = document.getElementById('homeForm');
@@ -159,13 +193,21 @@
 
             data.questions.forEach(question => {
                 const questionDiv = document.createElement('div');
-                const questionText = document.createElement('a');
-                const deleteButton = document.createElement('a');
+                const questionText = document.createElement('div');
+                const buttonWrap = document.createElement('div');
+                const editButton = document.createElement('a');
+                const deleteButton = document.createElement('button');
 
                 questionDiv.className = 'question';
                 questionText.className = 'questionTitle';
                 questionText.innerHTML = question.question_text;
-                questionText.href = editQuestionPathSeg + question.questionNum;
+
+                buttonWrap.className = 'buttonWrap';
+
+                editButton.className = 'editBtn';
+                editButton.href = editQuestionPathSeg + question.questionNum;
+                editButton.innerHTML = "Edit Question";
+
                 deleteButton.className = 'deleteBtn';
                 deleteButton.innerHTML = "Delete Question";
                 deleteButton.addEventListener('click', function () {
@@ -180,32 +222,46 @@
                         fetch(deleteURL, {
                             method: 'DELETE'
                         })
-                            .then(response => {
-                                if (!response.ok) {
-                                    console.error('Response status:', response.status);
-                                    throw new Error('Failed to delete question');
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                window.location.reload();
-                            })
-                            .catch(error => {
-                                console.error('Error deleting quiz:', error);
-                            });
+                        .then(response => {
+                            if (!response.ok) {
+                                console.error('Response status:', response.status);
+                                throw new Error('Failed to delete question');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            window.location.reload();
+                        })
+                        .catch(error => {
+                            console.error('Error deleting quiz:', error);
+                        });
                     }
                 });
 
-                questionDiv.appendChild(questionText);
-                questionDiv.appendChild(deleteButton);
+                buttonWrap.appendChild(editButton);
+                buttonWrap.appendChild(deleteButton);
 
+                questionDiv.appendChild(questionText);
+                questionDiv.appendChild(buttonWrap)
                 questionsContainer.appendChild(questionDiv);
             });
+
+            // Changing the admin buttons for responsive 
+            document.querySelectorAll(".buttonWrap").forEach(function(buttonWrap) {
+                if (buttonWrap.offsetWidth < 430) {
+                    document.querySelectorAll(".buttonWrap .editBtn").forEach(function(editButton) {
+                        editButton.innerHTML = `<i class="fa-solid fa-pen"></i>`
+                    });
+                    document.querySelectorAll(".deleteBtn").forEach(function(deleteButton) {
+                        deleteButton.innerHTML = `<i class="fa-solid fa-trash"></i>`;
+                    });
+                }
+            })
 
 
         }).catch(error => {
             console.error('Error fetching categories:', error);
-            document.getElementById('categories').innerHTML = '<p>There was an error loading the categories. Please try again later.</p>';
+            document.getElementById('categories').innerHTML = '<p class="emptyMsg">There was an error loading the categories. Please try again later.</p>';
         });
 
     });

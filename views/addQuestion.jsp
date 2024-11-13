@@ -90,6 +90,13 @@
             box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.5);
         }
 
+        .answer {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
         .answer input {
             max-width: 100%;
         }
@@ -124,6 +131,28 @@
             display: flex;
             flex-direction: column;
         }
+
+        #imageAudioUploadQuestion>div,
+        .imageUploadAnswer {
+            max-width: 100%;
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #imageAudioUploadQuestion label,
+        .imageUploadAnswer label {
+            margin: 0;
+            margin-right: 10px;
+        }
+
+        #imageAudioUploadQuestion input,
+        .imageUploadAnswer input {
+            border-radius: 0;
+            padding: 0 !important;
+        }
     </style>
     <script>
 
@@ -138,10 +167,12 @@
             answerDiv.classList.add(`answer`);
             answerDiv.id = `answer`;
             answerDiv.innerHTML = `
-            <input type="text" name="answerText" placeholder="Answer ${answerCount}" required>
-            <input type="radio" name="correctAnswer" value="${answerCount}"> Correct
-            <jsp:include page="/views/answerMediaUpload.jsp"/>
-        `;
+                <input type="text" name="answerText" placeholder="Answer ${answerCount}" required>
+                <div>
+                    <input type="radio" name="correctAnswer" value="${answerCount}"> Correct
+                </div>
+                <jsp:include page="/views/answerMediaUpload.jsp"/>
+            `;
             document.getElementById('answersContainer').appendChild(answerDiv);
         }
 
@@ -254,22 +285,24 @@
 
                 <div class="answer">
                     <input type="text" name="answerText" placeholder="Answer 1" required>
-                    <input type="radio" name="correctAnswer" value="1" checked="checked"> Correct
+                    <div class="">
+                        <input type="radio" name="correctAnswer" value="1" checked="checked"> Correct
+                    </div>
                     <jsp:include page="/views/answerMediaUpload.jsp" />
                 </div>
                 <div class="answer">
                     <input type="text" name="answerText" placeholder="Answer 2" required>
-                    <input type="radio" name="correctAnswer" value="2"> Correct
+                    <div class="">
+                        <input type="radio" name="correctAnswer" value="2"> Correct
+                    </div>
                     <jsp:include page="/views/answerMediaUpload.jsp" />
                 </div>
                 <!-- <button class="addAnotherAnswerBtn" type="button" onclick="addAnswer()">Add Another Answer</button> -->
             </div>
 
             <!-- Add more answers dynamically if needed -->
-            <button class="addAnswerBtn" id="addAnswerBtn" type="button" onclick="addAnswer()">Add Another
-                Answer</button>
+            <button class="addAnswerBtn" id="addAnswerBtn" type="button" onclick="addAnswer()">Add Another Answer</button>
             <div id="questionsContainer"></div>
-
 
             <button class="addQuestionBtn" type="submit">Add Question</button>
         </form>
