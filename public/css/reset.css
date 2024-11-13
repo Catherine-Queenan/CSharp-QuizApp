@@ -294,6 +294,7 @@ textarea {
     }
 
     /* Edit Questions page */
+    .questionsWrap .editBtn,
     .questionsWrap .deleteBtn {
         padding: 15px 30px;
         font-size: 16px;
