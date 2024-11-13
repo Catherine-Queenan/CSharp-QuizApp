@@ -152,7 +152,7 @@
             </div>
 
             <div class="button-container">
-                <a id="seeQuestionsLink" class="button-link">Go Back to Questions List</a>
+                <a id="seeQuestionsLink" class="button-link">Go to Questions List</a>
                 <button id="saveButton" class="saveBtn">Save Changes</button>
             </div>
         </form>

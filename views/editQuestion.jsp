@@ -133,7 +133,6 @@
             border-radius: 10px;
             background-color: rgb(244, 244, 244);
             display: flex;
-            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             gap: 10px;
