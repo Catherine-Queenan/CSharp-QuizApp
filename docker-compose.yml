@@ -8,6 +8,8 @@ services:
       DB_URL: jdbc:mysql://db:3307/quizapp  # Use host.docker.internal to access localhost
       DB_USER: root
       DB_PASSWORD: root
+    ports:
+      - "8080:8080"
     networks:
       - quizapp-network
     depends_on:
