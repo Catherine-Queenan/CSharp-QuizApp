@@ -73,8 +73,10 @@
             You Completed the Quiz !
         </div>
 
+        <p id="role" style="display: none;">
+            <%=request.getAttribute("role")%>
+        </p>
         <p id="sessionToEnd" style="display: none;">
-        <!-- <p id="sessionToEnd"> -->
             <%=request.getAttribute("sessionToEnd")%>
         </p>
 
@@ -90,11 +92,16 @@
 
     window.onload = function () {
         let sessionId = document.getElementById("sessionToEnd").textContent.trim()
+        let role = document.getElementById("role").textContent.trim();
         console.log(sessionId)
+        console.log(role)
         if (sessionId != "null" && sessionId != null) {
             // Display the thing
-            document.getElementById("endSession").style.display = "block";
             document.querySelector(".playAgainBtn").style.display = "none";
+            // Only admin can end session
+            if (role == "a") { 
+                document.getElementById("endSession").style.display = "block";
+            }
             // Add onclick to buttons
             document.querySelector(".endSession").onclick = function () {
                 endModeration(sessionId);

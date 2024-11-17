@@ -130,6 +130,9 @@ public class QuestionWebSocket {
 
     @OnClose
     public void onClose(Session session) {
+        // Reset question index
+        questionIndex = 0;
+        // Remove sessions
         sessions.remove(session);
         userSessions.remove(session);
         System.out.println("Connection closed: " + session.getId());
@@ -157,8 +160,6 @@ public class QuestionWebSocket {
             session.getBasicRemote().sendText(json.toString());
         }
     }
-    
-
 
     private void clearAllSessions() {
         List<Session> sessionsToClose;
@@ -175,6 +176,9 @@ public class QuestionWebSocket {
                 e.printStackTrace();
             }
         }
+
+        // Reset question index
+        questionIndex = 0;
         
         // Clear the user sessions and the sessions set after closing
         userSessions.clear();

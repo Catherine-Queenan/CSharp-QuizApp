@@ -11,9 +11,11 @@ public class QuizEndServlet extends HttpServlet{
             res.sendRedirect("login");
             return;
         }
+        String role = (String) session.getAttribute("USER_ROLE");
         String sessionId = req.getParameter("sessionId");
         if (sessionId != null) {
             System.out.println("SESSIONLIGJGDSLJ:LIJDSGODLSF " + sessionId);
+            req.setAttribute("role", role);
             req.setAttribute("sessionToEnd", sessionId);
         }
         RequestDispatcher view = req.getRequestDispatcher("/views/quizEnd.jsp");
@@ -28,7 +30,10 @@ public class QuizEndServlet extends HttpServlet{
             res.sendRedirect("login");
             return;
         }
+
+        String role = (String) session.getAttribute("USER_ROLE");
         session.setAttribute("currQuestion", 0);
+        session.setAttribute("role", role);
     
         // Redirect to the login page
         res.setStatus(302);
