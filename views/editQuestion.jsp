@@ -463,6 +463,7 @@
             if (buttons.length < 3) {
                 buttons.forEach(button => {
                     button.disabled = true;
+                    button.style.opacity = 0.5;
                 });
             }
         }
@@ -584,9 +585,42 @@
                     answerBool.type = "radio";
                     answerBool.name = "correctAnswer";
                     answerBool.value = answerCount;
+
+                     let deleteBtn = document.createElement("button");
+                    deleteBtn.type = "button";
+                    deleteBtn.innerHTML = `<i class="fa-solid fa-trash"></i>`;
+                    deleteBtn.classList.add("deleteAnswerBtn");
+
                     if (answer.is_correct == 1) {
                         answerBool.checked = true;
+                        deleteBtn.addEventListener("click", () => {
+                            alert("Create a new correct answer to delete this one!");
+                        });
+                    } else {
+                        deleteBtn.addEventListener("click", () => {
+                        fetch(editAnswerPath + "?id=" + answer.answer_num, {
+                            method: "DELETE",
+                            headers: {
+                                "Accept": "application/json" // Expect a JSON response
+                            }
+                        }).then(response => {
+                            return response.json().then(data => {
+                                if (response.ok) {
+                                    window.location.reload();
+
+                                } else {
+                                    throw new Error(data.message || 'An error occurred');
+                                }
+                            })
+                        }).catch(error => {
+                            // Handle any errors that occurred during the fetch
+                            console.error("Error:", error.message);
+                            alert("An error occurred: " + error.message);
+                        });
+                        })
                     }
+                    answerDiv.appendChild(deleteBtn);
+                    
 
                     let answerImage;
                     if (answer.answer_type == "IMG") {
@@ -597,6 +631,7 @@
                         ansewrImgWrap.className = "answerImgWrap";
                         ansewrImgWrap.appendChild(answerImg);
                         answerImage = ansewrImgWrap;
+
                     } else if (answer.is_correct == 1) {
                         switch (answer.answer_type) {
                             case "AUD":
@@ -619,33 +654,9 @@
                         }
                     }
 
-                    let deleteBtn = document.createElement("button");
-                    deleteBtn.type = "button";
-                    deleteBtn.innerHTML = `<i class="fa-solid fa-trash"></i>`;
-                    deleteBtn.classList.add("deleteAnswerBtn");
+                   
 
-                    deleteBtn.addEventListener("click", () => {
-                        fetch(editAnswerPath + "?id=" + answer.answer_num, {
-                            method: "DELETE",
-                            headers: {
-                                "Accept": "application/json" // Expect a JSON response
-                            }
-                        }).then(response => {
-                            return response.json().then(data => {
-                                if (response.ok) {
-                                    window.location.reload();
-
-                                } else {
-                                    throw new Error(data.message || 'An error occurred');
-                                }
-                            })
-                        }).catch(error => {
-                            // Handle any errors that occurred during the fetch
-                            console.error("Error:", error.message);
-                            alert("An error occurred: " + error.message);
-                        });
-                    })
-                    answerDiv.appendChild(deleteBtn);
+                    
 
                     document.getElementById('answersContainer').appendChild(answerDiv);
                     if (answerImage) {
@@ -735,6 +746,7 @@
                     console.log(pair[0] + ', ' + pair[1]);
                 }
 
+                console.log(editAnswerPath);
                 fetch(editAnswerPath, { // Replace with your servlet URL
                     method: "POST",
                     body: formData,
