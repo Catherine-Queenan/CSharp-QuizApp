@@ -172,16 +172,20 @@ repository.init("com.mysql.cj.jdbc.Driver");
                     currentCorrectAnswer = answer;
                 }
             }
-            System.out.println("IN UPDATE IF");
+            if(currentCorrectAnswer != null){
+                System.out.println("IN UPDATE IF");
 
-            ((Answer) currentCorrectAnswer).setCorrect(0);
-            JSONObject answerJSON = currentCorrectAnswer.serialize();
-            System.out.println("THE ANSWER TO BE UPDATED (CHECK IS_CORRECT)" + answerJSON.toString());
-            repository.update(currentCorrectAnswer, answerJSON.getString("id"), "is_correct");
-            if(answerType.equalsIgnoreCase("AUD") || answerType.equalsIgnoreCase("VID")){
-                System.out.println("AAAAAAAAAAAAAAA");
-                mediaId = answerJSON.getString("media_id");
+                ((Answer) currentCorrectAnswer).setCorrect(0);
+                JSONObject answerJSON = currentCorrectAnswer.serialize();
+                System.out.println("THE ANSWER TO BE UPDATED (CHECK IS_CORRECT)" + answerJSON.toString());
+                
+                repository.update(currentCorrectAnswer, answerJSON.getString("id"), "is_correct");
+                if(answerType.equalsIgnoreCase("AUD") || answerType.equalsIgnoreCase("VID")){
+                    System.out.println("AAAAAAAAAAAAAAA");
+                    mediaId = answerJSON.getString("media_id");
+                }
             }
+           
         }
 
         String questionId = answers.get(0).serialize().getString("question_id");
