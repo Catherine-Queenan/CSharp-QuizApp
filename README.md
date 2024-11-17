@@ -66,7 +66,37 @@ Completed Tasks for 1(b):
         b. Refactored quizzes to be RESTful
         c. Debugged
     4. Saba Karbakhsh
-        a. *Created the websocket functionalities, minus the functionality to load mediaedia and ability to compile
+        a. *Created the websocket functionalities, minus the functionality to load media
     5. Liam Janicke
         a. Introduced AOP *ONLY WORKS IF YOU COMPILE WITH JDK 11* 
         b. Introduced FP *ONLY WORKS IF YOU COMPILE WITH JDK 11*
+
+Completed Tasks for 1(c):
+
+    1. Catherine Queenan:
+        a. Refactored and modified answer video and audio to replace the question video and audio, where applicable
+        b. Implemented GitHub actions to automatically compile the project on all major OS (MacOS, Linux, Windows)
+        c. Created sessions for moderated mode
+        d. Added the ability for regular users to join specific moderated sessions from the main page
+        e. *Added base functionality for moderators to end a session
+        f. *Began implementing the loading of audio on the websockets
+        g. Debugged logout
+    2. Eugenie Kim:
+        a. Added the ability to edit quizzes and their media
+        b. Added the ability to edit questions and their media
+        c. Simplified the addition and removal of answers, questions, and quizzes
+        d. Debugged editing functionalities
+        e. Implemented MySQL database in a docker container with a compose file
+        f. Combined the MySQL and Tomcat dockers
+        g. Debugged logout
+    3. Soomin Jeong:
+        a. *Completed functionality for moderators to end a session
+        b. Debugged moderated mode
+        c. Styled all new features, and restyled existing features for better cohesion
+        d. Implemented audio for the websocket questions
+        e. Allowed users to join on the current question in moderated mode
+        f. Implemented image answers for the websocket questions
+        g. Debugged logout
+    4. Saba Karbakhsh
+    5. Liam Janicke
+        a. Implemented Tomcat Docker container to run the webapp
