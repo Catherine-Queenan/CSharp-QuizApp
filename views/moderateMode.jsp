@@ -396,6 +396,7 @@
 
             // Collect images and videos for the current question
             let questionImages = images.filter(image => image.media == i + 1).map(image => image.src);
+            let questionAudio = images.filter(audio => audio.media == i + 1).map(audio => audio.src);
             let questionVideos = videos.filter(video => video.media == i + 1).map(video => video.src);
 
             // Create an object for each question and its answers
@@ -403,6 +404,7 @@
                 question: questions[i],
                 answers: answers,
                 images: questionImages,
+                audio: questionAudio,
                 videos: questionVideos
             });
         }
@@ -428,7 +430,7 @@
                 };
             }
             if (response.question && response.answers) {
-                displayQuestion(response.question, response.answers, response.images, response.videos);
+                displayQuestion(response.question, response.answers, response.images, response.audio, response.videos);
             } else if (response.type === "answerCounts") {
                 console.log(response);
                 displayAnswerCounts(response.counts);
@@ -447,7 +449,7 @@
         //         window.location.href = "end";
         //     }
         // Display question, answers, and media (images, videos)
-        function displayQuestion(question, answers, images, videos) {
+        function displayQuestion(question, answers, images, audio, videos) {
             document.getElementById("question").textContent = question;
             const optionsDiv = document.getElementById("options");
             optionsDiv.innerHTML = '';  // Clear previous answers
@@ -488,6 +490,22 @@
                     imgElement.src = imageSrc;
                     imgElement.alt = "Question Image";
                     mediaDiv.appendChild(imgElement);
+                });
+            }
+
+            // Display audio (if any)
+            if (audio && audio.length > 0) {
+                audio.forEach(audioSrc => {
+                    const videoElement = document.createElement("iframe");
+                    if (role !== "a") {
+                        videoElement.style.display = "none";
+                    }
+                    videoElement.src = videoUrl.replace("watch?v=", "embed/");
+                    videoElement.width = "100%";
+                    videoElement.height = "315";
+                    videoElement.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+                    videoElement.allowFullscreen = true;
+                    mediaDiv.appendChild(videoElement);
                 });
             }
 
