@@ -82,7 +82,7 @@
 
         <div class="btnWrap">
             <button class="btns endSession" id="endSession">End Session</button>
-            <form action="home"><button class="btns homeBtn">Home</button></form>
+            <form action="home"><button class="btns homeBtn" id="homeButton">Home</button></form>
             <form method="post"><button class="btns playAgainBtn">Play Again</button></form>
         </div>
     </div>
@@ -101,6 +101,7 @@
             // Only admin can end session
             if (role == "a") { 
                 document.getElementById("endSession").style.display = "block";
+                document.getElementById("homeButton").style.display = "none";
             }
             // Add onclick to buttons
             document.querySelector(".endSession").onclick = function () {

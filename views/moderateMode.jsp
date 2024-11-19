@@ -290,6 +290,10 @@
                     };
                     // Append the button and session div to the container
                     sessionDiv.appendChild(endButton);
+                } else {
+                    sessionDiv.innerHTML = `<form action="home" id="homeButton">
+                                                <button class="homeBtn" type="Submit">Home</button>
+                                            </form>`;
                 }
 
                 modSessionsContainer.appendChild(sessionDiv);
