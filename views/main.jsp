@@ -402,7 +402,6 @@
                 categoryDiv.className = 'category';
 
                 let mediaHtml = '';
-                // console.log(category.media.media_file_path)
                 if (category.media && category.media.media_file_path) {
                     console.log(category.media.media_file_path)
                     mediaHtml = `<img src="${category.media.media_file_path}" alt="${category.name}" class="categoryImg">`;
