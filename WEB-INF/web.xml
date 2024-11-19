@@ -2,10 +2,7 @@
     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_2_3.xsd"
-         version="2.3">
+<web-app>
 
  <servlet>
     <servlet-name>login</servlet-name>
@@ -62,33 +59,92 @@
     <servlet-name>LogoutServlet</servlet-name>
     <url-pattern>/logout</url-pattern>
 </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Edit</servlet-name>
+    <jsp-file>/views/edit.jsp</jsp-file>
+  </servlet>
+<servlet-mapping>
+    <servlet-name>Edit</servlet-name>
+    <url-pattern>/edit/*</url-pattern>
+</servlet-mapping>
+
 <servlet>
-    <servlet-name>EditServlet</servlet-name>
+    <servlet-name>EditJSON</servlet-name>
     <servlet-class>EditServlet</servlet-class>
 </servlet>
 <servlet-mapping>
-    <servlet-name>EditServlet</servlet-name>
-    <url-pattern>/edit</url-pattern>
+    <servlet-name>EditJSON</servlet-name>
+    <url-pattern>/edit-json/*</url-pattern>
 </servlet-mapping>
+
 <!-- EditQuestionsServlet Mapping -->
+
     <servlet>
-        <servlet-name>EditQuestionsServlet</servlet-name>
+        <servlet-name>EditQuestions</servlet-name>
+        <jsp-file>/views/editQuestions.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditQuestions</servlet-name>
+        <url-pattern>/editQuestions/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EditQuestionsJSON</servlet-name>
         <servlet-class>EditQuestionsServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>EditQuestionsServlet</servlet-name>
-        <url-pattern>/editQuestions</url-pattern>
+        <servlet-name>EditQuestionsJSON</servlet-name>
+        <url-pattern>/editQuestions-json/*</url-pattern>
     </servlet-mapping>
 
     <!-- AddQuestionServlet Mapping -->
     <servlet>
-        <servlet-name>AddQuestionServlet</servlet-name>
+        <servlet-name>AddQuestion</servlet-name>
+        <jsp-file>/views/addQuestion.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddQuestion</servlet-name>
+        <url-pattern>/addQuestion/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AddQuestionJSON</servlet-name>
         <servlet-class>AddQuestionServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>AddQuestionServlet</servlet-name>
-        <url-pattern>/addQuestion</url-pattern>
+        <servlet-name>AddQuestionJSON</servlet-name>
+        <url-pattern>/addQuestion-json/*</url-pattern>
     </servlet-mapping>
+
+<!-- EditQuestionServlet Mapping -->
+<servlet>
+        <servlet-name>EditQuestion</servlet-name>
+        <jsp-file>/views/editQuestion.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditQuestion</servlet-name>
+        <url-pattern>/editQuestion/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EditQuestionJSON</servlet-name>
+        <servlet-class>EditQuestionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditQuestionJSON</servlet-name>
+        <url-pattern>/editQuestion-json/*</url-pattern>
+    </servlet-mapping>
+<!-- EditAnswersServlet Mapping -->
+    <servlet>
+        <servlet-name>EditAnswers</servlet-name>
+        <servlet-class>EditAnswersServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditAnswers</servlet-name>
+        <url-pattern>/editAnswer/*</url-pattern>
+    </servlet-mapping>
+
 <servlet>
     <servlet-name>DeleteQuestionServlet</servlet-name>
     <servlet-class>DeleteQuestionServlet</servlet-class>
@@ -131,7 +187,7 @@
 </servlet>
 <servlet-mapping>
   <servlet-name>QuizEndServlet</servlet-name>
-  <url-pattern>/end</url-pattern>
+  <url-pattern>/endQuiz/*</url-pattern>
 </servlet-mapping>
 
 <servlet>
@@ -157,7 +213,15 @@
 </servlet>
 <servlet-mapping>
   <servlet-name>ModerateModeServlet</servlet-name>
-  <url-pattern>/moderateMode</url-pattern>
+  <url-pattern>/moderateMode/*</url-pattern>
+</servlet-mapping>
+<servlet>
+  <servlet-name>ModeratedSessionServlet</servlet-name>
+  <servlet-class>ModeratedSessionServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>ModeratedSessionServlet</servlet-name>
+  <url-pattern>/getActiveSessions/*</url-pattern>
 </servlet-mapping>
   <servlet>
     <servlet-name>CreateQuizServlet</servlet-name>

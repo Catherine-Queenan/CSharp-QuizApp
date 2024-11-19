@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
 
+        .wrap {
+            height: 100vh !important;
+        }
+        
         .fa-triangle-exclamation {
             font-size: 100px;
             color: #FF4B3E;
@@ -47,34 +51,32 @@
     </div>
 </body>
 <script>
-
-
     const urlParams = new URLSearchParams(window.location.search);
     const errorMessage = urlParams.get('errorMessage');
 
-document.addEventListener('DOMContentLoaded', () => { 
+    document.addEventListener('DOMContentLoaded', () => { 
 
-    let rediretPath;
+        let rediretPath;
 
-    if (errorMessage) {
-        document.querySelector('.message').textContent = decodeURIComponent(errorMessage);
-    }
+        if (errorMessage) {
+            document.querySelector('.message').textContent = decodeURIComponent(errorMessage);
+        }
 
-    if(errorMessage.includes('Invalid')) {
-        redirectPath = 'login';
-    } else {
-        redirectPath = 'home';
-    }
+        if(errorMessage.includes('Invalid')) {
+            redirectPath = 'login';
+        } else {
+            redirectPath = 'home';
+        }
 
-    document.getElementById('redirectHome').addEventListener('click', () => {
-        console.log('Redirecting to: index.html');
-    if (redirectPath) {
-        console.log('Redirecting to:', redirectPath); // Debugging to check if the click is firing
-        window.location.href = redirectPath;
-    } else {
-        console.error('Redirect path is not set.');
-    }
-});
-});
+        document.getElementById('redirectHome').addEventListener('click', () => {
+            console.log('Redirecting to: index.html');
+            if (redirectPath) {
+                console.log('Redirecting to:', redirectPath); // Debugging to check if the click is firing
+                window.location.href = redirectPath;
+            } else {
+                console.error('Redirect path is not set.');
+            }
+        });
+    });
 </script>
 </html>

@@ -8,7 +8,8 @@ import org.json.JSONObject;
 
 public class DeleteQuestionServlet extends HttpServlet {
 
-    public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    @Override
+    public void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("USER_ID") == null) {
             res.sendRedirect("login");
@@ -26,6 +27,9 @@ public class DeleteQuestionServlet extends HttpServlet {
             view.forward(req, res);
             return;
         }
+
+        JSONObject jsonResponse = new JSONObject();
+
         int idIndex = Integer.parseInt(req.getParameter("id"));
         String quizName = req.getParameter("quizName");
         ArrayList<AClass> questions = (ArrayList<AClass>)session.getAttribute("questions");
@@ -60,16 +64,32 @@ public class DeleteQuestionServlet extends HttpServlet {
             // ps.executeUpdate();
 
             // Redirect back to the edit questions page after successful deletion
-            res.sendRedirect("editQuestions?quizName=" + quizName);
+            // res.sendRedirect("editQuestions?quizName=" + quizName);
 
         } catch (Exception e) {
             e.printStackTrace();
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "Something went wrong when deleting the question");
+            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } 
+
+        jsonResponse.put("status", "success");
+        jsonResponse.put("message", "Question deleted successfully.");
+        res.setStatus(HttpServletResponse.SC_OK); // Set status to 200
+        writeResponse(res, jsonResponse);
         // finally {
         //     try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
         //     try { if (con != null) con.close(); } catch (SQLException e) { e.printStackTrace(); }
         // }
     }
+
+    private void writeResponse(HttpServletResponse res, JSONObject jsonResponse) throws IOException {
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        PrintWriter out = res.getWriter();
+        out.print(jsonResponse.toString());
+        out.flush();
+    }    
     //     private String getUserRoleFromDatabase(String username) {
     //         Connection con = null;
     //         PreparedStatement ps = null;

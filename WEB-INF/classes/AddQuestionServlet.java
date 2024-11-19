@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.MultipartConfig;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 @MultipartConfig
@@ -40,9 +41,15 @@ public class AddQuestionServlet extends HttpServlet {
             return;
         }
 
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        PrintWriter out = res.getWriter();
+
         String username = (String) session.getAttribute("USER_ID");
         String role = (String) session.getAttribute("USER_ROLE");
         // String role = getUserRoleFromDatabase(username);
+
+        JSONObject jsonResponse = new JSONObject();
 
         if (!"a".equals(role)) {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Set status to 401
@@ -52,13 +59,15 @@ public class AddQuestionServlet extends HttpServlet {
             return;
         }
 
-        String quizName = req.getParameter("quizName");
-        System.out.println(quizName);
-        req.setAttribute("quizName", quizName);
-        RequestDispatcher view = req.getRequestDispatcher("/views/addQuestion.jsp");
-        view.forward(req, res);
+        jsonResponse.put("role", "admin");
+
+       // Write the JSON responses
+       out.write(jsonResponse.toString());
+       out.flush();
+       out.close();
     }
 
+    @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // Connection con = null;
         // PreparedStatement psQuestion = null;
@@ -172,6 +181,7 @@ public class AddQuestionServlet extends HttpServlet {
                         .append(",,,media_type:==").append(mediaType)
                         .append(",,,media_file_path:==").append(mediaUrls[i])
                         .append(",,,media_filename:==").append(mediaFileNames[i]);
+                        System.out.println(criteria);
 
                 // String insertMediaSql = "INSERT INTO media (id, media_type, media_file_path,
                 // media_filename, media_start, media_end) VALUES (?, ?, ?, ?, ?, ?)";
@@ -180,6 +190,7 @@ public class AddQuestionServlet extends HttpServlet {
                 // psMedia.setString(2, mediaType);
                 // psMedia.setString(3, mediaUrls[i]);
                 // psMedia.setString(4, mediaFileNames[i]);
+                System.out.println("QUESTION ADDITION QUESTION TYPE: " + questionType);
                 if (i == 0 && questionType.equals("VID")) {
                     // psMedia.setInt(5, videoStarts[i]);
                     // psMedia.setInt(6, videoEnds[i]);
@@ -194,12 +205,15 @@ public class AddQuestionServlet extends HttpServlet {
                 } else if (answerType.equals("VID")) {
                     // psMedia.setInt(5, videoStarts[i]);
                     // psMedia.setInt(6, videoEnds[i]);
-                    criteria.append(",,,media_start:==").append(videoStarts[i])
-                            .append(",,,media_end:==").append(videoEnds[i]);
+                    int indexVideoTimes = i == 0 ? 1 : i;
+                    criteria.append(",,,media_start:==").append(videoStarts[indexVideoTimes])
+                            .append(",,,media_end:==").append(videoEnds[indexVideoTimes]);
                 } else {
-                    criteria.append(",,,media_start:==").append(audioStarts[i])
-                            .append(",,,media_end:==").append(audioEnds[i]);
+                    int indexVideoTimes = i == 0 ? 1 : i;
+                    criteria.append(",,,media_start:==").append(audioStarts[indexVideoTimes = i == 0 ? 1 : i])
+                            .append(",,,media_end:==").append(audioEnds[indexVideoTimes = i == 0 ? 1 : i]);
                 }
+                System.out.println(criteria);
                 repository.insert(factory.createAClass("media", criteria.toString()));
                 // psMedia.executeUpdate();
             }
@@ -211,7 +225,7 @@ public class AddQuestionServlet extends HttpServlet {
             // UUID mediaUUID = UUID.randomUUID();
             // byte[] mediaIdBinary = uuidToBytes(mediaUUID);
             // System.out.println("A");
-            // // Insert media information into the `media` table
+            // // Insert media ionformation into the `media` table
             // String mediaUrl = null;
             // if (questionType.equals("VID")) {
             // mediaUrl = videoUrl;
@@ -361,7 +375,8 @@ public class AddQuestionServlet extends HttpServlet {
 
 
             // Redirect back to the quiz creation page or show success message
-            res.sendRedirect("editQuestions?quizName=" + quizName);
+            res.setStatus(200); 
+            res.getWriter().write("{\"message\": \"Quiz edited successfully!\"}");
 
         } catch (Exception e) {
             throw new ServletException("Error processing question addition", e);

@@ -10,9 +10,9 @@ import org.json.JSONObject;
 
 public class Repository implements IRepository {
 
-    private static final String URL =  "jdbc:mysql://localhost:3306/quizapp";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    public static final String URL = "jdbc:mysql://localhost:3306/QuizApp";
+    public static final String USER = "root";
+    public static final String PASSWORD = "mySQL20@$CHANGE";
     private Connection con = null;   
 
     private void insertCategory(JSONObject entry) {
@@ -49,7 +49,6 @@ public class Repository implements IRepository {
             ps.setString(2, entry.getString("category_name"));
             ps.setString(3, entry.getString("description"));
             ps.executeUpdate();
-            System.out.println(entry);
 
             if (!entry.isNull("media_id")) {
                 // Associate quiz with respective media
@@ -96,6 +95,7 @@ public class Repository implements IRepository {
     private void insertAnswer(JSONObject entry) {
         try {
             // Insert Answer
+            System.out.println("NEW ANSWER:" + entry.toString());
             String query = "INSERT INTO answers (id, question_id, answer_text, is_correct, answer_type) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = con.prepareStatement(query);
 
@@ -164,20 +164,162 @@ public class Repository implements IRepository {
         try {
             StringBuilder query = new StringBuilder("UPDATE quizzes SET ");
             for (String col : values) {
+                if(!col.equalsIgnoreCase("media_id")){
+                    query.append(col).append("= ?,");
+                }
+                
+            }
+            int keyPos = 0;
+            query.deleteCharAt(query.length() - 1);
+            query.append(" WHERE name = ?");
+            System.out.println(query.toString());
+            PreparedStatement ps = con.prepareStatement(query.toString());
+            for (int i = 1; i <= values.length; i++) {
+                if(values[i - 1].equalsIgnoreCase("media_id")){
+                    System.out.println("ADDING ENTRY TO QUIZ_MEDIA");
+                    // Associate answer with respective media
+                String mediaQuery = "INSERT INTO quiz_media (quiz_name, media_id) VALUES (?, ?)";
+                PreparedStatement mediaPs = con.prepareStatement(mediaQuery);
+
+                    mediaPs.setString(1, pKey);
+                    mediaPs.setBytes(2, updatedEntry.getString("media_id").getBytes());
+                    mediaPs.executeUpdate();
+                } else {
+                    ps.setString(i, updatedEntry.getString(values[i - 1]));
+                }
+                keyPos++;
+                
+            }
+            
+            ps.setString(keyPos + 1, pKey);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            System.out.println(ex);
+            throw new RuntimeException("Error updating entry in the \"quizzes\" table", ex);
+        }
+    }
+
+    private void updateQuestion(JSONObject updatedEntry, String pKey, String[] values){
+        try {
+            StringBuilder query = new StringBuilder("UPDATE questions SET ");
+            for (String col : values) {
+                if(!col.equalsIgnoreCase("media_id")){
+                    query.append(col).append("= ?,");
+                }
+            }
+
+            System.out.println("UPDATED ENTRY:" + updatedEntry.toString());
+
+            int keyPos = 0;
+            query.deleteCharAt(query.length() - 1);
+            query.append(" WHERE id = ?");
+            PreparedStatement ps = con.prepareStatement(query.toString());
+            for (int i = 1; i <= values.length; i++) {
+                System.out.println("VALUE" + values[i - 1]);
+                if(values[i - 1].equalsIgnoreCase("media_id")){
+                    System.out.println("INSERTING INTO QUESTION_MEDIA");
+                    // Associate answer with respective media
+                String mediaQuery = "INSERT INTO question_media (question_id, media_id) VALUES (?, ?)";
+                PreparedStatement mediaPs = con.prepareStatement(mediaQuery);
+
+                    mediaPs.setBytes(1, pKey.getBytes());
+                    mediaPs.setBytes(2, updatedEntry.getString("media_id").getBytes());
+                    mediaPs.executeUpdate();
+                } else {
+                    ps.setString(i, updatedEntry.getString(values[i - 1]));
+                    keyPos++;
+                }
+                
+            }
+            ps.setBytes(keyPos + 1, pKey.getBytes());
+            ps.executeUpdate();
+
+            System.out.println("QUESTION UPDATED");
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error updating entry in the \"question\" table", ex);
+        }
+    }
+
+    private void updateAnswer(JSONObject updatedEntry, String pKey, String[] values){
+        try {
+            StringBuilder query = new StringBuilder("UPDATE answers SET ");
+            for (String col : values) {
+                if(!col.equalsIgnoreCase("media_id")){
+                    query.append(col).append("= ?,");
+                }
+            }
+
+            System.out.println("UPDATED ENTRY:" + updatedEntry.toString());
+
+            int keyPos = 0;
+            query.deleteCharAt(query.length() - 1);
+            query.append(" WHERE id = ?");
+            PreparedStatement ps = con.prepareStatement(query.toString());
+            for (int i = 1; i <= values.length; i++) {
+                System.out.println("VALUE" + values[i - 1]);
+                if(values[i - 1].equalsIgnoreCase("media_id")){
+                    //Delete previous record if there is one
+                    String deleteOldPair = "DELETE FROM answer_media WHERE media_id = ?";
+                    PreparedStatement deleteMediaPs = con.prepareStatement(deleteOldPair);
+                    deleteMediaPs.setBytes(1, updatedEntry.getString("media_id").getBytes());
+                    deleteMediaPs.executeUpdate();
+                    
+                    System.out.println("INSERTING INTO ANSWER_MEDIA");
+                    // Associate answer with respective media
+                String mediaQuery = "INSERT INTO answer_media (answer_id, media_id) VALUES (?, ?)";
+                PreparedStatement mediaPs = con.prepareStatement(mediaQuery);
+
+                    mediaPs.setBytes(1, pKey.getBytes());
+                    mediaPs.setBytes(2, updatedEntry.getString("media_id").getBytes());
+                    mediaPs.executeUpdate();
+                } else {
+
+                    if(values[i - 1].equalsIgnoreCase("is_correct")){
+                        ps.setInt(i, updatedEntry.getInt(values[i - 1]));
+                    } else {
+                        ps.setString(i, updatedEntry.getString(values[i - 1]));
+                    }
+                    
+                    keyPos++;
+                }
+                
+            }
+            ps.setBytes(keyPos + 1, pKey.getBytes());
+            ps.executeUpdate();
+
+            System.out.println("ANSWER UPDATED");
+        } catch (SQLException ex) {
+            throw new RuntimeException("Error updating entry in the \"answer\" table", ex);
+        }
+    }
+
+    private void updateMedia(JSONObject updatedEntry, String pKey, String[] values){
+        try {
+            StringBuilder query = new StringBuilder("UPDATE media SET ");
+            for (String col : values) {
                 query.append(col).append("= ?,");
             }
             query.deleteCharAt(query.length() - 1);
-            query.append(" WHERE name = ?");
+            query.append(" WHERE id = ?");
             PreparedStatement ps = con.prepareStatement(query.toString());
-            for (int i = 1; i < values.length + 1; i++) {
-                ps.setString(i, updatedEntry.getString(values[i - 1]));
+            for (int i = 1; i <= values.length; i++) {
+                if(values[i - 1].equalsIgnoreCase("media_start") || values[i - 1].equalsIgnoreCase("media_end")){
+                    ps.setInt(i, updatedEntry.getInt(values[i - 1]));
+                } else {
+                    ps.setString(i, updatedEntry.getString(values[i - 1]));
+                }
+                
             }
-            ps.setString(values.length + 1, pKey);
+            ps.setBytes(values.length + 1, pKey.getBytes());
             ps.executeUpdate();
+
+            System.out.println("MEDIA UPDATED");
         } catch (SQLException ex) {
-            throw new RuntimeException("Error updating entry in the \"category\" table", ex);
+            throw new RuntimeException("Error updating entry in the \"media\" table", ex);
         }
     }
+
+    
 
     private String createConstructorParameters(ResultSet rs, String tableType) {
         StringBuilder parameters = new StringBuilder();
@@ -300,6 +442,16 @@ public class Repository implements IRepository {
             case "quiz":
                 updateQuiz(updatedEntry, pKey, changeColumns);
                 break;
+            case "media":
+                updateMedia(updatedEntry, pKey, changeColumns);
+                break;
+            case "question":
+                updateQuestion(updatedEntry, pKey, changeColumns);
+                break;
+            case "answer":
+            System.out.println("UPDATEING ANSWER");
+                updateAnswer(updatedEntry, pKey, changeColumns);
+                break;
             default:
                 throw new RuntimeException("Error updating the database");
         }
@@ -314,21 +466,38 @@ public class Repository implements IRepository {
             byte[] id = null;
             switch (tableType) {
                 case "category":
-                    update = "DELETE FROM categories WHERE " + criteria;
+                    AClass cat = select("category", "name=\"" + criteria + "\"").get(0);
+                    JSONObject catJSON = cat.serialize();
+                    if(!catJSON.isNull("media_id")){
+                        PreparedStatement  deleteCatMedia= con.prepareStatement("DELETE FROM category_media WHERE category_name =\"" + criteria + "\"");
+                        deleteCatMedia.executeUpdate();
+                    }
+                    update = "DELETE FROM categories WHERE name=\"" + criteria + "\"";
+
                     break;
                 case "quiz":
-                    update = "DELETE FROM quizzes WHERE " + criteria;
+                System.out.println("DELETING QUIZ");
+                    AClass quiz = select("quiz", "name=\"" + criteria + "\"").get(0);
+                    JSONObject quizJSON = quiz.serialize();
+                    System.out.println("QUIZ TO BE DELETE: " + quizJSON.toString());
+                    if(!quizJSON.isNull("media_id")){
+                        PreparedStatement deleteQuizMedia = con.prepareStatement("DELETE FROM quiz_media WHERE quiz_name =\"" + criteria + "\"");
+                        deleteQuizMedia.executeUpdate();
+                    }
+                    
+                    update = "DELETE FROM quizzes WHERE name=\"" + criteria + "\"";
                     break;
                 case "question":
-                System.out.println("HERE HERE  " + criteria);
                     id = criteria.getBytes();
                     update = "DELETE FROM questions WHERE id = ? ";
                     break;
                 case "answer":
-                    update = "DELETE FROM answers WHERE " + criteria;
+                id = criteria.getBytes();
+                    update = "DELETE FROM answers WHERE id= ?";
                     break;
                 case "media":
-                    update = "DELETE FROM media WHERE " + criteria;
+                id = criteria.getBytes();
+                    update = "DELETE FROM media WHERE id= ?";
                     break;
                 default:
                     throw new RuntimeException("Error deleting from the database. Entered type cannot be deleted");
@@ -370,11 +539,15 @@ public class Repository implements IRepository {
                     query = "SELECT * FROM questions " + where;
                     break;
                 case "answer":
-                    query = "SELECT * FROM answers WHERE question_id = ? " + criteria.split(",")[1];
-                    id = criteria.split(",")[0].getBytes();
+                    String [] queryCrits = criteria.split(",");
+                    query = "SELECT * FROM answers WHERE question_id = ? ";
+                    if(queryCrits.length > 1){
+                        query = query + queryCrits[1];
+                    }
+                    
+                    id = queryCrits[0].getBytes();
                     break;
                 case "media":
-                    System.out.println(criteria);
                     id = criteria.getBytes();
                     query = "SELECT * FROM media WHERE id = ?";
                     break;
@@ -388,13 +561,9 @@ public class Repository implements IRepository {
             }
 
             ResultSet rs = selectStatement.executeQuery();
-            System.out.println(rs.getMetaData());
             while (rs.next()) {
-                System.out.println(rs);
                 String parameters = createConstructorParameters(rs, tableType);
-                System.out.println(parameters);
                 AClass cat = factory.createAClass(tableType, parameters);
-                System.out.println(cat.serialize());
                 selectedEntries.add(cat);
             }
 
