@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 public class Repository implements IRepository {
 
-    private static final String URL =  "jdbc:mysql://db:3307/quizapp";
+    private static final String URL =  "jdbc:mysql://db:3306/quizapp";
     private static final String USER = "root";
     private static final String PASSWORD = "root";
     private Connection con = null;   
