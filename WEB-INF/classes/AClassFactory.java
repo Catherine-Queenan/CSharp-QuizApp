@@ -11,7 +11,7 @@ public class AClassFactory {
         } else if(tableType.equalsIgnoreCase("media")){
             return new Media(constructorParameters);
         } else  if(tableType.equalsIgnoreCase("websocket")){
-            return new WebSocketQuestion(constructorParameters);
+            return new QuesionWebSocket(constructorParameters);
         }
         return null;
     }
