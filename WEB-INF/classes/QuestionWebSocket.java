@@ -13,6 +13,7 @@ public class QuestionWebSocket {
 
     private static Set<Session> sessions = Collections.synchronizedSet(new HashSet<>());
     private static List<WebSocketQuestion> questions = new ArrayList<>();
+    private static int questionIndex = 0;
 
     static class WebSocketQuestion {
         String questionText;
@@ -110,6 +111,7 @@ public class QuestionWebSocket {
     
                 if (jsonMessage.has("type") && jsonMessage.getString("type").equals("answer")) {
                     String answer = jsonMessage.getString("answer");
+                    userData.answerCounts.clear();
                     userData.answerCounts.put(answer, userData.answerCounts.getOrDefault(answer, 0) + 1);
                     broadcastAnswerCounts();
                 } else if (jsonMessage.has("type") && jsonMessage.getString("type").equals("next")) {
@@ -128,6 +130,9 @@ public class QuestionWebSocket {
 
     @OnClose
     public void onClose(Session session) {
+        // Reset question index
+        questionIndex = 0;
+        // Remove sessions
         sessions.remove(session);
         userSessions.remove(session);
         System.out.println("Connection closed: " + session.getId());
@@ -135,6 +140,9 @@ public class QuestionWebSocket {
 
     private void sendCurrentQuestion(Session session) throws IOException {
         UserSessionData userData = userSessions.get(session);
+        if (userData.currentQuestionIndex != questionIndex) {
+            userData.currentQuestionIndex = questionIndex;
+        }
         if (userData.currentQuestionIndex < userData.questions.size()) {
             WebSocketQuestion currentQuestion = userData.questions.get(userData.currentQuestionIndex);
             
@@ -152,8 +160,6 @@ public class QuestionWebSocket {
             session.getBasicRemote().sendText(json.toString());
         }
     }
-    
-
 
     private void clearAllSessions() {
         List<Session> sessionsToClose;
@@ -170,6 +176,9 @@ public class QuestionWebSocket {
                 e.printStackTrace();
             }
         }
+
+        // Reset question index
+        questionIndex = 0;
         
         // Clear the user sessions and the sessions set after closing
         userSessions.clear();
@@ -199,6 +208,7 @@ public class QuestionWebSocket {
 
     private Map<String, Integer> getCombinedAnswerCounts() {
         Map<String, Integer> combinedCounts = new HashMap<>();
+        combinedCounts.clear();
         for (UserSessionData userData : userSessions.values()) {
             userData.answerCounts.forEach((key, value) -> {
                 combinedCounts.put(key, combinedCounts.getOrDefault(key, 0) + value);
@@ -208,8 +218,10 @@ public class QuestionWebSocket {
     }
 
     private void incrementQuestionForAllUsers() {
+        questionIndex++;
         for (UserSessionData userData : userSessions.values()) {
             userData.currentQuestionIndex++;
+            userData.answerCounts.clear();
         }
     }
 
