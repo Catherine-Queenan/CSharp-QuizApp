@@ -155,7 +155,8 @@
 
         // Extract the category name from URL parameters
         const quizName = pathSegments[3];
-        quizTitle.innerHTML = quizName;
+        const quizNameSpace = quizName.replace(/%20/g, ' ');
+        quizTitle.innerHTML = quizNameSpace;
         console.log(quizName);
 
         // Extract the base path dynamically (remove last segment if it's quiz-related)
