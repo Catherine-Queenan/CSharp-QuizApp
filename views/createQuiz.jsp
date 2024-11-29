@@ -94,6 +94,7 @@
 
     <div class="wrap">
         <div class="title cherry-cream-soda">
+        </br>
             Create a New Quiz
         </div>
         <!-- <% if (request.getAttribute("error") != null) { %>
