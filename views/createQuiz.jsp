@@ -94,6 +94,7 @@
 
     <div class="wrap">
         <div class="title cherry-cream-soda">
+        </br>
             Create a New Quiz
         </div>
         <!-- <% if (request.getAttribute("error") != null) { %>
@@ -219,7 +220,8 @@
             const pathSegments = currentPath.split('/');
             pathSegments.pop();
             let newPath = pathSegments.join('/') + '/createQuiz-json';
-            let successPath = pathSegments.join('/') + '/quizzes/' + category;
+            const quizName = document.getElementById('quizName').value;
+            let successPath = pathSegments.join('/') + '/editQuestions/' + quizName;
 
             fetch(newPath, { // Replace with your servlet URL
                 method: "POST",

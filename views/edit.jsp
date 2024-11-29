@@ -265,7 +265,7 @@
 
                 if (response.ok) {
                     pathSegments.pop();
-                    window.location.reload();
+                    window.location.href = postPath;
 
                 } else {
                     throw new Error(data.message || 'An error occurred');

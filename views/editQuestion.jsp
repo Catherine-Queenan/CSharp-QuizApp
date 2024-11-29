@@ -697,7 +697,7 @@
                     }).then(response => {
                         return response.json().then(data => {
                             if (response.ok) {
-                                window.location.reload();
+                                window.location.href = updateQuestionListPath;
 
                             } else {
                                 throw new Error(data.message || 'An error occurred');
@@ -715,7 +715,6 @@
             let questionMedia = document.getElementById('questionType');
             questionMedia.addEventListener('change', function () {
                 if (questionMedia.value === 'IMG' || questionMedia.value === 'AUD') {
-                    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                     document.getElementById(`imageAudioUploadQuestion`).style.display = 'flex';
                     document.getElementById(`videoUrlQuestion`).style.display = 'none';
                     if (questionMedia.value === 'AUD') {
@@ -754,7 +753,6 @@
                         "Accept": "application/json" // Expect a JSON response
                     }
                 }).then(response => {
-                    console.log("AAAAAAAAAa");
                     return response.json().then(data => {
                         if (response.ok) {
                             window.location.reload();

@@ -191,7 +191,7 @@
     <div class="wrap" id="wrap">
         <div class="title cherry-cream-soda">
             <!-- Add Question to <%= request.getAttribute("quizName") %> -->
-            Add Question to <span id="quizTitle" class="cherry-cream-soda"></span>
+            Add Question to: <span id="quizTitle" class="cherry-cream-soda"></span>
         </div>
 
         <form id="newQuestionForm" class="newQuestionForm" method="post" enctype="multipart/form-data">
@@ -319,7 +319,8 @@
 
             // Extract the category name from URL parameters
             const quizName = pathSegments[3];
-            quizTitle.innerHTML = quizName;
+            const quizNameSpace = quizName.replace(/%20/g, ' ');
+            quizTitle.innerHTML = quizNameSpace;
             quizNameInput.value = quizName;
             console.log(quizName);
 
