@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <!-- Use this for tomcat -->
+    <link rel="stylesheet" href="/css/reset.css">
+    <!-- Use this for local -->
+    <!-- <link rel="stylesheet" href="../public/css/reset.css">  -->
+    <style>
+
+        .signup {
+            max-width: 500px;
+            width: 85vw;
+            padding: 70px 10px;
+            border-radius: 15px;
+            background-color: #45425A;
+            box-shadow: 5px 5px 15px rgba(1, 1, 1, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .id, .pw {
+            width: 80%;
+            height: 50px;
+            padding: 30px;
+            font-size: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            background-color: #DCEED1;
+        }
+
+        .btn {
+            width: 80%;
+            height: 60px;
+            border-radius: 15px;
+            font-size: 20px;
+            color: rgb(244, 244, 244);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #0C1B33;
+            cursor: pointer;
+            transition-duration: 0.3s;
+        }
+
+            .btn:hover {
+                box-shadow: inset 5px 5px 5px rgba(1, 1, 1, 0.5);
+            }
+
+        .desc a {
+            color: #FFE548;
+            transition-duration: 0.3s;
+        }
+
+            .desc a:hover {
+                color: #FFB20F;
+                cursor: pointer;
+            }
+
+        input, button {
+            color: #0C1B33;
+            border: 0;
+        }
+
+        ::placeholder {
+            color: #0C1B33;
+        }
+
+        :focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <form class="signup" id="signup">
+            <div class="title cherry-cream-soda">
+                Sign Up
+            </div>
+
+            <input type="text" name="username" placeholder="Enter a username" class="id" id="username" required></input>
+            <input type="password" name="password" placeholder="Enter password" class="pw" id="password" required></input>
+
+            <button type="button" id="signupButton" class="btn">SIGN UP</button>
+
+            <div class="desc">
+                Already have an account? <a id="login">Log in</a>
+            </div>
+        </form>
+    </div>
+</body>
+<script>
+    const currentPath = window.location.pathname;
+    const pathSegments = currentPath.split('/');
+
+    function handleSignup() {
+        // Prevent the form from submitting
+        event.preventDefault();
+
+        // Get the form details
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Make AJAX call to login
+        fetch('signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'Username': username,
+                'Password': password
+            })
+        })
+        .then(response => {
+            console.log(response);
+            return response.json().then(data => {
+                console.log(data);
+                if (response.ok) {
+                    pathSegments.pop();
+                    let newPath = pathSegments.join('/') + '/home';
+                    window.location.href = newPath;
+                } else if (response.status === 401) {
+                    pathSegments.pop();
+                    let newPath = pathSegments.join('/') + '/error?errorMessage=' + encodeURIComponent(data.message);
+                    window.location.href = newPath;
+                } else {
+                    throw new Error(data.message || 'An error occurred');
+                }
+            })
+        })
+        .catch(error => {
+            const messageDiv = document.getElementById('message');
+            if(messageDiv) {
+                messageDiv.textContent = error.message;
+            }
+        });
+    }
+
+    document.getElementById('signupButton').addEventListener('click', handleSignup);
+
+    document.getElementById('signup').addEventListener("keypress", function(event) {
+        if (event.key === 'Enter') {
+            handleSignup();
+        }
+    });
+
+    document.getElementById('login').addEventListener('click', function() {
+        pathSegments.pop();
+        let newPath = pathSegments.join('/') + '/Login.html';
+        window.location.href = newPath;
+    });
+</script>
+</html>
