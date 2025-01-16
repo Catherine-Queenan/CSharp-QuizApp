@@ -37,7 +37,8 @@ public class SignupController : ControllerBase
             }
 
             // Insert new user into the database
-            Guid userId = Guid.NewGuid();
+            Guid newGuid = Guid.NewGuid();
+            byte[] userId = newGuid.ToByteArray();
             string role = "g"; // Default role for the user
             string hashedPassword = HashPassword(request.Password);
 
