@@ -53,7 +53,7 @@ namespace QuizApp.Utilities
                     mediaCommand.CommandText = "INSERT INTO category_media (category_name, media_id) VALUES (@category_name, @media_id)";
                     mediaCommand.Parameters.Add(new MySqlParameter("@category_name", entry["name"]?.ToString()));
                     
-                    byte[] media_idBytes = Convert.FromHe(media_id);
+                    byte[] media_idBytes = Convert.FromHexString(media_id);
                     mediaCommand.Parameters.Add(new MySqlParameter("@media_id", media_idBytes));
                     
                     mediaCommand.ExecuteNonQuery();

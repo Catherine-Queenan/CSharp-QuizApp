@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quizapp-app
+    environment:
+      DB_URL: jdbc:mysql://db:3306/testdb  # Database connection URL
+      DB_USER: root                        # Database username
+      DB_PASSWORD: root                    # Database password
+      ASPNETCORE_ENVIRONMENT: Development  # Environment for .NET app
+    ports:
+      - "8080:8080"                         # Expose application on port 8080
+    networks:
+      - quizapp-network
+    depends_on:
+      - db                                  # Ensure the database starts before the app
+    volumes:
+      - ./wwwroot:/app/wwwroot             # Static files directory
+
+  db:
+    image: mysql:5.7
+    container_name: quizapp-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root             # Root password for MySQL
+      MYSQL_DATABASE: testdb               # Create a database named 'quizapp'
+    ports:
+      - "3307:3306"                         # Map MySQL to port 3307
+    volumes:
+      - db_data:/var/lib/mysql              # Persist MySQL data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Initialization script for database
+    networks:
+      - quizapp-network
+
+volumes:
+  db_data:                                  # Named volume for database persistence
+
+networks:
+  quizapp-network:                          # Shared network for the services
