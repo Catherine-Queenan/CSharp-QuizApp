@@ -17,6 +17,25 @@ var app = builder.Build();
 
 app.UseStaticFiles();
 
+app.MapGet("/home", async context =>
+{
+    context.Response.ContentType = "text/html";
+    await context.Response.SendFileAsync("wwwroot/home.html");
+});
+
+app.MapGet("/login", async context =>
+{
+    context.Response.ContentType = "text/html";
+    await context.Response.SendFileAsync("wwwroot/login.html");
+});
+
+app.MapGet("/signup", async context =>
+{
+    context.Response.ContentType = "text/html";
+    await context.Response.SendFileAsync("wwwroot/signup.html");
+});
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

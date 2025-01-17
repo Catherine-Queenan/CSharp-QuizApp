@@ -27,7 +27,7 @@ namespace QuizApp.Utilities
                     switch (keyvaluePair[0])
                     {
                         case "id":
-                            this.id = Convert.FromBase64String(keyvaluePair[1]);
+                            this.id = Convert.FromHexString(keyvaluePair[1]);
                             break; // Assuming id is being set as a string representation
                         case "description":
                             this.description = keyvaluePair[1];
@@ -126,7 +126,7 @@ namespace QuizApp.Utilities
         {
             JsonObject jo = new JsonObject
             {
-                ["id"] = (this.id != null ? BitConverter.ToString(this.id) : ""),
+                ["id"] = (this.id != null ? BitConverter.ToString(this.id).Replace("-", "") : ""),
                 ["description"] = this.description,
                 ["media_type"] = this.media_type,
                 ["media_file_path"] = this.media_file_path,

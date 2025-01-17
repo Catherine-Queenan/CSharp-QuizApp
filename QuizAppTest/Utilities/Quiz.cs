@@ -34,7 +34,7 @@ namespace QuizApp.Utilities
                             this.description = keyvaluePair[1];
                             break;
                         case "media_id":
-                            this.media_id = Convert.FromBase64String(keyvaluePair[1]);
+                            this.media_id = Convert.FromHexString(keyvaluePair[1]);
                             break;
                     }
                 }
@@ -88,7 +88,7 @@ namespace QuizApp.Utilities
                 ["name"] = this.name,
                 ["category_name"] = this.category_name,
                 ["description"] = this.description,
-                ["media_id"] = (this.media_id != null ? BitConverter.ToString(this.media_id) : "")
+                ["media_id"] = (this.media_id != null ? BitConverter.ToString(this.media_id).Replace("-", "") : "")
             };
 
             return jo;

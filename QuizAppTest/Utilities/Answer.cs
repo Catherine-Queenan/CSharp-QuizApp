@@ -26,12 +26,12 @@ namespace QuizApp.Utilities
                 {
                     switch (keyvaluePair[0])
                     {
-                        case "id": this.id = Convert.FromBase64String(keyvaluePair[1]); break; // Assuming id is being set as a string representation
-                        case "question_id": this.question_id = Convert.FromBase64String(keyvaluePair[1]); break; // Same assumption
+                        case "id": this.id = Convert.FromHexString(keyvaluePair[1]); break; // Assuming id is being set as a string representation
+                        case "question_id": this.question_id = Convert.FromHexString(keyvaluePair[1]); break; // Same assumption
                         case "answer_text": this.answer_text = keyvaluePair[1]; break;
                         case "is_correct": this.is_correct = Int32.Parse(keyvaluePair[1]); break;
                         case "answer_type": this.answer_type = keyvaluePair[1]; break;
-                        case "media_id": this.media_id = Convert.FromBase64String(keyvaluePair[1]); break;
+                        case "media_id": this.media_id = Convert.FromHexString(keyvaluePair[1]); break;
                     }
                 }
             }
@@ -100,12 +100,12 @@ namespace QuizApp.Utilities
         {
             JsonObject jo = new JsonObject
             {
-                ["id"] = (this.id != null ? BitConverter.ToString(this.id) : ""),
-                ["question_id"] = (this.question_id != null ? BitConverter.ToString(this.question_id) : ""),
+                ["id"] = (this.id != null ? BitConverter.ToString(this.id).Replace("-", "") : ""),
+                ["question_id"] = (this.question_id != null ? BitConverter.ToString(this.question_id).Replace("-", "") : ""),
                 ["answer_text"] = this.answer_text,
                 ["is_correct"] = this.is_correct,
                 ["answer_type"] = this.answer_type,
-                ["media_id"] = (this.media_id != null ? BitConverter.ToString(this.media_id) : "")
+                ["media_id"] = (this.media_id != null ? BitConverter.ToString(this.media_id).Replace("-", "") : "")
             };
 
             return jo;

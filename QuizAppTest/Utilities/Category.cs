@@ -24,7 +24,7 @@ namespace QuizApp.Utilities
                     switch (keyvaluePair[0])
                     {
                         case "name": this.name = keyvaluePair[1]; break;
-                        case "media_id": this.media_id = Convert.FromBase64String(keyvaluePair[1]); break;
+                        case "media_id": this.media_id = Convert.FromHexString(keyvaluePair[1]); break;
                     }
                 }
             }
@@ -54,11 +54,11 @@ namespace QuizApp.Utilities
             JsonObject jo = new JsonObject
             {
                 ["name"] = this.name,
-                ["media_id"] = (this.media_id != null ? BitConverter.ToString(this.media_id) : "")
+                ["media_id"] = (this.media_id != null ? BitConverter.ToString(this.media_id).Replace("-","") : "")
             };
    
             return jo;
         }
     }
 }
-}
+

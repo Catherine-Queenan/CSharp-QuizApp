@@ -39,12 +39,17 @@ namespace QuizApp.Controllers
 
                         if (dbPassword == hashedEnteredPassword)
                         {
+                            HttpContext.Session.SetString("USER_ID", request.Username);
+                            HttpContext.Session.SetString("USER_ROLE", reader["role"]?.ToString() ?? "g");
+
+                            reader.Close();
                             // Successful login
                             return Ok(new { Status = "Success", Message = "Login successful.", Role = userRole });
                         }
                     }
                 }
             }
+
 
             // Invalid login
             return Unauthorized(new { Status = "Error", Message = "Invalid username or password." });

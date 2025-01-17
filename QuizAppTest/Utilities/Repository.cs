@@ -53,7 +53,7 @@ namespace QuizApp.Utilities
                     mediaCommand.CommandText = "INSERT INTO category_media (category_name, media_id) VALUES (@category_name, @media_id)";
                     mediaCommand.Parameters.Add(new MySqlParameter("@category_name", entry["name"]?.ToString()));
                     
-                    byte[] media_idBytes = Convert.FromBase64String(media_id);
+                    byte[] media_idBytes = Convert.FromHe(media_id);
                     mediaCommand.Parameters.Add(new MySqlParameter("@media_id", media_idBytes));
                     
                     mediaCommand.ExecuteNonQuery();
@@ -84,7 +84,7 @@ namespace QuizApp.Utilities
                     mediaCommand.CommandText = "INSERT INTO quiz_media (quiz_name, media_id) VALUES (@quiz_name, @media_id)";
                     mediaCommand.Parameters.Add(new MySqlParameter("@quiz_name", entry["name"]?.ToString()));
     
-                    byte[] media_idBytes = Convert.FromBase64String(media_id);
+                    byte[] media_idBytes = Convert.FromHexString(media_id);
                     mediaCommand.Parameters.Add(new MySqlParameter("@media_id", media_idBytes));
 
                     mediaCommand.ExecuteNonQuery();
@@ -103,7 +103,7 @@ namespace QuizApp.Utilities
                 command.CommandText = "INSERT INTO questions (id, quiz_name, question_text, question_type) VALUES (@id, @quiz_name, @question_text, @question_type)";
 
                 string? id = entry["id"]?.ToString();
-                byte[] idBytes = (id != null && id != "") ? Convert.FromBase64String(id) : Array.Empty<byte>();
+                byte[] idBytes = (id != null && id != "") ? Convert.FromHexString(id) : Array.Empty<byte>();
                 command.Parameters.Add(new MySqlParameter("@id", idBytes));
                 command.Parameters.Add(new MySqlParameter("@quiz_name", entry["quiz_name"]?.ToString()));
                 command.Parameters.Add(new MySqlParameter("@question_text", entry["question_text"]?.ToString()));
@@ -118,7 +118,7 @@ namespace QuizApp.Utilities
                     mediaCommand.CommandText = "INSERT INTO question_media (question_id, media_id) VALUES (@question_id, @media_id)";
 
                     mediaCommand.Parameters.Add(new MySqlParameter("@question_id", idBytes));
-                    byte[] media_idBytes = Convert.FromBase64String(media_id);
+                    byte[] media_idBytes = Convert.FromHexString(media_id);
                     mediaCommand.Parameters.Add(new MySqlParameter("@media_id", media_idBytes));
                     mediaCommand.ExecuteNonQuery();
                 }
@@ -135,11 +135,11 @@ namespace QuizApp.Utilities
                 command.CommandText = "INSERT INTO answers (id, question_id, answer_text, is_correct, answer_type) VALUES (@id, @question_id, @answer_text, @is_correct, @answer_type)";
     
                 string? id = entry["id"]?.ToString();
-                byte[] idBytes = (id != null && id != "") ? Convert.FromBase64String(id) : Array.Empty<byte>();
+                byte[] idBytes = (id != null && id != "") ? Convert.FromHexString(id) : Array.Empty<byte>();
                 command.Parameters.Add(new MySqlParameter("@id", idBytes));
 
                 string? question_id = entry["question_id"]?.ToString();
-                byte[] question_idBytes = question_id != null && question_id != "" ? Convert.FromBase64String(question_id) : Array.Empty<byte>();
+                byte[] question_idBytes = question_id != null && question_id != "" ? Convert.FromHexString(question_id) : Array.Empty<byte>();
                 command.Parameters.Add(new MySqlParameter("@question_id", question_idBytes));
 
                 command.Parameters.Add(new MySqlParameter("@answer_text", entry["answer_text"]?.ToString()));
@@ -174,7 +174,7 @@ namespace QuizApp.Utilities
                 command.CommandText = "INSERT INTO media (id, description, media_type, media_file_path, media_filename, media_start, media_end) VALUES (@id, @description, @media_type, @media_file_path, @media_filename, @media_start, @media_end)";
 
                 string? id = entry["id"]?.ToString();
-                byte[] idBytes = (id != null && id != "") ? Convert.FromBase64String(id) : Array.Empty<byte>();
+                byte[] idBytes = (id != null && id != "") ? Convert.FromHexString(id) : Array.Empty<byte>();
                 command.Parameters.Add(new MySqlParameter("@id", idBytes));
 
                 command.Parameters.Add(new MySqlParameter("@description", entry["description"]?.ToString()));
@@ -212,26 +212,23 @@ namespace QuizApp.Utilities
 
         }
 
-        private string createConstructorParameters(IDataReader rs, string tableType)
+        private string createConstructorParameters(Dictionary<String, Object> rs, string tableType)
         {
             StringBuilder parameters = new("");
-
-                int columns = rs.FieldCount;
-
                 string prefix = "";
-                for (int i = 0; i <= columns; i++)
+                foreach (var column in rs)
                 {
-                    string colName = rs.GetName(i);
+                    string colName = column.Key;
                     parameters.Append(prefix).Append(colName).Append(":==");
                     prefix = ",,,";
                     if (colName == "id" || colName.Contains("_id"))
                     {
-                        string? id = rs[colName]?.ToString();
-                        parameters.Append(id);
+                        byte[]? id = (byte[])column.Value;
+                        parameters.Append(BitConverter.ToString(id).Replace("-",""));
                     }
                     else
                     {
-                        string? entry = rs[colName]?.ToString();
+                        string? entry = column.Value.ToString();
                         parameters.Append(entry);
                     }
                 }
@@ -265,12 +262,14 @@ namespace QuizApp.Utilities
 
                     if (command != null)
                     {
-                        var reader = command.ExecuteReader();
+                        var mediaReader = command.ExecuteReader();
 
-                        if (reader.Read())
+                        if (mediaReader.Read())
                         {
-                            parameters.Append(prefix).Append("media_id:==").Append(reader["media_id"].ToString());
+                            parameters.Append(prefix).Append("media_id:==").Append(BitConverter.ToString((byte[])mediaReader["media_id"]).Replace("-", ""));
                         }
+
+                        mediaReader.Close();
                     }
                 }
             
@@ -358,7 +357,7 @@ namespace QuizApp.Utilities
                         command.CommandText = "DELETE FROM quizzes WHERE " + criteria;
                         break;
                     case "question":
-                        id = Convert.FromBase64String(criteria);
+                        id = Convert.FromHexString(criteria);
                         command.CommandText = "DELETE FROM questions WHERE id = @criteria ";
                         break;
                     case "answer":
@@ -406,10 +405,10 @@ namespace QuizApp.Utilities
                         break;
                     case "answer":
                         command.CommandText = "SELECT * FROM answers WHERE question_id = @criteria " + criteria.Split(",")[1];
-                        id = Convert.FromBase64String(criteria.Split(",")[0]);
+                        id = Convert.FromHexString(criteria.Split(",")[0]);
                         break;
                     case "media":
-                        id = Convert.FromBase64String(criteria);
+                        id = Convert.FromHexString(criteria);
                         command.CommandText = "SELECT * FROM media WHERE id = @criteria";
                         break;
                 }
@@ -420,9 +419,11 @@ namespace QuizApp.Utilities
                 }
 
                 var reader = command.ExecuteReader();
-                while (reader.Read())
+                var resultSet = ReadResults(reader);
+                reader.Close();
+                foreach(var result in resultSet)
                 {
-                    string parameters = createConstructorParameters(reader, tableType);
+                    string parameters = createConstructorParameters(result, tableType);
                     AClass cat = factory.createAClass(tableType, parameters);
                     selectedEntries.Add(cat);
                 }
@@ -431,5 +432,24 @@ namespace QuizApp.Utilities
             return selectedEntries;
 
         }
+
+        static List<Dictionary<string, object>> ReadResults(IDataReader reader)
+        {
+            var entries = new List<Dictionary<string, object>>();
+
+            while (reader.Read())
+            {
+                var entry = new Dictionary<string, object>();
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    entry[reader.GetName(i)] = reader.GetValue(i);
+                }
+                entries.Add(entry);
+            }
+
+            return entries;
+        }
     }
 }
+
+    

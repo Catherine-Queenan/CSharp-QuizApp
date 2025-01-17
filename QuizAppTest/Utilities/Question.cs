@@ -99,11 +99,11 @@ namespace QuizApp.Utilities
         {
             JsonObject jo = new JsonObject
             {
-                ["id"] = (this.id != null ? BitConverter.ToString(this.id) : ""),
+                ["id"] = (this.id != null ? BitConverter.ToString(this.id).Replace("-", "") : ""),
                 ["quiz_name"] = this.quiz_name,
                 ["question_text"] = this.question_text,
                 ["question_type"] = this.question_type,
-                ["media_id"] = (this.media_id != null ? BitConverter.ToString(this.media_id) : "")
+                ["media_id"] = (this.media_id != null ? BitConverter.ToString(this.media_id).Replace("-", "") : "")
             };
             
 
