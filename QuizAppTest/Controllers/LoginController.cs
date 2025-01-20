@@ -52,7 +52,7 @@ namespace QuizApp.Controllers
 
 
             // Invalid login
-            return Unauthorized(new { Status = "Error", Message = "Invalid username or password." });
+            return Unauthorized(new { Status = "Error", Message = "401 Invalid username or password." });
         }
 
         // Helper function to hash the password before comparing

@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +65,11 @@ public class Program
         {
             context.Response.ContentType = "text/html";
             await context.Response.SendFileAsync("wwwroot/signup.html");
+        });
+
+        app.MapGet("/error", async context => {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/error.html");
         });
 
         // Configure the HTTP request pipeline.
