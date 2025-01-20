@@ -319,6 +319,7 @@
             //const correctButton = document.querySelector('.answer[id="rightPlayAnswer"]');
 
             let correctAnswerButton = document.getElementById("rightPlayAnswer");
+            console.log(correctAnswerButton);
             let answerMedia = document.getElementById("mediaAnswer");
             correctAnswerButton.addEventListener('click', () => {
                 correctAnswerButton.style.boxShadow = "0px 0px 50px rgb(0, 244, 0)";
@@ -533,7 +534,7 @@
                     submitCorrectAnswer();
                 }
             }
-        });
+        }, 100);
 
 
         
