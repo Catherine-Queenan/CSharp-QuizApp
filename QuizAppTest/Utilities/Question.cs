@@ -26,7 +26,7 @@ namespace QuizApp.Utilities
                     switch (keyvaluePair[0])
                     {
                         case "id":
-                            this.id = Convert.FromBase64String(keyvaluePair[1]);
+                            this.id = Convert.FromHexString(keyvaluePair[1]);
                             break; // Assuming id is being set as a string representation
                         case "quiz_name":
                             this.quiz_name = keyvaluePair[1];
@@ -38,7 +38,7 @@ namespace QuizApp.Utilities
                             this.question_type = keyvaluePair[1];
                             break;
                         case "media_id":
-                            this.media_id = Convert.FromBase64String(keyvaluePair[1]);
+                            this.media_id = Convert.FromHexString(keyvaluePair[1]);
                             break;
                     }
                 }

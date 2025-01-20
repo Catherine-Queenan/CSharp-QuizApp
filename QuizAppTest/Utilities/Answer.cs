@@ -29,7 +29,7 @@ namespace QuizApp.Utilities
                         case "id": this.id = Convert.FromHexString(keyvaluePair[1]); break; // Assuming id is being set as a string representation
                         case "question_id": this.question_id = Convert.FromHexString(keyvaluePair[1]); break; // Same assumption
                         case "answer_text": this.answer_text = keyvaluePair[1]; break;
-                        case "is_correct": this.is_correct = Int32.Parse(keyvaluePair[1]); break;
+                        case "is_correct": this.is_correct = (keyvaluePair[1] == "True") ? 1 : 0; break;
                         case "answer_type": this.answer_type = keyvaluePair[1]; break;
                         case "media_id": this.media_id = Convert.FromHexString(keyvaluePair[1]); break;
                     }

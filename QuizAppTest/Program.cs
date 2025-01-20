@@ -17,12 +17,6 @@ var app = builder.Build();
 
 app.UseStaticFiles();
 
-app.MapGet("/home", async context =>
-{
-    context.Response.ContentType = "text/html";
-    await context.Response.SendFileAsync("wwwroot/home.html");
-});
-
 app.MapGet("/login", async context =>
 {
     context.Response.ContentType = "text/html";
@@ -34,6 +28,25 @@ app.MapGet("/signup", async context =>
     context.Response.ContentType = "text/html";
     await context.Response.SendFileAsync("wwwroot/signup.html");
 });
+
+app.MapGet("/home", async context =>
+{
+    context.Response.ContentType = "text/html";
+    await context.Response.SendFileAsync("wwwroot/home.html");
+});
+
+app.MapGet("/quizzes/{*slug}", async context =>
+{
+    context.Response.ContentType = "text/html";
+    await context.Response.SendFileAsync("wwwroot/quizzes.html");
+});
+
+app.MapGet("/play", async context =>
+{
+    context.Response.ContentType = "text/html";
+    await context.Response.SendFileAsync("wwwroot/play.html");
+});
+
 
 
 // Configure the HTTP request pipeline.

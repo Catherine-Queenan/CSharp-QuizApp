@@ -26,7 +26,7 @@ namespace QuizApp.Controllers
 
             if (string.IsNullOrEmpty(userRole))
             {
-                return Redirect("/login.html");
+                return Redirect("/login");
             }
 
             JsonObject jsonResponse = new JsonObject();
@@ -66,7 +66,7 @@ namespace QuizApp.Controllers
 
             jsonResponse["categories"] = categoriesArray;
 
-            // Serve the main.jsp file
+            // Serve JSON of categories 
             return Json(jsonResponse);
         }
     }
