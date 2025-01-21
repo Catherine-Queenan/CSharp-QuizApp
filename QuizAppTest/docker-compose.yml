@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quizapp-app
+    environment:
+      DB_URL: jdbc:mysql://db:3306/testdb
+      DB_USER: root
+      DB_PASSWORD: root
+      ASPNETCORE_ENVIRONMENT: Development  # Environment for .NET app
+
+      ASPNETCORE_Kestrel__Certificates__Default__Password: q12773250P
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+    ports:
+      - "8080:8080" # HTTP
+      - "8081:8081"   # HTTPS
+    networks:
+      - quizapp-network
+    depends_on:
+      - db
+    volumes:
+      - ./wwwroot:/app/wwwroot
+      - ./certs:/https
+
+  db:
+    image: mysql:5.7
+    container_name: quizapp-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: testdb
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - quizapp-network
+
+volumes:
+  db_data:
+
+networks:
+  quizapp-network:

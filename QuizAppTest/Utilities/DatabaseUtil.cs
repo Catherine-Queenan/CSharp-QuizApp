@@ -6,17 +6,25 @@ namespace QuizApp.Utilities
 {
     public class DatabaseUtil
     {
-        private readonly IConfiguration _configuration;
+        private readonly string _connectionString;
 
         public DatabaseUtil(IConfiguration configuration)
         {
-            _configuration = configuration;
+            // First, try to get the connection string from environment variables.
+            // If not set, fall back to appsettings.json.
+            _connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+                                ?? configuration.GetConnectionString("DefaultConnection");
         }
 
         public IDbConnection GetConnection()
         {
-            var connectionString = _configuration.GetConnectionString("DefaultConnection");
-            return new MySqlConnection(connectionString);
+            // Validate the connection string
+            if (string.IsNullOrEmpty(_connectionString))
+            {
+                throw new InvalidOperationException("Database connection string is not configured.");
+            }
+
+            return new MySqlConnection(_connectionString);
         }
     }
 }
