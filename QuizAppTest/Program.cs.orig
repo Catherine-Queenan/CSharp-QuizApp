@@ -6,21 +6,28 @@ public class Program
 {
     public static async void Main(string[] args)
     {
-var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers();
-builder.Services.AddScoped<DatabaseUtil>(); // Register DatabaseUtil as a scoped service
+        // Add services to the container.
+        builder.Services.AddControllers();
+        builder.Services.AddScoped<DatabaseUtil>(); // Register DatabaseUtil as a scoped service
 
-// Add session services
-builder.Services.AddDistributedMemoryCache(); // Add in-memory cache
-builder.Services.AddSession(options =>
-{
+        // Add session services
+        builder.Services.AddDistributedMemoryCache(); // Add in-memory cache
+        builder.Services.AddSession(options =>
+        {
             options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
             options.Cookie.HttpOnly = true; // Protect cookies
             options.Cookie.IsEssential = true; // Ensure cookies are not optional
-});
+        });
 
+<<<<<<< HEAD
+app.MapGet("/login", async context =>
+{
+    context.Response.ContentType = "text/html";
+    await context.Response.SendFileAsync("wwwroot/login.html");
+});
+=======
         // Configure HTTPS with custom certificate
         builder.WebHost.ConfigureKestrel(serverOptions =>
         {
@@ -37,29 +44,11 @@ builder.Services.AddSession(options =>
             options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
             options.HttpsPort = 8081; // HTTPS port
         });
+>>>>>>> c9dfb29333e5445b44d336a2e3321334beccb5b8
 
-var app = builder.Build();
+        var app = builder.Build();
 
-        // Use forwarded headers to handle proxy setups (e.g., for containers)
-        app.UseForwardedHeaders(new ForwardedHeadersOptions
-        {
-            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-        });
-
-        app.UseStaticFiles(); // Serve static files
-
-app.MapGet("/login", async context =>
-{
-    context.Response.ContentType = "text/html";
-    await context.Response.SendFileAsync("wwwroot/login.html");
-});
-
-app.MapGet("/signup", async context =>
-{
-    context.Response.ContentType = "text/html";
-    await context.Response.SendFileAsync("wwwroot/signup.html");
-});
-
+<<<<<<< HEAD
 app.MapGet("/home", async context =>
 {
     context.Response.ContentType = "text/html";
@@ -78,17 +67,46 @@ app.MapGet("/play", async context =>
     await context.Response.SendFileAsync("wwwroot/play.html");
 });
 
+
+=======
+        // Use forwarded headers to handle proxy setups (e.g., for containers)
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+        });
+>>>>>>> c9dfb29333e5445b44d336a2e3321334beccb5b8
+
+        app.UseStaticFiles(); // Serve static files
+
+        // Map routes for static pages
+        app.MapGet("/home", async context =>
+        {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/home.html");
+        });
+
+        app.MapGet("/login", async context =>
+        {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/login.html");
+        });
+
+        app.MapGet("/signup", async context =>
+        {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/signup.html");
+        });
+
         app.MapGet("/error", async context => {
             context.Response.ContentType = "text/html";
             await context.Response.SendFileAsync("wwwroot/error.html");
         });
 
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
         else
         {
             // Configure strict security headers for production
@@ -96,12 +114,12 @@ if (app.Environment.IsDevelopment())
         }
 
         app.UseHttpsRedirection(); // Redirect HTTP to HTTPS
-app.UseAuthorization();
-app.UseSession(); // Enable session middleware
+        app.UseAuthorization();
+        app.UseSession(); // Enable session middleware
 
         // Map API controllers
-app.MapControllers();
+        app.MapControllers();
 
-app.Run();
+        app.Run();
     }
 }
