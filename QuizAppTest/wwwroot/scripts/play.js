@@ -49,6 +49,7 @@ function BuildPage() {
 
         } else {
             const questionDiv = document.createElement("div");
+            questionContainer.appendChild(questionDiv);
             questionDiv.classList.add("question");
 
             const questionText = document.createElement("p");
@@ -62,7 +63,6 @@ function BuildPage() {
             }
 
             insertAnswers(data.question.answers, questionDiv);
-            questionContainer.appendChild(questionDiv);
         }
     });
 }
@@ -210,5 +210,3 @@ function insertAnswers(answers, questionDiv) {
     }
     questionDiv.appendChild(answerOptions);
 }
-
-BuildPage();
