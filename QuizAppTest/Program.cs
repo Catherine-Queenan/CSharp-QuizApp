@@ -10,6 +10,8 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllers();
+        builder.Services.AddControllersWithViews();
+
         builder.Services.AddScoped<DatabaseUtil>(); // Register DatabaseUtil as a scoped service
 
         // Add session services
@@ -61,10 +63,6 @@ public class Program
         // Enable authorization (if needed)
         app.UseAuthorization();
 
-        app.MapGet("/test", async context =>
-        {
-            await context.Response.WriteAsync("Test route is working!");
-        });
         app.MapGet("/login", async context =>
         {
             context.Response.ContentType = "text/html";
