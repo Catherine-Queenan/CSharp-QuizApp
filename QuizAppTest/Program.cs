@@ -100,6 +100,10 @@ public class Program
             await context.Response.SendFileAsync("wwwroot/error.html");
         });
 
+        // Websocket stuff
+        app.UseWebSockets();
+        app.UseMiddleware<QuestionWebSocketMiddleware>();
+
         // Map API controllers
         app.MapControllers();
 
