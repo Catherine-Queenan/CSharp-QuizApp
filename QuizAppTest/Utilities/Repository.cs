@@ -72,8 +72,8 @@ namespace QuizApp.Utilities
                 var command = _connection.CreateCommand();
                 command.CommandText = "INSERT INTO quizzes (name, category_name, description) VALUES (@name, @category_name, @description)";
                 command.Parameters.Add(new MySqlParameter("@name", entry["name"]?.ToString()));
-                command.Parameters.Add(new MySqlParameter("@name", entry["category_name"]?.ToString()));
-                command.Parameters.Add(new MySqlParameter("@name", entry["description"]?.ToString()));
+                command.Parameters.Add(new MySqlParameter("@category_name", entry["category_name"]?.ToString()));
+                command.Parameters.Add(new MySqlParameter("@description", entry["description"]?.ToString()));
                 command.ExecuteNonQuery();
 
                 string? media_id = entry["id"]?.ToString();

@@ -1,6 +1,8 @@
 using QuizApp.Utilities;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Extensions.FileProviders;
+using System.Security.AccessControl;
 
 public class Program
 {
@@ -51,8 +53,23 @@ public class Program
         // Use HTTPS redirection
         //app.UseHttpsRedirection();
 
-        // Serve static files
+        // Serve static files (wwwroot)
         app.UseStaticFiles();
+
+        //Establish folder for image uploads
+        string UploadPath = app.Configuration["UploadPath"] ?? "C:\\temp\\uploads";
+
+        // Ensure the directory exists
+        if (!Directory.Exists(UploadPath))
+        {
+            Directory.CreateDirectory(UploadPath);
+        }
+
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(UploadPath),
+            RequestPath = "/uploads"
+        });
 
         // Enable session middleware (after static files and before routing)
         app.UseSession();
@@ -96,6 +113,11 @@ public class Program
         app.MapGet("/error", async context => {
             context.Response.ContentType = "text/html";
             await context.Response.SendFileAsync("wwwroot/error.html");
+        });
+
+        app.MapGet("/createQuiz", async context => {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/createQuiz.html");
         });
 
         // Map API controllers
