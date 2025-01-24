@@ -41,7 +41,6 @@ namespace QuizApp.Controllers
             _databaseUtil = databaseUtil;
             init(databaseUtil);
             _moderationSessionManager = new ModerationSessionManager(_databaseUtil);
-
         }
 
         [HttpGet]
@@ -153,8 +152,8 @@ namespace QuizApp.Controllers
             //ViewData["quizName"] = quizName;
             //ViewData["moderatorId"] = moderator;
             //ViewData["QuestionsHtml"] = questionsHtml.ToString();
-            //return View("moderatedMode");
-            return Redirect("/moderatedQuiz/quizName=" + quizName);
+            //return View("ModeratedMode");
+            return Redirect("/help=" + quizName);
         }
         //public IActionResult Index(string quizName, string sessionId)
         //{
@@ -201,8 +200,8 @@ namespace QuizApp.Controllers
         //    return Json(new { status = "error", message = "Session ID not provided" });
         //}
 
-        [HttpGet("{quizName}")]
-        public IActionResult Get(string quizName, string sessionId)
+        [HttpGet("/{quizName}")]
+        public IActionResult Get([FromQuery] string quizName, [FromQuery] string? sessionId)
         {
             return Json(new { status = "error", message = "am I cooking or am I being cooked" });
         }

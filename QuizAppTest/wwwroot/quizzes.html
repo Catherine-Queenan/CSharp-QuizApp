@@ -403,7 +403,8 @@
                 },
             })
             .then(response => {
-                console.log(response)
+                console.log("response.json is here ", response.json());
+                console.log("response is here ", response)
                 if (!response.ok) {
                     throw new Error('Failed to start moderation session');
                 }
@@ -412,6 +413,38 @@
             .then(data => {
                 window.location.href = `${pathSegments.join('/')}/api/ModeratedMode?sessionId=${data.sessionId}&quizName=${quizName}`;
             })
+            //.then(data => {
+            //    console.log("data.json is here ", data.json())
+            //    console.log("data is here ", data)
+            //    if (data.status === "success" && data.sessionId) {
+            //        // Redirect to moderated mode with the new modSessionId
+            //        //console.log(`${pathSegments.join('/')}/api/ModeratedMode?sessionId=${data.sessionId}&quizName=${quizName})`;
+            //        window.location.href = `${pathSegments.join('/')}/api/ModeratedMode?sessionId=${data.sessionId}&quizName=${quizName}`;
+            //    } else {
+            //        alert("Failed to create moderation session.");
+            //    }
+            //})
+            //.catch(error => {
+            //    console.error('Error starting moderation session:', error);
+            //    alert("Error starting moderation session. Please try again.");
+            //});
+
+            //fetch(startSessionPath, {
+            //    method: 'GET',
+            //    headers: {
+            //        'Accept': 'application/json'
+            //    },
+            //})
+            //.then(response => {
+            //    console.log(response)
+            //    if (!response.ok) {
+            //        throw new Error('Failed to start moderation session');
+            //    }
+            //    return response;
+            //})
+            //.then(data => {
+            //    window.location.href = `${pathSegments.join('/')}/api/ModeratedMode?sessionId=${data.sessionId}&quizName=${quizName}`;
+            //})
 
             //.then(data => {
             //    console.log('Response Data:', data); // Log the resolved data
@@ -427,6 +460,7 @@
             //    console.error('Error starting moderation session:', error);
             //    alert("Error starting moderation session. Please try again.");
             //});
+
 
             //fetch(startSessionPath, {
             //    method: 'GET',

@@ -28,6 +28,7 @@ namespace QuizApp.Controllers
                         if (string.IsNullOrEmpty(moderatorId)) return Unauthorized("User not logged in.");
 
                         string modSessionId = moderationSessionManager.StartModeratedSession(moderatorId, quizName);
+                        //return new JsonResult(StatusCode(1000));
                         return Ok(new { status = "success", sessionId = modSessionId });
 
                     case "endmoderatedsession":
