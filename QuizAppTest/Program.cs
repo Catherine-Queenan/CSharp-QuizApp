@@ -128,6 +128,9 @@ public class Program
             context.Response.ContentType = "text/html";
             await context.Response.SendFileAsync("wwwroot/editQuestion.html");
         });
+        // Websocket stuff
+        app.UseWebSockets();
+        app.UseMiddleware<QuestionWebSocketMiddleware>();
 
         // Map API controllers
         app.MapControllers();
