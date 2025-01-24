@@ -45,7 +45,7 @@ namespace QuizApp.Utilities
                 command.Parameters.Add(new MySqlParameter("@name", entry["name"]?.ToString()));
                 command.ExecuteNonQuery();
 
-                string? media_id = entry["id"]?.ToString();
+                string? media_id = entry["media_id"]?.ToString();
                 if (media_id != null && media_id != "")
                 {
 
@@ -76,7 +76,7 @@ namespace QuizApp.Utilities
                 command.Parameters.Add(new MySqlParameter("@description", entry["description"]?.ToString()));
                 command.ExecuteNonQuery();
 
-                string? media_id = entry["id"]?.ToString();
+                string? media_id = entry["media_id"]?.ToString();
                 if (media_id != null && media_id != "")
                 {
                     // Associate quiz with respective media
@@ -157,7 +157,7 @@ namespace QuizApp.Utilities
                     mediaCommand.CommandText = "INSERT INTO answer_media (answer_id, media_id) VALUES (@answer_id, @media_id)";
         
                     mediaCommand.Parameters.Add(new MySqlParameter("@answer_id", idBytes));
-                    byte[] media_idBytes = Convert.FromBase64String(media_id);
+                    byte[] media_idBytes = Convert.FromHexString(media_id);
                     mediaCommand.Parameters.Add(new MySqlParameter("@media_id", media_idBytes));
                     mediaCommand.ExecuteNonQuery();
                 }
@@ -313,7 +313,11 @@ namespace QuizApp.Utilities
                 StringBuilder query = new("UPDATE quizzes SET ");
                 foreach (string col in values)
                 {
-                    query.Append(col).Append("= @").Append(col).Append(",");
+                    if(col != "media_id")
+                    {
+                        query.Append(col).Append("= @").Append(col).Append(",");
+                    }
+                    
                 }
                 query.Remove(query.Length - 1, 1);
                 query.Append(" WHERE name = @name");
@@ -321,15 +325,176 @@ namespace QuizApp.Utilities
                 command.CommandText = query.ToString();
                 for (int i = 0; i < values.Length; i++)
                 {
-                    command.Parameters.Add(new MySqlParameter("@" + values[i], updatedEntry[values[i]]?.ToString()));
+                    if (values[i] == "media_id")
+                    {
+                        var mediaCommand = _connection.CreateCommand();
+                        mediaCommand.CommandText = "INSERT INTO quiz_media (quiz_name, media_id) VALUES (@quiz_name, @media_id)";
+                        mediaCommand.Parameters.Add(new MySqlParameter("@quiz_name", pKey));
+
+                        string? id = updatedEntry["media_id"]?.ToString();
+                        byte[] idBytes = (id != null && id != "") ? Convert.FromHexString(id) : Array.Empty<byte>();
+                        mediaCommand.Parameters.Add(new MySqlParameter("@media_id", idBytes));
+
+                        mediaCommand.ExecuteNonQuery();
+                    } else
+                    {
+                        command.Parameters.Add(new MySqlParameter("@" + values[i], updatedEntry[values[i]]?.ToString()));
+                    }
+                    
                 }
                 command.Parameters.Add(new MySqlParameter("@name", pKey));
                 command.ExecuteNonQuery();
             }
-            
         }
 
-    public void update(AClass update, string pKey, string values)
+        private void updateQuestion(JsonObject updatedEntry, string pKey, string[] values)
+        {
+            if (_connection != null)
+            {
+                byte[] pKeyBytes = (pKey != null && pKey != "") ? Convert.FromHexString(pKey) : Array.Empty<byte>();
+
+                StringBuilder query = new("UPDATE questions SET ");
+                foreach (string col in values)
+                {
+                    if (col != "media_id")
+                    {
+                        query.Append(col).Append("= @").Append(col).Append(",");
+                    }
+                }
+
+                query.Remove(query.Length - 1, 1);
+                query.Append(" WHERE id = @id");
+
+                var command = _connection.CreateCommand();
+                command.CommandText = query.ToString();
+
+                for (int i = 0; i < values.Length; i++)
+                {
+                    if (values[i] == "media_id")
+                    {
+                        var mediaCommand = _connection.CreateCommand();
+                        mediaCommand.CommandText = "INSERT INTO question_media (question_id, media_id) VALUES (@question_id, @media_id)";
+                        mediaCommand.Parameters.Add(new MySqlParameter("@question_id", pKeyBytes));
+
+                        string? id = updatedEntry["media_id"]?.ToString();
+                        byte[] idBytes = (id != null && id != "") ? Convert.FromHexString(id) : Array.Empty<byte>();
+                        mediaCommand.Parameters.Add(new MySqlParameter("@media_id", idBytes));
+
+                        mediaCommand.ExecuteNonQuery();
+                    }
+                    else
+                    {
+                        command.Parameters.Add(new MySqlParameter("@" + values[i], updatedEntry[values[i]]?.ToString()));
+                    }
+                }
+
+                command.Parameters.Add(new MySqlParameter("@id", pKeyBytes));
+                command.ExecuteNonQuery();
+            }
+        }
+
+        private void updateAnswer(JsonObject updatedEntry, string pKey, string[] values)
+        {
+            if (_connection != null)
+            {
+                byte[] pKeyBytes = (pKey != null && pKey != "") ? Convert.FromHexString(pKey) : Array.Empty<byte>();
+
+                StringBuilder query = new("UPDATE answers SET ");
+                foreach (string col in values)
+                {
+                    if (col != "media_id")
+                    {
+                        query.Append(col).Append("= @").Append(col).Append(",");
+                    }
+                }
+
+                query.Remove(query.Length - 1, 1);
+                query.Append(" WHERE id = @id");
+
+                var command = _connection.CreateCommand();
+                command.CommandText = query.ToString();
+
+                for (int i = 0; i < values.Length; i++)
+                {
+                    if (values[i] == "media_id")
+                    {
+                        var deleteMediaCommand = _connection.CreateCommand();
+                        deleteMediaCommand.CommandText = "DELETE FROM answer_media WHERE media_id = @media_id";
+                        deleteMediaCommand.Parameters.Add(new MySqlParameter("@media_id", updatedEntry["media_id"]));
+                        deleteMediaCommand.ExecuteNonQuery();
+
+                        var mediaCommand = _connection.CreateCommand();
+                        mediaCommand.CommandText = "INSERT INTO answer_media (answer_id, media_id) VALUES (@answer_id, @media_id)";
+                        mediaCommand.Parameters.Add(new MySqlParameter("@answer_id", pKeyBytes));
+
+                        string? id = updatedEntry["media_id"]?.ToString();
+                        byte[] idBytes = (id != null && id != "") ? Convert.FromHexString(id) : Array.Empty<byte>();
+                        mediaCommand.Parameters.Add(new MySqlParameter("@media_id", idBytes));
+
+                        mediaCommand.ExecuteNonQuery();
+                    }
+                    else
+                    {
+                        if (values[i] == "is_correct")
+                        {
+                            var parameterValue = updatedEntry[values[i]]?.GetValue<int>();
+                            command.Parameters.Add(new MySqlParameter("@" + values[i], parameterValue));
+                        } else
+                        {
+                            var parameterValue = updatedEntry[values[i]]?.ToString();
+                            command.Parameters.Add(new MySqlParameter("@" + values[i], parameterValue));
+                        }
+                        
+                        
+                    }
+                }
+
+                command.Parameters.Add(new MySqlParameter("@id", pKeyBytes));
+                command.ExecuteNonQuery();
+            }
+        }
+
+        private void updateMedia(JsonObject updatedEntry, string pKey, string[] values)
+        {
+            if (_connection != null)
+            {
+                byte[] pKeyBytes =  Convert.FromHexString(pKey);
+
+                StringBuilder query = new("UPDATE media SET ");
+                foreach (string col in values)
+                {
+                    query.Append(col).Append("= @").Append(col).Append(",");
+                }
+
+                query.Remove(query.Length - 1, 1);
+                query.Append(" WHERE id = @id");
+
+                var command = _connection.CreateCommand();
+                command.CommandText = query.ToString();
+
+                for (int i = 0; i < values.Length; i++)
+                {
+                    if (values[i] == "media_start" || values[i] == "media_end")
+                    {
+                        var parameterValue = updatedEntry[values[i]]?.GetValue<int>();
+                        command.Parameters.Add(new MySqlParameter("@" + values[i], parameterValue));
+                    } else
+                    {
+                        var parameterValue = updatedEntry[values[i]]?.ToString();
+                        command.Parameters.Add(new MySqlParameter("@" + values[i], parameterValue));
+                    }
+                        
+
+                }
+
+                command.Parameters.Add(new MySqlParameter("@id", pKeyBytes));
+                int rows = command.ExecuteNonQuery();
+            }
+        }
+
+
+
+        public void update(AClass update, string pKey, string values)
         {
             string table = update.getTableType();
             JsonObject updatedEntry = update.serialize();
@@ -339,6 +504,16 @@ namespace QuizApp.Utilities
                 case "quiz":
                     updateQuiz(updatedEntry, pKey, changeColumns);
                     break;
+                case "media":
+                    updateMedia(updatedEntry, pKey, changeColumns);
+                    break;
+                case "question":
+                    updateQuestion(updatedEntry, pKey, changeColumns);
+                    break;
+                case "answer":
+                    updateAnswer(updatedEntry, pKey, changeColumns);
+                    break;
+                
             }
         }
 

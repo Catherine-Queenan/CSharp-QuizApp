@@ -218,7 +218,7 @@
             pathSegments.pop();
             let newPath = pathSegments.join('/') + '/api/createQuiz';
             const quizName = document.getElementById('quizName').value;
-            let successPath = pathSegments.join('/') + '/editQuestions/' + quizName;
+            let successPath = pathSegments.join('/') + '/edit/' + quizName + '/questions';
 
 
             console.log(formData);

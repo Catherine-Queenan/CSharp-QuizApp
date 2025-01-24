@@ -16,6 +16,10 @@ public class Program
 
         builder.Services.AddScoped<DatabaseUtil>(); // Register DatabaseUtil as a scoped service
 
+        // Configure logging
+        builder.Logging.AddConsole();    // Add console logging
+        builder.Logging.AddDebug();      // Add debug logging (for debugging in IDE)
+
         // Add session services
         builder.Services.AddDistributedMemoryCache(); // Add in-memory cache
         builder.Services.AddSession(options =>
@@ -55,21 +59,6 @@ public class Program
 
         // Serve static files (wwwroot)
         app.UseStaticFiles();
-
-        //Establish folder for image uploads
-        string UploadPath = app.Configuration["UploadPath"] ?? "C:\\temp\\uploads";
-
-        // Ensure the directory exists
-        if (!Directory.Exists(UploadPath))
-        {
-            Directory.CreateDirectory(UploadPath);
-        }
-
-        app.UseStaticFiles(new StaticFileOptions
-        {
-            FileProvider = new PhysicalFileProvider(UploadPath),
-            RequestPath = "/uploads"
-        });
 
         // Enable session middleware (after static files and before routing)
         app.UseSession();
@@ -118,6 +107,21 @@ public class Program
         app.MapGet("/createQuiz", async context => {
             context.Response.ContentType = "text/html";
             await context.Response.SendFileAsync("wwwroot/createQuiz.html");
+        });
+
+        app.MapGet("/edit/{quiz}/", async context => {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/editQuiz.html");
+        });
+
+        app.MapGet("/edit/{quiz}/questions", async context => {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/editQuizQuestions.html");
+        });
+
+        app.MapGet("/edit/{quiz}/addQuestion", async context => {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/addQuestion.html");
         });
 
         // Map API controllers

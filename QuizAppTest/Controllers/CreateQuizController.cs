@@ -83,14 +83,15 @@ namespace QuizApp.Controllers
                     string categoryMediaIdString = BitConverter.ToString(categoryMediaId).Replace("-", "");
                     insertCategory += ",,,media_id:==" + categoryMediaIdString;
 
-                    string filePath = Path.Combine(_configuration["UploadPath"] ?? "C:\\temp\\uploads", req.CategoryMedia.FileName);
+                    var fileName = Path.GetFileName(req.CategoryMedia.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\uploads", fileName);
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await req.CategoryMedia.CopyToAsync(stream);
                     }
 
-                    string storedUrl = Path.Combine("./uploads", req.CategoryMedia.FileName);
+                    string storedUrl = Path.Combine("uploads", req.CategoryMedia.FileName);
 
                     string insertMedia = "id:==" + categoryMediaIdString
                                         + ",,,media_type:==IMG"
@@ -115,14 +116,15 @@ namespace QuizApp.Controllers
 
                 insertQuiz += ",,,media_id:==" + quizMediaIdString;
 
-                string filePath = Path.Combine(_configuration["UploadPath"] ?? "C:\\temp\\uploads", req.QuizMedia.FileName);
+                var fileName = Path.GetFileName(req.QuizMedia.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\uploads", fileName);
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await req.QuizMedia.CopyToAsync(stream);
                 }
 
-                string storedUrl = Path.Combine("./uploads", req.QuizMedia.FileName);
+                string storedUrl = Path.Combine("uploads", req.QuizMedia.FileName);
 
                 string insertMedia = "id:==" + quizMediaIdString
                                         + ",,,media_type:==IMG"

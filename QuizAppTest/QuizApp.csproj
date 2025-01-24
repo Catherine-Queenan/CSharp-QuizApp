@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <Folder Include="certs\" />
-    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
 </Project>
