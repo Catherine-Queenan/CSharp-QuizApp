@@ -124,6 +124,11 @@ public class Program
             await context.Response.SendFileAsync("wwwroot/addQuestion.html");
         });
 
+        app.MapGet("/edit/{quiz}/questions/{question}", async context => {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/editQuestion.html");
+        });
+
         // Map API controllers
         app.MapControllers();
 

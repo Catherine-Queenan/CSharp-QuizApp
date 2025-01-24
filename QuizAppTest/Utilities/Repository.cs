@@ -536,7 +536,8 @@ namespace QuizApp.Utilities
                         command.CommandText = "DELETE FROM questions WHERE id = @criteria ";
                         break;
                     case "answer":
-                        command.CommandText = "DELETE FROM answers WHERE " + criteria;
+                        id = Convert.FromHexString(criteria);
+                        command.CommandText = "DELETE FROM answers WHERE id = @criteria ";
                         break;
                     case "media":
                         command.CommandText = "DELETE FROM media WHERE " + criteria;
@@ -579,7 +580,7 @@ namespace QuizApp.Utilities
                         command.CommandText = "SELECT * FROM questions " + where;
                         break;
                     case "answer":
-                        command.CommandText = "SELECT * FROM answers WHERE question_id = @criteria " + criteria.Split(",")[1];
+                        command.CommandText = "SELECT * FROM answers WHERE question_id = @criteria ";
                         id = Convert.FromHexString(criteria.Split(",")[0]);
                         break;
                     case "media":

@@ -167,7 +167,7 @@
         const postPath = `/api/edit/${quizName}/questions`;
         const homePath =  `/home`;
         const addQuestionPath = `/edit/${quizName}/addQuestion`;
-        const editQuestionPathSeg = `/api/edit/${quizName}/`;
+        const editQuestionPathSeg = `/edit/${quizName}/questions/`;
 
         homeButtonForm.addEventListener("submit", function (event) {
             event.preventDefault();
@@ -220,7 +220,7 @@
                     // Show a confirmation dialog before proceeding
                     const isConfirmed = confirm(`Are you sure you want to delete this question?`);
                     if (isConfirmed) {
-                        const deleteURL = pathSegments.join('/') + `/deleteQuestion?id=${question.questionNum}&quizName=${quizName}`;
+                        const deleteURL = `/api/edit/${quizName}/questions/${question.id}/delete`;
 
                         console.log("delete: " + deleteURL)
                         // Send a DELETE request to the server
