@@ -99,7 +99,7 @@ public class Program
             await context.Response.SendFileAsync("wwwroot/play.html");
         });
 
-        app.MapGet("/moderatedMode/{*slug}", async context =>
+        app.MapGet("/moderatedQuiz/{*slug}", async context =>
         {
             context.Response.ContentType = "text/html";
             await context.Response.SendFileAsync("wwwroot/moderatedMode.html");
