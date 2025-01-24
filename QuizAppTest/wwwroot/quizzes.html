@@ -235,7 +235,7 @@
 <body>
     <header>
         <button class="homeBtn">
-            <a href="../home">
+            <a href="/home">
                 Home
             </a>
         </button>
@@ -273,8 +273,8 @@
             pathSegments.pop();
 
             // Construct the new path dynamically
-            const newPath = pathSegments.join('/') + `/api/quizzes/${categoryName}`;
-            const homePath = pathSegments.join('/') + `/home`;
+            const newPath = `/api/quizzes/${categoryName}`;
+            const homePath = `/home`;
 
             // console.log(newPath)
             fetch(newPath, {
@@ -346,13 +346,13 @@
                 document.querySelectorAll('.deleteButton').forEach(button => {
                     button.addEventListener('click', function() {
                         // Get the quiz name
-                        const quizName = button.parentElement.parentElement.querySelector('input[name="quizName"]').value;
+                        const quizName = button.parentElement.parentElement.querySelector('input[name="QuizName"]').value;
                         console.log('Deleting quiz:', quizName);
 
                         // Show a confirmation dialog before proceeding
                         const isConfirmed = confirm(`Are you sure you want to delete the quiz: "${quizName}"?`);
                         if (isConfirmed) {
-                            const deleteURL = pathSegments.join('/') + `/quizzes/deleteQuiz-json/?quizName=${encodeURIComponent(quizName)}`;
+                            const deleteURL = `/api/edit/${encodeURIComponent(quizName)}/delete`;
 
                             console.log("delete: " + deleteURL)
                             // Send a DELETE request to the server
