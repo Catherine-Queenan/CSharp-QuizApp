@@ -11,7 +11,7 @@ namespace QuizApp.Controllers
     [Route("api/[controller]")]
     public class UpdateAutoplayController : Controller
     {
-        private readonly ILogger<ErrorController> _logger;
+        private readonly ILogger<UpdateAutoplayController> _logger;
 
         [HttpGet]
         public IActionResult Index(string enabled)

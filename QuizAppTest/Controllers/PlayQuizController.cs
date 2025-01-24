@@ -96,7 +96,7 @@ namespace QuizApp.Controllers
 
             if (++currQuestion >= questionsArrayJSON.Count)
             {
-                return Redirect("/end");
+                return Redirect("/quizend");
             }
 
             if (request.Restart != null)
@@ -108,7 +108,7 @@ namespace QuizApp.Controllers
             {
                 HttpContext.Session.SetInt32("currQuestion", currQuestion);
             }
-            return Redirect("/questions");
+            return Redirect("/play");
         }
 
         private void ShuffleJsonArray(JsonArray arr)
