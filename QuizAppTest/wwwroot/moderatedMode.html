@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz</title>
+    <title>Moderated Quiz</title>
     <link rel="stylesheet" href="/css/reset.css">
     <style>
 
@@ -47,12 +47,12 @@
             overflow: hidden;
         }
 
-            #media-container img {
-                width: 100%;
-                max-height: 400px;
-                height: 100%;
-                object-fit: contain;
-            }
+        #media-container img {
+            width: 100%;
+            max-height: 400px;
+            height: 100%;
+            object-fit: contain;
+        }
 
         /* options */
         #options {
@@ -65,34 +65,34 @@
             gap: 20px;
         }
 
-            #options button {
-                all: unset;
-                width: 45%;
-                padding: 20px 40px;
-                box-sizing: border-box;
-                border-radius: 10px;
-                font-size: 20px;
-                text-align: center;
-                cursor: pointer;
-                display: block;
-                transition-duration: 0.3s;
-            }
+        #options button {
+            all: unset;
+            width: 45%;
+            padding: 20px 40px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            font-size: 20px;
+            text-align: center;
+            cursor: pointer;
+            display: block;
+            transition-duration: 0.3s;
+        }
 
-                #options button:nth-child(1) {
-                    background-color: #d00000 !important;
-                }
+        #options button:nth-child(1) {
+            background-color: #d00000 !important;
+        }
 
-                #options button:nth-child(2) {
-                    background-color: #FF4B3E !important;
-                }
+        #options button:nth-child(2) {
+            background-color: #FF4B3E !important;
+        }
 
-                #options button:nth-child(3) {
-                    background-color: #FFB20F !important;
-                }
+        #options button:nth-child(3) {
+            background-color: #FFB20F !important;
+        }
 
-                #options button:nth-child(4) {
-                    background-color: #99c252 !important;
-                }
+        #options button:nth-child(4) {
+            background-color: #99c252 !important;
+        }
 
         /* answer count */
         #answerCounts {
@@ -105,32 +105,32 @@
             gap: 10px;
         }
 
-            #answerCounts div {
-                max-width: 500px;
-                width: 70%;
-                padding: 10px 20px;
-                border-radius: 10px;
-            }
+        #answerCounts div {
+            max-width: 500px;
+            width: 70%;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
 
-                #answerCounts div:nth-child(2),
-                #answerCounts div:nth-child(4n + 2) {
-                    background-color: #d00000 !important;
-                }
+        #answerCounts div:nth-child(2),
+        #answerCounts div:nth-child(4n + 2) {
+            background-color: #d00000 !important;
+        }
 
-                #answerCounts div:nth-child(3),
-                #answerCounts div:nth-child(4n + 3) {
-                    background-color: #FF4B3E !important;
-                }
+        #answerCounts div:nth-child(3),
+        #answerCounts div:nth-child(4n + 3) {
+            background-color: #FF4B3E !important;
+        }
 
-                #answerCounts div:nth-child(4),
-                #answerCounts div:nth-child(4n + 4) {
-                    background-color: #FFB20F !important;
-                }
+        #answerCounts div:nth-child(4),
+        #answerCounts div:nth-child(4n + 4) {
+            background-color: #FFB20F !important;
+        }
 
-                #answerCounts div:nth-child(5),
-                #answerCounts div:nth-child(4n + 5) {
-                    background-color: #99c252 !important;
-                }
+        #answerCounts div:nth-child(5),
+        #answerCounts div:nth-child(4n + 5) {
+            background-color: #99c252 !important;
+        }
 
         /* Session Button */
         .modSession {
@@ -226,14 +226,15 @@
         let userName = document.getElementById("userName").textContent.trim();
         let role = document.getElementById("role").textContent.trim();
         console.log("Role: ", role);
+        console.log("IT WORKS?")
 
         const currentPath = window.location.pathname;
         const pathSegments = currentPath.split('/');
         // Extract the base path dynamically (remove last segment if it's quiz-related)
-        console.log(pathSegments);
+        //console.log(pathSegments);
         pathSegments.pop();
-        console.log(pathSegments);
-        console.log(pathSegments.join('/'));
+        //console.log(pathSegments);
+        //console.log(pathSegments.join('/'));
 
         // Construct the new path dynamically
         const newPath = pathSegments.join('/') + `/questionsws`;
@@ -246,8 +247,8 @@
         const params = new URLSearchParams(window.location.search);
         const modSessionId = params.get("sessionId");
         const quizName = params.get("quizName");
-        console.log("Session ID: ", modSessionId);
-        console.log("Quiz Name: ", quizName);
+        //console.log("Session ID: ", modSessionId);
+        //console.log("Quiz Name: ", quizName);
 
         // Define the fetch path for the specific moderation session
         const currentSessionPath = window.location.pathname;
@@ -312,7 +313,7 @@
             pathSegments.pop();
             const endSessionPath = pathSegments.join('/') + `/api/ModeratedSession?action=endModeratedSession&sessionId=${encodeURIComponent(modSessionId)}`;
 
-            window.location.href = endSessionPath;
+            //window.location.href = endSessionPath;
         }
 
         let webSocket = new WebSocket('ws://localhost:8081/' + newPath);
@@ -341,8 +342,8 @@
             }
         });
 
-        console.log("Images: ", images);
-        console.log("Videos: ", videos);
+        //console.log("Images: ", images);
+        //console.log("Videos: ", videos);
 
         // Collect questions and answers from the HTML
         document.querySelectorAll(".questionTitle").forEach((question) => {
@@ -350,14 +351,14 @@
         });
 
 
-        console.log("Questions: ", questions);
+        //console.log("Questions: ", questions);
 
         let numOfQuestions = questions.length;
 
         document.querySelectorAll(".answer").forEach((answer) => {
             answers.push(answer.textContent);
         });
-        console.log("Questions: ", answers);
+        //console.log("Questions: ", answers);
 
         let questionData = [];
         for (let i = 0; i < questions.length; i++) {
@@ -512,9 +513,9 @@
         // Handle "Next Question" button click
         document.getElementById("next-button").addEventListener("click", function () {
             //clear answer counts
-            console.log("Sending next question request");
-            console.log("Question index: ", questionIndex);
-            console.log("Number of questions: ", numOfQuestions);
+            //console.log("Sending next question request");
+            //console.log("Question index: ", questionIndex);
+            //console.log("Number of questions: ", numOfQuestions);
             questionIndex++;
             webSocket.send(JSON.stringify({ type: "next" }));
         });
@@ -522,8 +523,8 @@
 
         // Display answer counts
         function displayAnswerCounts(counts) {
-            console.log("COUNTS");
-            console.log(counts)
+            //console.log("COUNTS");
+            //console.log(counts)
             let totalElement = document.getElementById("answerCounts");
             totalElement.innerHTML = "<h3>Answer Counts:</h3>";
 
