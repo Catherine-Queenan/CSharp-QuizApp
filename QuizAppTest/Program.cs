@@ -10,6 +10,7 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllers();
+        builder.Services.AddControllersWithViews();
         builder.Services.AddScoped<DatabaseUtil>(); // Register DatabaseUtil as a scoped service
 
         // Add session services
@@ -96,6 +97,12 @@ public class Program
         {
             context.Response.ContentType = "text/html";
             await context.Response.SendFileAsync("wwwroot/play.html");
+        });
+
+        app.MapGet("/moderatedMode/{*slug}", async context =>
+        {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/moderatedMode.html");
         });
 
         app.MapGet("/error", async context => {

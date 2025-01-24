@@ -325,6 +325,7 @@
             const modSessionsContainer = document.getElementById('modSessionsCont');
             modSessionsContainer.innerHTML = ''; // Clear previous content
 
+            console.log(data.session)
             // Check if there are any moderated sessions
             if (!data.sessions || data.sessions.length === 0) {
                 // If no sessions, display a message
@@ -353,7 +354,8 @@
             const currentSessPath = window.location.pathname;
             const pathSessSegments = currentSessPath.split('/');
             pathSessSegments.pop();
-            let sessSessionPath = pathSessSegments.join('/') + `/ModeratedMode?sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
+            let sessSessionPath = pathSessSegments.join('/') + `/api/ModeratedMode?sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
+            console.log("HEREBRO", sessionPath)
             window.location.href = sessSessionPath;
         }
 

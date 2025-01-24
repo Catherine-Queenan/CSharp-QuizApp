@@ -393,7 +393,7 @@
             pathSegments.pop(); // Remove current page from path
             pathSegments.pop(); // Remove the last segment (quiz name) from path
             let startSessionPath = pathSegments.join('/') + `api/ModeratedSession?action=startModeratedSession&quizName=${encodeURIComponent(quizName)}`;
-            //console.log('Session Path:', startSessionPath);
+            console.log('Session Path:', startSessionPath);
 
             // Send a request to create the modSessionId
             //fetch(startSessionPath, {
