@@ -4,22 +4,22 @@ using System.Security.Cryptography.X509Certificates;
 
 public class Program
 {
-    public static async void Main(string[] args)
+    public static void Main(string[] args)
     {
-var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers();
-builder.Services.AddScoped<DatabaseUtil>(); // Register DatabaseUtil as a scoped service
+        // Add services to the container.
+        builder.Services.AddControllers();
+        builder.Services.AddScoped<DatabaseUtil>(); // Register DatabaseUtil as a scoped service
 
-// Add session services
-builder.Services.AddDistributedMemoryCache(); // Add in-memory cache
-builder.Services.AddSession(options =>
-{
+        // Add session services
+        builder.Services.AddDistributedMemoryCache(); // Add in-memory cache
+        builder.Services.AddSession(options =>
+        {
             options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
             options.Cookie.HttpOnly = true; // Protect cookies
             options.Cookie.IsEssential = true; // Ensure cookies are not optional
-});
+        });
 
         // Configure HTTPS with custom certificate
         builder.WebHost.ConfigureKestrel(serverOptions =>
@@ -27,7 +27,7 @@ builder.Services.AddSession(options =>
             serverOptions.ListenAnyIP(8080); // HTTP endpoint
             serverOptions.ListenAnyIP(8081, listenOptions =>
             {
-                listenOptions.UseHttps("/https/aspnetapp.pfx", "q12773250P"); // HTTPS with certificate
+                listenOptions.UseHttps("certs/aspnetapp.pfx", "q12773250P"); // HTTPS with certificate
             });
         });
 
@@ -38,7 +38,7 @@ builder.Services.AddSession(options =>
             options.HttpsPort = 8081; // HTTPS port
         });
 
-var app = builder.Build();
+        var app = builder.Build();
 
         // Use forwarded headers to handle proxy setups (e.g., for containers)
         app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -46,62 +46,78 @@ var app = builder.Build();
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
         });
 
-        app.UseStaticFiles(); // Serve static files
+        // Use HTTPS redirection
+        //app.UseHttpsRedirection();
 
-app.MapGet("/login", async context =>
-{
-    context.Response.ContentType = "text/html";
-    await context.Response.SendFileAsync("wwwroot/login.html");
-});
+        // Serve static files
+        app.UseStaticFiles();
 
-app.MapGet("/signup", async context =>
-{
-    context.Response.ContentType = "text/html";
-    await context.Response.SendFileAsync("wwwroot/signup.html");
-});
+        // Enable session middleware (after static files and before routing)
+        app.UseSession();
 
-app.MapGet("/home", async context =>
-{
-    context.Response.ContentType = "text/html";
-    await context.Response.SendFileAsync("wwwroot/home.html");
-});
+        // Enable routing
+        app.UseRouting();
 
-app.MapGet("/quizzes/{*slug}", async context =>
-{
-    context.Response.ContentType = "text/html";
-    await context.Response.SendFileAsync("wwwroot/quizzes.html");
-});
+        // Enable authorization (if needed)
+        app.UseAuthorization();
 
-app.MapGet("/play", async context =>
-{
-    context.Response.ContentType = "text/html";
-    await context.Response.SendFileAsync("wwwroot/play.html");
-});
+        app.MapGet("/test", async context =>
+        {
+            await context.Response.WriteAsync("Test route is working!");
+        });
+        app.MapGet("/login", async context =>
+        {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/login.html");
+        });
+
+        app.MapGet("/signup", async context =>
+        {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/signup.html");
+        });
+
+        app.MapGet("/home", async context =>
+        {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/home.html");
+        });
+
+        app.MapGet("/quizzes/{*slug}", async context =>
+        {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/quizzes.html");
+        });
+
+        app.MapGet("/play", async context =>
+        {
+            context.Response.ContentType = "text/html";
+            await context.Response.SendFileAsync("wwwroot/play.html");
+        });
 
         app.MapGet("/error", async context => {
             context.Response.ContentType = "text/html";
             await context.Response.SendFileAsync("wwwroot/error.html");
         });
 
+        // Websocket stuff
+        app.UseWebSockets();
+        app.UseMiddleware<QuestionWebSocketMiddleware>();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
+        // Map API controllers
+        app.MapControllers();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
         else
         {
             // Configure strict security headers for production
             app.UseHsts(); // Enforce HTTP Strict Transport Security (HSTS)
         }
 
-        app.UseHttpsRedirection(); // Redirect HTTP to HTTPS
-app.UseAuthorization();
-app.UseSession(); // Enable session middleware
-
-        // Map API controllers
-app.MapControllers();
-
-app.Run();
+        app.Run();
     }
 }

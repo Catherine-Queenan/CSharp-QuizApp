@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: quizapp-app
     environment:
-      DB_URL: jdbc:mysql://db:3306/testdb
+      DB_URL: jdbc:mysql://db:3306/quizapp
       DB_USER: root
       DB_PASSWORD: root
       ASPNETCORE_ENVIRONMENT: Development  # Environment for .NET app
@@ -30,7 +30,7 @@ services:
     container_name: quizapp-db
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: testdb
+      MYSQL_DATABASE: quizapp
     ports:
       - "3307:3306"
     volumes:

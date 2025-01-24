@@ -10,10 +10,26 @@ namespace QuizApp.Utilities
 
         public DatabaseUtil(IConfiguration configuration)
         {
+
             // First, try to get the connection string from environment variables.
+            string? dbUrl = Environment.GetEnvironmentVariable("DB_URL");  // Fallback to local
+            string? dbUser = Environment.GetEnvironmentVariable("DB_USER");  // Fallback to root
+            string? dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");  // Fallback to root
+            string dbName = "quizapp";  // Default DB name
+
+
+            if (dbUrl != null && dbUser != null & dbPassword != null)
+            {
+                // Build the connection string using environment variables
+                _connectionString = $"Server={dbUrl};Database={dbName};User={dbUser};Password={dbPassword};SslMode=None;";
+            } else
+            {
+                _connectionString = configuration.GetConnectionString("DefaultConnection");
+            }
+            
+            
             // If not set, fall back to appsettings.json.
-            _connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-                                ?? configuration.GetConnectionString("DefaultConnection");
+           
         }
 
         public IDbConnection GetConnection()
