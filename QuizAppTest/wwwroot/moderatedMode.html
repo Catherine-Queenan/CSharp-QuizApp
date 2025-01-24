@@ -253,7 +253,7 @@
         const currentSessionPath = window.location.pathname;
         const pathSessionSegments = currentSessionPath.split('/');
         pathSessionSegments.pop();
-        const fetchSessionPath = pathSessionSegments.join('/') + `/getActiveSessions?action=getModeratedSession&sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
+        const fetchSessionPath = pathSessionSegments.join('/') + `/api/ModeratedSession?action=getModeratedSession&sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
 
         // Fetch current moderation session data for the specific session
         fetch(fetchSessionPath, {
@@ -310,40 +310,9 @@
             const currentSessionPath = window.location.pathname;
             const pathSegments = currentSessionPath.split('/');
             pathSegments.pop();
-            const endSessionPath = pathSegments.join('/') + `/getActiveSessions?action=endModeratedSession&sessionId=${encodeURIComponent(modSessionId)}`;
+            const endSessionPath = pathSegments.join('/') + `/api/ModeratedSession?action=endModeratedSession&sessionId=${encodeURIComponent(modSessionId)}`;
 
             window.location.href = endSessionPath;
-
-            // fetch(endSessionPath, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/x-www-form-urlencoded',
-            //         'Accept': 'application/json',
-            //         'Allow' : 'GET',
-            //     },
-            //     body: `modSessionId=${encodeURIComponent(modSessionId)}`
-            // })
-            // .then(response => {
-            //     console.log("EIOHG")
-            //     console.log(response);
-            //     if (!response.ok) {
-            //         throw new Error('Failed to end moderation session');
-            //     }
-            //     return response.json();
-            // })
-            // .then(data => {
-            //     if (data.success) {
-            //         alert("Moderation session ended successfully.");
-            //         window.location.href = pathSegments.join('/') + '/home'; // Example redirect to home
-            //     } else {
-            //         alert("Moderation session could not be ended.");
-            //     }
-            // })
-            // .catch(error => {
-            //     console.error("Error:", error);
-            //     const modSessionsContainer = document.getElementById('modSessionsCont');
-            //     modSessionsContainer.innerHTML = '<div>Error ending moderation session. Please try again later.</div>';
-            // });
         }
 
         let webSocket = new WebSocket('ws://localhost:8081/' + newPath);

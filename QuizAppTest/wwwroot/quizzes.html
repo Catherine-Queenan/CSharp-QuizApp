@@ -392,10 +392,37 @@
             const pathSegments = currentSessionPath.split('/');
             pathSegments.pop(); // Remove current page from path
             pathSegments.pop(); // Remove the last segment (quiz name) from path
-            const startSessionPath = pathSegments.join('/') + `/getActiveSessions?action=startModeratedSession&quizName=${encodeURIComponent(quizName)}`;
-            console.log('Session Path:', startSessionPath);
+            let startSessionPath = pathSegments.join('/') + `api/ModeratedSession?action=startModeratedSession&quizName=${encodeURIComponent(quizName)}`;
+            //console.log('Session Path:', startSessionPath);
 
             // Send a request to create the modSessionId
+            //fetch(startSessionPath, {
+            //    method: 'GET',
+            //    headers: {
+            //        'Accept': 'application/json'
+            //    },
+            //})
+            //.then(response => {
+            //    if (!response.ok) {
+            //        throw new Error('Failed to start moderation session');
+            //    }
+            //    return response.json();
+            //})
+            //.then(data => {
+            //    console.log('Response Data:', data); // Log the resolved data
+            //    if (data.status === "success" && data.sessionId) {
+            //        // Redirect to moderated mode with the new modSessionId
+            //        console.log(`${pathSegments.join('/')}/api/ModeratedMode?sessionId=${data.sessionId}&quizName=${quizName}`);
+            //        window.location.href = `${pathSegments.join('/')}/api/ModeratedMode?sessionId=${data.sessionId}&quizName=${quizName}`;
+            //    } else {
+            //        alert("Failed to create moderation session.");
+            //    }
+            //})
+            //.catch(error => {
+            //    console.error('Error starting moderation session:', error);
+            //    alert("Error starting moderation session. Please try again.");
+            //});
+
             fetch(startSessionPath, {
                 method: 'GET',
                 headers: {
@@ -403,17 +430,30 @@
                 },
             })
             .then(response => {
+                console.log('Raw Response:', response);
+
                 if (!response.ok) {
-                    throw new Error('Failed to start moderation session');
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-                return response.json();
+
+                return response.text(); // Parse as text to inspect the raw response
             })
-            .then(data => {
-                if (data.status === "success" && data.sessionId) {
-                    // Redirect to moderated mode with the new modSessionId
-                    window.location.href = `${pathSegments.join('/')}/moderateMode?sessionId=${data.sessionId}&quizName=${quizName}`;
-                } else {
-                    alert("Failed to create moderation session.");
+            .then(rawData => {
+                console.log('Raw Data:', rawData);
+
+                // Check if the response is valid JSON
+                try {
+                    const data = JSON.parse(rawData);
+                    console.log('Parsed Data:', data);
+
+                    if (data.status === "success" && data.sessionId) {
+                        window.location.href = `${pathSegments.join('/')}/api/ModeratedMode?sessionId=${data.sessionId}&quizName=${quizName}`;
+                    } else {
+                        alert("Failed to create moderation session.");
+                    }
+                } catch (e) {
+                    console.error("Invalid JSON response:", rawData);
+                    alert("The server returned an invalid response. Please contact support.");
                 }
             })
             .catch(error => {
@@ -421,6 +461,7 @@
                 alert("Error starting moderation session. Please try again.");
             });
         }
+
 
         function connectWebSocket() {
 

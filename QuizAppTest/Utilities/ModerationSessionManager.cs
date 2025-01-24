@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Text.Json.Nodes;
 using MySql.Data.MySqlClient;
 using QuizApp.Utilities;
 
@@ -16,9 +17,7 @@ public class ModerationSessionManager
             _connection.Open();
         }
         catch (MySqlException ex)
-        {
-
-        }
+        { }
     }
 
     public ModerationSessionManager(DatabaseUtil databaseUtil)
@@ -30,16 +29,25 @@ public class ModerationSessionManager
     public string StartModeratedSession(string moderatorId, string quizName)
     {
         string sessionId = null;
-        string insertSessionSQL = "INSERT INTO moderated_sessions (moderator_id, quiz_name) OUTPUT INSERTED.session_id VALUES (@moderatorId, @quizName)";
+        string insertSessionSQL = "INSERT INTO moderated_sessions (moderator_id, quiz_name) VALUES (@moderatorId, @quizName);";
+        string getLastInsertIdSQL = "SELECT LAST_INSERT_ID();";
 
         try
         {
             using (var connection = _databaseUtil.GetConnection())
             {
-                using (var command = _connection.CreateCommand())
+                connection.Open(); // Ensure the connection is open
+                using (var command = connection.CreateCommand())
                 {
+                    // Insert the session into the database
+                    command.CommandText = insertSessionSQL;
                     command.Parameters.Add(new MySqlParameter("@moderatorId", moderatorId));
                     command.Parameters.Add(new MySqlParameter("@quizName", quizName));
+                    command.ExecuteNonQuery();
+
+                    // Retrieve the last inserted ID
+                    command.CommandText = getLastInsertIdSQL;
+                    command.Parameters.Clear(); // Clear parameters since it's a new command
                     sessionId = command.ExecuteScalar()?.ToString();
                 }
             }
@@ -60,7 +68,7 @@ public class ModerationSessionManager
         {
             using (var connection = _databaseUtil.GetConnection())
             {
-                using (var command = _connection.CreateCommand())
+                using (var command = connection.CreateCommand())
                 {
                     command.Parameters.Add(new MySqlParameter("@sessionId", int.Parse(sessionId)));
                     command.ExecuteNonQuery();
@@ -82,8 +90,10 @@ public class ModerationSessionManager
         {
             using (var connection = _databaseUtil.GetConnection())
             {
-                using (var command = _connection.CreateCommand())
+                using (var command = connection.CreateCommand())
                 {
+                    command.CommandText = query;
+
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -93,6 +103,8 @@ public class ModerationSessionManager
                             string quizName = reader["quiz_name"].ToString();
 
                             sessions.Add(new ModerationSession(moderator, sessionId, quizName));
+                            //Console.WriteLine("HERE BRO HERE HERE");
+                            Console.WriteLine(sessions);
                         }
                     }
                 }
@@ -115,8 +127,9 @@ public class ModerationSessionManager
         {
             using (var connection = _databaseUtil.GetConnection())
             {
-                using (var command = _connection.CreateCommand())
+                using (var command = connection.CreateCommand())
                 {
+                    command.CommandText = query;
                     command.Parameters.Add(new MySqlParameter("@sessionId", int.Parse(sessionId)));
                     command.Parameters.Add(new MySqlParameter("@quizName", quizName));
 

@@ -270,7 +270,7 @@
     </div>
 
 </body>
-<script src="scripts\logout.js"></script>
+<script src="/scripts/logout.js"></script>
 <script>
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -302,7 +302,8 @@
         const currentSessionPath = window.location.pathname;
         const pathSessionSegments = currentSessionPath.split('/');
         pathSessionSegments.pop();
-        let sessionPath = pathSessionSegments.join('/') + '/getActiveSessions?action=getActiveSessions';
+        let sessionPath = pathSessionSegments.join('/') + '/api/ModeratedSession?action=getActiveSessions';
+
 
         // Fetch current moderated sessions
         fetch(sessionPath, {
@@ -313,9 +314,11 @@
         })
         .then(response => {
             // Check if the response is okay and convert to JSON
+            console.log("HEREHEREHERE ", response)
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
+
             return response.json();
         })
         .then(data => {
@@ -350,7 +353,7 @@
             const currentSessPath = window.location.pathname;
             const pathSessSegments = currentSessPath.split('/');
             pathSessSegments.pop();
-            let sessSessionPath = pathSessSegments.join('/') + `/moderateMode?sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
+            let sessSessionPath = pathSessSegments.join('/') + `/ModeratedMode?sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
             window.location.href = sessSessionPath;
         }
 

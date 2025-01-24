@@ -1,52 +1,56 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QuizApp.Utilities;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ModeratedSessionController : ControllerBase
+namespace QuizApp.Controllers
 {
-    private readonly DatabaseUtil _databaseUtil;
-    private readonly ModerationSessionManager moderationSessionManager;
-
-    public ModeratedSessionController(DatabaseUtil databaseUtil)
+    [Route("api/ModeratedSession")]
+    [ApiController]
+    public class ModeratedSessionController : ControllerBase
     {
-        _databaseUtil = databaseUtil;
-        moderationSessionManager = new ModerationSessionManager(_databaseUtil); 
-    }
+        private readonly DatabaseUtil _databaseUtil;
+        private readonly ModerationSessionManager moderationSessionManager;
 
-    [HttpGet]
-    public IActionResult HandleRequest([FromQuery] string action, [FromQuery] string sessionId, [FromQuery] string quizName)
-    {
-        try
+        public ModeratedSessionController(DatabaseUtil databaseUtil)
         {
-            switch (action?.ToLower())
+            _databaseUtil = databaseUtil;
+            moderationSessionManager = new ModerationSessionManager(_databaseUtil);
+        }
+
+        [HttpGet]
+        public IActionResult HandleRequest([FromQuery] string action, [FromQuery] string? sessionId, [FromQuery] string? quizName)
+        {
+            try
             {
-                case "startmoderatedsession":
-                    string moderatorId = HttpContext.Session.GetString("USER_ID");
-                    if (string.IsNullOrEmpty(moderatorId)) return Unauthorized("User not logged in.");
+                switch (action?.ToLower())
+                {
+                    case "startmoderatedsession":
+                        string moderatorId = HttpContext.Session.GetString("USER_ID");
+                        if (string.IsNullOrEmpty(moderatorId)) return Unauthorized("User not logged in.");
 
-                    string modSessionId = moderationSessionManager.StartModeratedSession(moderatorId, quizName);
-                    return Ok(new { status = "success", sessionId = modSessionId });
+                        string modSessionId = moderationSessionManager.StartModeratedSession(moderatorId, quizName);
+                        return Ok(new { status = "success", sessionId = modSessionId });
 
-                case "endmoderatedsession":
-                    moderationSessionManager.EndModeratedSession(sessionId);
-                    return Ok(new { status = "success", message = "Session ended successfully." });
+                    case "endmoderatedsession":
+                        moderationSessionManager.EndModeratedSession(sessionId);
+                        return Ok(new { status = "success", message = "Session ended successfully." });
 
-                case "getactivesessions":
-                    var sessions = moderationSessionManager.GetActiveSessions();
-                    return Ok(new { status = "success", sessions });
+                    case "getactivesessions":
+                        var sessions = moderationSessionManager.GetActiveSessions();
+                        return Ok(new { status = "success", sessions });
 
-                case "getmoderatedsession":
-                    var session = moderationSessionManager.GetModeratedSession(sessionId, quizName);
-                    return Ok(new { status = "success", session });
+                    case "getmoderatedsession":
+                        var session = moderationSessionManager.GetModeratedSession(sessionId, quizName);
+                        return Ok(new { status = "success", session });
 
-                default:
-                    return BadRequest(new { status = "error", message = "Invalid action." });
+                    default:
+                        return BadRequest(new { status = "error", message = "Invalid action." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "error", message = ex.Message });
             }
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { status = "error", message = ex.Message });
-        }
     }
+
 }

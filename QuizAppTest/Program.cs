@@ -38,6 +38,9 @@ public class Program
             options.HttpsPort = 8081; // HTTPS port
         });
 
+        // Websocket stuff
+        builder.Services.AddSession();
+
         var app = builder.Build();
 
         // Use forwarded headers to handle proxy setups (e.g., for containers)
@@ -103,6 +106,7 @@ public class Program
         // Websocket stuff
         app.UseWebSockets();
         app.UseMiddleware<QuestionWebSocketMiddleware>();
+        app.UseSession();
 
         // Map API controllers
         app.MapControllers();
@@ -120,4 +124,5 @@ public class Program
 
         app.Run();
     }
+
 }
