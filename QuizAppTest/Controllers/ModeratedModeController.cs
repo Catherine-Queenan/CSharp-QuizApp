@@ -153,7 +153,7 @@ namespace QuizApp.Controllers
             //ViewData["moderatorId"] = moderator;
             //ViewData["QuestionsHtml"] = questionsHtml.ToString();
             //return View("ModeratedMode");
-            return Redirect("/help=" + quizName);
+            return Redirect("/moderateQuiz/quizName=" + quizName);
         }
         //public IActionResult Index(string quizName, string sessionId)
         //{
