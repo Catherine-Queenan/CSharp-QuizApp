@@ -255,6 +255,7 @@
         const pathSessionSegments = currentSessionPath.split('/');
         pathSessionSegments.pop();
         const fetchSessionPath = pathSessionSegments.join('/') + `/api/ModeratedSession?action=getModeratedSession&sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
+        console.log(fetchSessionPath)
 
         // Fetch current moderation session data for the specific session
         fetch(fetchSessionPath, {
@@ -264,6 +265,7 @@
             }
         })
         .then(response => {
+            console.log(response)
             if (!response.ok) {
                 throw new Error('Failed to fetch the moderated session');
             }
@@ -373,6 +375,12 @@
         //console.log("Questions: ", answers);
 
         let questionData = [];
+        console.log(questionData)
+        if (!questionData || questionData.length === 0) {
+            console.error("No questions found.");
+            return;
+        }
+
         for (let i = 0; i < questions.length; i++) {
             let answerElements = document.querySelectorAll(`[data-question="${i + 1}"]`);
 
@@ -393,21 +401,49 @@
                 videos: questionVideos
             });
         }
-        console.log(questionData);
+
+        //webSocket.onopen = function () {
+        //    console.log("Connection established ...");
+        //    console.log("Sending data to server: ", JSON.stringify(questionData));  // Log the sent data
+        //    console.log("Session ID: ", modSessionId);
+        //    console.log("Quiz Name: ", quizName);
+        //    webSocket.send(JSON.stringify(questionData));
+        //};
+
         webSocket.onopen = function () {
             console.log("Connection established ...");
-            console.log("Sending data to server: ", JSON.stringify(questionData));  // Log the sent data
-            console.log("Session ID: ", modSessionId);
-            console.log("Quiz Name: ", quizName);
+            console.log("Sending data to server: ", JSON.stringify(questionData));
             webSocket.send(JSON.stringify(questionData));
         };
 
+        //webSocket.onmessage = function (message) {
+        //    console.log("Received message from server:", message.data);  // Log the incoming message
+        //    let response = JSON.parse(message.data);
+        //    questionIndex = response.questionIndex;
+
+        //    if (response.type === "end") {
+        //        webSocket.onclose = function () {
+        //            console.log("Connection closed ...");
+        //            globalThis.end = true;
+        //            window.location.href = "end";
+        //        };
+        //    }
+        //    if (response.question && response.answers) {
+        //        displayQuestion(response.question, response.answers, response.images, response.audio, response.videos);
+        //    } else if (response.type === "answerCounts") {
+        //        console.log(response);
+        //        displayAnswerCounts(response.counts);
+        //    } else {
+        //        console.log("Invalid message received from server:", response);
+        //    }
+        //};
         webSocket.onmessage = function (message) {
-            console.log("Received message from server:", message.data);  // Log the incoming message
+            console.log("Received message from server:", message.data); // Log all incoming messages
             let response = JSON.parse(message.data);
             questionIndex = response.questionIndex;
 
             if (response.type === "end") {
+                console.log("End signal received.");
                 webSocket.onclose = function () {
                     console.log("Connection closed ...");
                     globalThis.end = true;
@@ -423,6 +459,7 @@
                 console.log("Invalid message received from server:", response);
             }
         };
+
 
         webSocket.onclose = function () {
             console.log("Connection closed ...");
