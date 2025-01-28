@@ -26,9 +26,9 @@ public class ModerationSessionManager
         init(databaseUtil);
     }
 
-    public string StartModeratedSession(string moderatorId, string quizName)
+    public string? StartModeratedSession(string moderatorId, string quizName)
     {
-        string sessionId = null;
+        string? sessionId = null;
         string insertSessionSQL = "INSERT INTO moderated_sessions (moderator_id, quiz_name) VALUES (@moderatorId, @quizName);";
         string getLastInsertIdSQL = "SELECT LAST_INSERT_ID();";
 
@@ -68,8 +68,10 @@ public class ModerationSessionManager
         {
             using (var connection = _databaseUtil.GetConnection())
             {
+                connection.Open();
                 using (var command = connection.CreateCommand())
                 {
+                    command.CommandText = deleteSessionSQL;
                     command.Parameters.Add(new MySqlParameter("@sessionId", int.Parse(sessionId)));
                     command.ExecuteNonQuery();
                 }

@@ -91,9 +91,11 @@ namespace QuizApp.Controllers
 
                     string storedUrl = Path.Combine("uploads", fileName);
 
-                    string mediaParams = "id:==" + mediaIdString + "media_file_path:==" + storedUrl + ",,,media_filename:==" + fileName;
+                    string mediaParams = "id:==" + mediaIdString + ",,,media_file_path:==" + storedUrl + ",,,media_filename:==" + fileName;
                     AClass updateMedia = _classFactory.createAClass("media", mediaParams);
                     _repository.insert(updateMedia);
+
+                    mediaId = mediaIdString;
                 }
             }
             if(req.CorrectAnswer != null)
@@ -130,7 +132,7 @@ namespace QuizApp.Controllers
 
             string parameters = "id:==" + newAnswerIdString +
                     ",,,answer_text:==" + req.AnswerText + ",,,answer_type:==" + req.AnswerType +
-                    ",,,is_correct:==" + (req.CorrectAnswer != null ? 1 : 0) + ",,,question_id:==" + question;
+                    ",,,is_correct:==" + (req.CorrectAnswer != null) + ",,,question_id:==" + question;
             if (mediaId != null)
             {
                 parameters += ",,,media_id:==" + mediaId;

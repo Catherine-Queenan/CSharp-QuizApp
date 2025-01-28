@@ -144,7 +144,7 @@ namespace QuizApp.Utilities
 
                 command.Parameters.Add(new MySqlParameter("@answer_text", entry["answer_text"]?.ToString()));
 
-                string is_correct = entry["media_start"]?.ToString() ?? "0";
+                string is_correct = entry["is_correct"]?.ToString() ?? "0";
                 command.Parameters.Add(new MySqlParameter("@is_correct", Int32.Parse(is_correct))); // Default to "0" if null
                 command.Parameters.Add(new MySqlParameter("@answer_type", entry["answer_type"]?.ToString()));
                 command.ExecuteNonQuery();
@@ -522,6 +522,7 @@ namespace QuizApp.Utilities
             if(_connection != null)
             {
                 var command = _connection.CreateCommand();
+                var mediaCommand = _connection.CreateCommand();
                 byte[]? id = null;
                 switch (tableType)
                 {

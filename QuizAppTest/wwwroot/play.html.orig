@@ -221,7 +221,7 @@
         }
     </style>
 
-    
+    <script src="/scripts/play.js"></script>
 </head>
 <body>
 
@@ -229,7 +229,7 @@
         <form action="home">
             <button class="homeBtn" type="Submit">Home</button>
         </form>
-        <form action="api/play" method="post">
+        <form  action="api/play" method="post">
             <input type="hidden" value="true" name="restart">
             <button class="restartBtn" type="Submit">Restart</button>
         </form>
@@ -252,90 +252,26 @@
         </div>
     </div>
     <form id="questionForm" action="api/play" method="post" style="display: hidden;">
+        <input type="hidden" value="false" name="restart">
     </form>
-    <script src="/scripts/play.js"></script>
+
     <script>
-
         document.addEventListener("DOMContentLoaded", () => {
-            const currentPath = window.location.pathname;
-            const pathSegments = currentPath.split('/');
-            console.log(pathSegments);
-
-            // Extract the category name from URL parameters
-            const categoryName = pathSegments[2];
-
-            pathSegments.pop();
-
-            // Construct the new path dynamically
-            const newPath = pathSegments.join('/') + `/api/play`;
-            const homePath = pathSegments.join('/') + `/home`;
-
-            // console.log(newPath)
-            fetch(newPath, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            }).then(response => {
-                if (!response.ok) {
-                    console.error('Response status:', response.status);
-                    throw new Error('Failed to fetch question');
-                }
-                return response.json(); // Change this temporarily to text() instead of json()
-            }).then(data => {
-                console.log(data);
-                const questionContainer = document.getElementById("questionDiv");
-                questionContainer.innerHTML = '';
-
-                const currQuestionSpan = document.getElementById("currQuestion");
-                currQuestionSpan.innerHTML = data.currQuestion;
-
-                const quizSizeSpan = document.getElementById("quizSize");
-                quizSizeSpan.innerHTML = data.quizSize;
-
-                const autoPlayInput = document.getElementById("autoplay");
-                autoPlayInput.value = data.autoPlayEnabled;
-
-                // Render question
-                if (data.quizSize <= 0) {
-                    questionContainer.innerHTML = `
-                <p class="errorMsg">The quiz " ${data.quizName} " is empty!</p>
-                <form class="errorBtnWrap" action="home"><button class="homeBtn errorHome" type="Submit">Return Home</button></form>
-            `;
-
-                } else {
-                    const questionDiv = document.createElement("div");
-                    questionContainer.appendChild(questionDiv);
-                    questionDiv.classList.add("question");
-
-                    const questionText = document.createElement("p");
-                    questionText.classList.add("questionText");
-                    questionText.innerHTML = data.question.question_text;
-                    questionDiv.appendChild(questionText);
-
-                    if (data.question.question_type != "TEXT") {
-                        const questionMedia = insertQuestionMedia(data.question);
-                        questionDiv.appendChild(questionMedia);
-                    }
-
-                    insertAnswers(data.question.answers, questionDiv);
-
-                    // Load the IFrame Player API code asynchronously
-                    var tag = document.createElement('script');
-                    tag.src = "https://www.youtube.com/iframe_api";
-                    var firstScriptTag = document.getElementsByTagName('script')[0];
-                    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-
-                }
-            }).then(() => {
-
-                // Making all answer options have the same height value
-
+            BuildPage();
+            // Making all answer options have the same height value
+<<<<<<< HEAD
+            setTimeout(() => {
                 //Add right answer mechanics
                 const rightAnswer = document.getElementById("rightPlayAnswer");
                 // Get all buttons inside the div with class "answersOption"
                 var buttons = document.querySelectorAll('.answersOption button');
+=======
+await setTimeout(() => {
+            //Add right answer mechanics
+            const rightAnswer = document.getElementById("rightPlayAnswer");
+            // Get all buttons inside the div with class "answersOption"
+            var buttons = document.querySelectorAll('.answersOption button');
+>>>>>>> 3a4dccf2de421b0240e87f1ff7bfc8661e917ea7
 
                 var maxHeight = 0;
 
@@ -353,7 +289,7 @@
                 });
 
                 // Changing the display depending on how long the content is
-                if (document.querySelector(".questions").offsetHeight > 700) {
+                if(document.querySelector(".questions").offsetHeight > 700) {
                     document.getElementById("wrap").style.height = `fit-content`;
                 } else {
                     document.getElementById("wrap").style.height = `${100}vh`;
@@ -364,12 +300,6 @@
                     document.querySelector(".restartBtn").innerHTML = `<i class="fa-solid fa-arrow-rotate-left"></i>`;
                 }
 
-                // Changing the display depending on how long the content is
-                if (document.querySelector(".questions").offsetHeight > 700) {
-                    document.getElementById("wrap").style.height = `fit-content`;
-                } else {
-                    document.getElementById("wrap").style.height = `${100}vh`;
-                }
 
                 let correctAnswer = document.getElementById('questionForm');
                 // Declare the player variable
@@ -407,7 +337,7 @@
                     correctAnswerButton.style.boxShadow = "0px 0px 50px rgb(0, 244, 0)";
                     nextQuestion();
                 });
-                //const correctButton = document.querySelector('.answer[id="rightPlayAnswer"]');
+
 
                 // Set up event listener for the autoplay toggle button
                 // NO MORE CONSOLE.LOGS
@@ -419,14 +349,14 @@
                         autoplayToggleButton.textContent = "Autoplay: ON";
                         timerDisplay.style.display = 'block';
                         startAutoplay(correctAnswerButton);
-                        fetch('/api/updateAutoplay/True');
+                        fetch('updateAutoplay?enabled=true');
                     } else {
                         autoplayToggleButton.textContent = "Autoplay: OFF";
                         clearTimeout(autoplayTimer);
                         clearInterval(timerInterval);
                         timerDisplay.style.display = 'none';
                         // timerDisplay.textContent = "Time left: 60 seconds";
-                        fetch('api/updateAutoplay/False');
+                        fetch('updateAutoplay?enabled=false');
                     }
 
                     updateAutoplayButton();
@@ -477,26 +407,30 @@
                     // console.log(timeLeft / 30 * 100);
                 }
 
-
                 //---------------VIDEO PLAYING---------------\\
 
-                //autoplayTimer = setTimeout(() => {
-                //    correctAnswerButton.style.boxShadow = "0px 0px 50px rgb(0, 244, 0)";
-                //    nextQuestion();
-                //    // if (correctButton) {
-                //    //     correctButton.click();
-                //    // }
-                //}, countdownTime * 1000);
+                // Load the IFrame Player API code asynchronously
+                var tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/iframe_api";
+                var firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 
-                function updateTimerDisplay(timeLeft) {
-                    timerDisplay.innerHTML = `<div id="timerCountdown" style="width:${timeLeft / 30 * 100}%"></div>`;
-                    // console.log(timeLeft / 30 * 100);
-                }
 
                 // Setting player attributes
- 
-                var submitCorrectAnswer = () => {
+                var IdQ = document.getElementById("videoId-question");
+                var startTimeQ = parseInt(document.getElementById("videoStart-question") != null ? document.getElementById("videoStart-question").value : "0");
+                var endTimeQ = parseInt(document.getElementById("videoEnd-question") != null ? document.getElementById("videoEnd-question").value : "0");
+
+                var IdA = document.getElementById("videoId-answer");
+                var startTimeA = parseInt(document.getElementById("videoStart-answer") != null ? document.getElementById("videoStart-answer").value : "0");
+                var endTimeA = parseInt(document.getElementById("videoEnd-answer") != null ? document.getElementById("videoEnd-answer").value : "0");
+
+                console.log(startTimeA)
+                console.log(endTimeA)
+
+
+                function submitCorrectAnswer() {
                     setTimeout(() => {
                         correctAnswer.submit();
                     }, 500);
@@ -534,14 +468,68 @@
                     }
                 }
 
-                
+                // Create the YouTube player after the API downloads
+                function onYouTubeIframeAPIReady() {
+                    if (IdQ != null) {
+                        playerQuestion = new YT.Player('player-question', {
+                            videoId: IdQ.value,
+                            playerVars: {
+                                'playsinline': 1,
+                                'start': startTimeQ,
+                                'end': endTimeQ
+                            },
+                            events: {
+                                'onReady': onPlayerQuestionReady,
+                                'onStateChange': onPlayerQuestionStateChange
+                            }
+                        });
+                    }
+                    console.log(IdA);
+                    if (IdA != null) {
+                        playerAnswer = new YT.Player('player-answer', {
+                            videoId: IdA.value,
+                            playerVars: {
+                                'playsinline': 1,
+                                'start': startTimeA,
+                                'end': endTimeA
+                            },
+                            events: {
+                                'onStateChange': onPlayerAnswerStateChange
+                            }
+                        });
+                    }
 
-                let audioAnswer = document.getElementById("audio-answer");
-                let audioQuestion = document.getElementById("audio-question");
+                }
 
 
+                // Play the video once it's ready and start at the 5-second mark
+                function onPlayerQuestionReady(event) {
+                    event.target.seekTo(startTimeQ);
+                    event.target.playVideo();
+                }
 
-                
+                // Monitor the video state and loop it between 5 and 6 seconds
+                function onPlayerQuestionStateChange(event) {
+                    if (event.data == YT.PlayerState.PLAYING) {
+                        var checkTime = setInterval(function () {
+                            var currentTime = playerQuestion.getCurrentTime();
+                            if (currentTime >= endTimeQ) {
+                                playerQuestion.seekTo(startTimeQ);
+                            }
+                        }, 100);
+                    }
+                }
+
+                function onPlayerAnswerStateChange(event) {
+                    if (event.data == YT.PlayerState.PLAYING) {
+                        var checkTime = setInterval(function () {
+                            var currentTime = playerAnswer.getCurrentTime();
+                            if (currentTime >= endTimeA) {
+                                submitCorrectAnswer();
+                            }
+                        }, 100);
+                    }
+                }
 
                 //---------------AUDIO PLAYING---------------\\
                 //makes audio loop
@@ -558,80 +546,8 @@
                         submitCorrectAnswer();
                     }
                 }
-            });
-        });
-
-        // Create the YouTube player after the API downloads
-        window.onYouTubeIframeAPIReady= ()=> {
-            var IdQ = document.getElementById("videoId-question");
-            var startTimeQ = parseInt(document.getElementById("videoStart-question") != null ? document.getElementById("videoStart-question").value : "0");
-            var endTimeQ = parseInt(document.getElementById("videoEnd-question") != null ? document.getElementById("videoEnd-question").value : "0");
-
-            var IdA = document.getElementById("videoId-answer");
-            var startTimeA = parseInt(document.getElementById("videoStart-answer") != null ? document.getElementById("videoStart-answer").value : "0");
-            var endTimeA = parseInt(document.getElementById("videoEnd-answer") != null ? document.getElementById("videoEnd-answer").value : "0");
-
-            if (IdQ != null) {
-                playerQuestion = new YT.Player('player-question', {
-                    videoId: IdQ.value,
-                    playerVars: {
-                        'playsinline': 1,
-                        'start': startTimeQ,
-                        'end': endTimeQ
-                    },
-                    events: {
-                        'onReady': onPlayerQuestionReady,
-                        'onStateChange': onPlayerQuestionStateChange
-                    }
-                });
-            } else {
-                console.warn("videoId-question element is missing. Skipping question video player initialization.");
-            }
-            console.log(IdA);
-            if (IdA != null) {
-                playerAnswer = new YT.Player('player-answer', {
-                    videoId: IdA.value,
-                    playerVars: {
-                        'playsinline': 1,
-                        'start': startTimeA,
-                        'end': endTimeA
-                    },
-                    events: {
-                        'onStateChange': onPlayerAnswerStateChange
-                    }
-                });
-            }
-
-        }
-
-        window.onPlayerQuestionStateChange = (event) => {
-            if (event.data == YT.PlayerState.PLAYING) {
-                var checkTime = setInterval(function () {
-                    var currentTime = playerQuestion.getCurrentTime();
-                    if (currentTime >= endTimeQ) {
-                        playerQuestion.seekTo(startTimeQ);
-                    }
-                }, 100);
-            }
-        }
-
-        window.onPlayerAnswerStateChange = (event) => {
-            if (event.data == YT.PlayerState.PLAYING) {
-                var checkTime = setInterval(function () {
-                    var currentTime = playerAnswer.getCurrentTime();
-                    if (currentTime >= endTimeA) {
-                        submitCorrectAnswer();
-                    }
-                }, 100);
-            }
-        }
-
-        window.onPlayerQuestionReady = (event) => {
-            var startTimeQ = parseInt(document.getElementById("videoStart-question") != null ? document.getElementById("videoStart-question").value : "0");
-            event.target.seekTo(startTimeQ);
-            event.target.playVideo();
-        }
-
+            }, 100);
+        });     
 
     </script>
     <script src="scripts/logout.js"></script>

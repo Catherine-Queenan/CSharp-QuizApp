@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@{
+
+    var role = ViewData["Role"] as string; // Role passed from the controller
+    var username = ViewData["UserName"] as string;
+    var modSessionId = ViewData["ModSessionId"] as string;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -47,12 +54,12 @@
             overflow: hidden;
         }
 
-        #media-container img {
-            width: 100%;
-            max-height: 400px;
-            height: 100%;
-            object-fit: contain;
-        }
+            #media-container img {
+                width: 100%;
+                max-height: 400px;
+                height: 100%;
+                object-fit: contain;
+            }
 
         /* options */
         #options {
@@ -65,34 +72,34 @@
             gap: 20px;
         }
 
-        #options button {
-            all: unset;
-            width: 45%;
-            padding: 20px 40px;
-            box-sizing: border-box;
-            border-radius: 10px;
-            font-size: 20px;
-            text-align: center;
-            cursor: pointer;
-            display: block;
-            transition-duration: 0.3s;
-        }
+            #options button {
+                all: unset;
+                width: 45%;
+                padding: 20px 40px;
+                box-sizing: border-box;
+                border-radius: 10px;
+                font-size: 20px;
+                text-align: center;
+                cursor: pointer;
+                display: block;
+                transition-duration: 0.3s;
+            }
 
-        #options button:nth-child(1) {
-            background-color: #d00000 !important;
-        }
+                #options button:nth-child(1) {
+                    background-color: #d00000 !important;
+                }
 
-        #options button:nth-child(2) {
-            background-color: #FF4B3E !important;
-        }
+                #options button:nth-child(2) {
+                    background-color: #FF4B3E !important;
+                }
 
-        #options button:nth-child(3) {
-            background-color: #FFB20F !important;
-        }
+                #options button:nth-child(3) {
+                    background-color: #FFB20F !important;
+                }
 
-        #options button:nth-child(4) {
-            background-color: #99c252 !important;
-        }
+                #options button:nth-child(4) {
+                    background-color: #99c252 !important;
+                }
 
         /* answer count */
         #answerCounts {
@@ -105,32 +112,32 @@
             gap: 10px;
         }
 
-        #answerCounts div {
-            max-width: 500px;
-            width: 70%;
-            padding: 10px 20px;
-            border-radius: 10px;
-        }
+            #answerCounts div {
+                max-width: 500px;
+                width: 70%;
+                padding: 10px 20px;
+                border-radius: 10px;
+            }
 
-        #answerCounts div:nth-child(2),
-        #answerCounts div:nth-child(4n + 2) {
-            background-color: #d00000 !important;
-        }
+                #answerCounts div:nth-child(2),
+                #answerCounts div:nth-child(4n + 2) {
+                    background-color: #d00000 !important;
+                }
 
-        #answerCounts div:nth-child(3),
-        #answerCounts div:nth-child(4n + 3) {
-            background-color: #FF4B3E !important;
-        }
+                #answerCounts div:nth-child(3),
+                #answerCounts div:nth-child(4n + 3) {
+                    background-color: #FF4B3E !important;
+                }
 
-        #answerCounts div:nth-child(4),
-        #answerCounts div:nth-child(4n + 4) {
-            background-color: #FFB20F !important;
-        }
+                #answerCounts div:nth-child(4),
+                #answerCounts div:nth-child(4n + 4) {
+                    background-color: #FFB20F !important;
+                }
 
-        #answerCounts div:nth-child(5),
-        #answerCounts div:nth-child(4n + 5) {
-            background-color: #99c252 !important;
-        }
+                #answerCounts div:nth-child(5),
+                #answerCounts div:nth-child(4n + 5) {
+                    background-color: #99c252 !important;
+                }
 
         /* Session Button */
         .modSession {
@@ -177,17 +184,17 @@
         <div id="answerCounts"></div>
 
         <p id="role" style="display: none;">
-            <%=request.getAttribute("role")%>
+            @role
         </p>
         <p id="userName" style="display: none;">
-            <%=request.getAttribute("userName")%>
+            @username
         </p>
 
         <button id="next-button">Next Question</button>
         <div style="display: none;">
 
             <div class="questions" style="display: none;">
-                <%=request.getAttribute("questionsHtml")%>
+                @Html.Raw(ViewBag.QuestionsHtml)
             </div>
 
             <form id="questionForm" method="post" style="display: hidden;"></form>
@@ -254,7 +261,7 @@
         const currentSessionPath = window.location.pathname;
         const pathSessionSegments = currentSessionPath.split('/');
         pathSessionSegments.pop();
-        const fetchSessionPath = pathSessionSegments.join('/') + `/api/ModeratedSession?action=getModeratedSession&sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
+        const fetchSessionPath = `/api/ModeratedSession?action=getModeratedSession&sessionId=${encodeURIComponent(modSessionId)}&quizName=${encodeURIComponent(quizName)}`;
 
         // Fetch current moderation session data for the specific session
         fetch(fetchSessionPath, {
@@ -301,7 +308,7 @@
         })
         .catch(error => {
             console.error('Error fetching moderated session:', error);
-            let newPath = pathSegments.join('/') + '/error?errorMessage=' + encodeURIComponent(error);
+            let newPath = '/error?errorMessage=' + encodeURIComponent(error);
             modSessionsContainer.innerHTML = '<div>Error fetching moderated session. Please try again later.</div>';
             // window.location.href = newPath;
         });
@@ -374,8 +381,8 @@
 
         let questionData = [];
         for (let i = 0; i < questions.length; i++) {
-            let answerElements = document.querySelectorAll(`[data-question="${i + 1}"]`);
-
+            let answerElements = document.querySelectorAll('[data-question="'+(i + 1)+'"]');
+            console.log("CHECK HERE IM HERE OOOOOO ", answerElements)
             // Collect the answer texts in an array
             let answers = Array.from(answerElements).map(answer => answer.innerHTML);
 
@@ -512,10 +519,10 @@
 
         }
 
+
         if (role === "a") {
             document.getElementById("next-button").style.display = "block";  // Show next button for admin
             document.getElementById("options").style.display = "none";
-            document.getElementById("question").style.display = "block";
         }
         if (role !== "a") {
             document.getElementById("next-button").style.display = "none";

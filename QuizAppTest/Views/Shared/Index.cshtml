@@ -108,8 +108,24 @@
     };
 
     function endModeration(modSessionId) {
-        const endSessionPath = `/Home/EndSession?sessionId=${encodeURIComponent(modSessionId)}`;
-        window.location.href = endSessionPath;
-    }
+            const currentSessionPath = window.location.pathname;
+            const pathSegments = currentSessionPath.split('/');
+            pathSegments.pop();
+            const endSessionPath =  `/api/ModeratedSession?action=endModeratedSession&sessionId=${encodeURIComponent(modSessionId)}`;
+
+            fetch(endSessionPath, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch the moderated session');
+                    }
+                    return response.json();
+                });
+            window.location.href = '/home';
+        }
 </script>
 </html>

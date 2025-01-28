@@ -1,0 +1,16 @@
+{
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        }
+    },
+    "AllowedHosts": "*",
+    "ConnectionStrings": {
+<<<<<<< HEAD
+        "DefaultConnection": "Server=localhost;Database=quizapp;User=root;Password=mySQL20@$CHANGE;SslMode=None;"
+=======
+        "DefaultConnection": "Server=localhost;Database=QuizApp;User=root;Password=Cathgirlh6*;SslMode=None;"
+>>>>>>> 3a4dccf2de421b0240e87f1ff7bfc8661e917ea7
+    }
+}

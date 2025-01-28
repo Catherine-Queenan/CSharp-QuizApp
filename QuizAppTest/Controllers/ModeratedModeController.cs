@@ -91,70 +91,72 @@ namespace QuizApp.Controllers
 
             StringBuilder questionsHtml = new StringBuilder();
 
-            //using (var connection = _databaseUtil.GetConnection())
-            //{
-            //    connection.Open();
-            //    string query = @"SELECT q.id AS question_id, q.question_text, a.id AS answer_id, a.answer_text, a.is_correct, 
-            //            qm.media_id AS question_media_id, am.media_id AS answer_media_id
-            //         FROM questions q
-            //         LEFT JOIN answers a ON q.id = a.question_id
-            //         LEFT JOIN question_media qm ON q.id = qm.question_id
-            //         LEFT JOIN answer_media am ON a.id = am.answer_id
-            //         WHERE q.quiz_name = @QuizName"
-            //    ;
+            using (var connection = _databaseUtil.GetConnection())
+            {
+                connection.Open();
+                string query = @"SELECT q.id AS question_id, q.question_text, a.id AS answer_id, a.answer_text, a.is_correct, 
+                        qm.media_id AS question_media_id, am.media_id AS answer_media_id
+                     FROM questions q
+                     LEFT JOIN answers a ON q.id = a.question_id
+                     LEFT JOIN question_media qm ON q.id = qm.question_id
+                     LEFT JOIN answer_media am ON a.id = am.answer_id
+                     WHERE q.quiz_name = @QuizName"
+                ;
 
-            //    using (var command = _connection.CreateCommand())
-            //    {
-            //        command.Parameters.Add(new MySqlParameter("@QuizName", quizName));
-            //        using (var reader = command.ExecuteReader())
-            //        {
-            //            string previousQuestionId = null;
-            //            int questionNumber = 0;
+                using (var command = _connection.CreateCommand())
+                {
+                    command.CommandText = query;
+                    command.Parameters.Add(new MySqlParameter("@QuizName", quizName));
+                    using (var reader = command.ExecuteReader())
+                    {
+                        string? previousQuestionId = null;
+                        int questionNumber = 0;
 
-            //            while (reader.Read())
-            //            {
-            //                string questionId = reader["question_id"].ToString();
-            //                string questionText = reader["question_text"].ToString();
-            //                string answerText = reader["answer_text"]?.ToString();
-            //                bool isCorrect = Convert.ToBoolean(reader["is_correct"]);
+                        while (reader.Read())
+                        {
 
-            //                if (questionId != previousQuestionId)
-            //                {
-            //                    if (previousQuestionId != null)
-            //                    {
-            //                        questionsHtml.Append("</div>");
-            //                    }
+                            byte[]? questionIdBytes = (byte[])reader["question_id"];
+                            string questionId = BitConverter.ToString(questionIdBytes).Replace("-", "");
+                            string questionText = reader["question_text"].ToString();
+                            string answerText = reader["answer_text"]?.ToString();
+                            bool isCorrect = Convert.ToBoolean(reader["is_correct"]);
 
-            //                    questionsHtml.Append("<div class='question'>")
-            //                                 .Append("<p class='questionTitle'>").Append(questionText).Append("</p>");
+                            if (questionId != previousQuestionId)
+                            {
+                                if (previousQuestionId != null)
+                                {
+                                    questionsHtml.Append("</div>");
+                                }
 
-            //                    //string mediaHtml = GetMediaHtml(reader["question_media_id"], connection);
-            //                    //questionsHtml.Append(mediaHtml)
-            //                    questionsHtml
-            //                                 .Append("<div class='answers'>");
+                                questionsHtml.Append("<div class='question'>")
+                                             .Append("<p class='questionTitle'>").Append(questionText).Append("</p>");
 
-            //                    previousQuestionId = questionId;
-            //                    questionNumber++;
-            //                }
+                                string mediaHtml = GetMediaHtml(reader["question_media_id"]);
+                                questionsHtml.Append(mediaHtml)
+                                             .Append("<div class='answers'>");
 
-            //                string answerClass = isCorrect ? "answer correct" : "answer";
-            //                questionsHtml.Append($"<p data-question='{questionNumber}' class='{answerClass}'>{answerText}</p>");
-            //            }
+                                previousQuestionId = questionId;
+                                questionNumber++;
+                            }
 
-            //            if (previousQuestionId != null)
-            //            {
-            //                questionsHtml.Append("</div>");
-            //            }
-            //        }
-            //    }
-            //}
+                            string answerClass = isCorrect ? "answer correct" : "answer";
+                            questionsHtml.Append($"<p data-question='{questionNumber}' class='{answerClass}'>{answerText}</p>");
+                        }
+
+                        if (previousQuestionId != null)
+                        {
+                            questionsHtml.Append("</div>");
+                        }
+                    }
+                }
+            }
 
             //ViewData["sessionId"] = sessionId;
             //ViewData["quizName"] = quizName;
             //ViewData["moderatorId"] = moderator;
-            //ViewData["QuestionsHtml"] = questionsHtml.ToString();
-            //return View("moderatedMode");
-            return Redirect("/moderatedQuiz/quizName=" + quizName);
+            ViewBag.QuestionsHtml = questionsHtml.ToString();
+            return View("ModeratedMode");
+            //return Redirect("/moderatedQuiz?quizName=" + quizName + "&sessionId=" + sessionId);
         }
         //public IActionResult Index(string quizName, string sessionId)
         //{

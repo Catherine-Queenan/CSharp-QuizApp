@@ -35,7 +35,6 @@ namespace QuizApp.Controllers
             int currQuestion = HttpContext.Session.GetInt32("currQuestion") ?? 0;
             string? questions = HttpContext.Session.GetString("questions");
 
-           
 
             if (string.IsNullOrEmpty(quizName) || questions == null)
             {
@@ -124,8 +123,8 @@ namespace QuizApp.Controllers
 
         private void SwapArrayItems(JsonArray arr, int a, int b)
         {
-            var temp = arr[a];
-            arr[a] = arr[b];
+            var temp = arr[a]?.DeepClone();
+            arr[a] = arr[b]?.DeepClone();
             arr[b] = temp;
         }
 
@@ -179,5 +178,5 @@ namespace QuizApp.Controllers
 
 public class RestartRequest
 {
-    public string Restart { get; set; }
+    public string? Restart { get; set; }
 }

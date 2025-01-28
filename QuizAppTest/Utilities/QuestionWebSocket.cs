@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using MySqlX.XDevAPI;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -56,7 +58,7 @@ public class QuestionWebSocketMiddleware
 
         var userData = UserSessions[sessionId];
         userData.Questions.Clear();
-        await SendCurrentQuestion(webSocket, userData);
+        await SendCurrentQuestion(webSocket, sessionId);
     }
 
     private async Task OnMessage(System.Net.WebSockets.WebSocket webSocket, string message, string sessionId)
@@ -66,13 +68,34 @@ public class QuestionWebSocketMiddleware
 
         if (message.StartsWith("["))
         {
-            userData.CurrentQuestionIndex = 0;
-            userData.Questions.Clear();
 
+            userData.Questions.Clear();
             var jsonArray = JsonConvert.DeserializeObject<List<WebSocketQuestion>>(message);
             userData.Questions.AddRange(jsonArray);
+            userData.AnswerCounts.Clear();
+            userData.CurrentQuestionIndex = 0;
 
-            await SendCurrentQuestion(webSocket, userData);
+            foreach (var questionObj in jsonArray)
+            {
+                string questionText = questionObj.QuestionText;
+
+                // Parse answers
+                var jsonAnswers = questionObj.Answers;
+                var answerList = jsonAnswers.Select(answer => answer.ToString()).ToList();
+
+                // Parse images
+                var jsonImages = questionObj.Images;
+                var imageList = jsonImages.Select(image => image.ToString()).ToList();
+
+                // Parse videos
+                var jsonVideos = questionObj.Videos;
+                var videoList = jsonVideos.Select(video => video.ToString()).ToList();
+
+                // Add question with answers, images, and videos to the user's session data
+                userData.Questions.Add(new WebSocketQuestion(questionText, answerList, imageList, videoList));
+            }
+
+            await SendCurrentQuestion(webSocket, sessionId);
         }
         else
         {
@@ -106,8 +129,13 @@ public class QuestionWebSocketMiddleware
         Console.WriteLine($"Connection closed: {sessionId}");
     }
 
-    private async Task SendCurrentQuestion(System.Net.WebSockets.WebSocket webSocket, UserSessionData userData)
+    private async Task SendCurrentQuestion(System.Net.WebSockets.WebSocket webSocket, string sessionId)
     {
+        var userData = UserSessions[sessionId];
+        if(userData.CurrentQuestionIndex != QuestionIndex)
+        {
+            userData.CurrentQuestionIndex = QuestionIndex;
+        }
         if (userData.CurrentQuestionIndex < userData.Questions.Count)
         {
             var currentQuestion = userData.Questions[userData.CurrentQuestionIndex];
@@ -122,7 +150,7 @@ public class QuestionWebSocketMiddleware
 
             await SendMessage(webSocket, json);
         }
-        else
+        else if(userData.Questions.Count != 0)
         {
             var json = JsonConvert.SerializeObject(new { type = "end" });
             await SendMessage(webSocket, json);
@@ -193,6 +221,14 @@ public class QuestionWebSocketMiddleware
 
     public class WebSocketQuestion
     {
+        public WebSocketQuestion(string questionText, List<string> answers, List<string> images, List<string> videos)
+        {
+            QuestionText = questionText;
+            Answers = answers;
+            Images = images;
+            Videos = videos;
+        }
+
         public string QuestionText { get; set; }
         public List<string> Answers { get; set; } = new();
         public List<string> Images { get; set; } = new();

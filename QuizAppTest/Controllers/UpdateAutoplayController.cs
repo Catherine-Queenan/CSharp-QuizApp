@@ -13,18 +13,23 @@ namespace QuizApp.Controllers
     {
         private readonly ILogger<UpdateAutoplayController> _logger;
 
-        [HttpGet]
-        public IActionResult Index(string enabled)
+        [HttpGet("{enabled}")]
+        public IActionResult? Index(string enabled)
         {
-            if (HttpContext.Session.GetString("user") == null)
+            if (HttpContext.Session.GetString("USER_ROLE") == null)
             {
-                return RedirectToAction("Index", "Login");
+                return Redirect("/Login");
             }
 
-            bool isAutoplayEnabled = bool.TryParse(enabled, out bool result) && result;
-            HttpContext.Session.SetString("autoplay", isAutoplayEnabled.ToString());
+            //bool isAutoplayEnabled = bool.TryParse(enabled, out bool result) && result;
+            HttpContext.Session.SetString("autoplay", enabled);
 
-            return RedirectToAction("Index", "Play");
+            JsonObject jsonResponse = new()
+            {
+                ["status"] = "success"
+            };
+            return Json(jsonResponse);
         }
     }
+
 }

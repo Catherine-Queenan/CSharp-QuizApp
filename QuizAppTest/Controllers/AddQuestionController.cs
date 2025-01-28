@@ -182,12 +182,12 @@ namespace QuizApp.Controllers
                 newAnswer.Append("id:==").Append(answerIdString)
                         .Append(",,,question_id:==").Append(questionIdString)
                         .Append(",,,answer_text:==").Append(req.AnswerText[i])
-                        .Append(",,,is_correct:==").Append((isCorrect ? 1 : 0))
+                        .Append(",,,is_correct:==").Append((isCorrect))
                         .Append(",,,answer_type:==").Append(req.AnswerType);
 
                 if(req.AnswerType == "IMG" || (req.AnswerType != "TEXT" && isCorrect))
                 {
-                    string answerMediaId = req.QuestionType == "TEXT" ? mediaIds[i+1] : mediaIds[i + 1];
+                    string answerMediaId = req.QuestionType == "TEXT" ? mediaIds[i] : mediaIds[i + 1];
                     newAnswer.Append(",,,media_id:==").Append(answerMediaId);
                 }
 
